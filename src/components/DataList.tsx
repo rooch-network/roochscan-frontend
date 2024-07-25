@@ -3,13 +3,20 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { GiStoneBlock } from "react-icons/gi"
 import { HiViewList } from "react-icons/hi"
 import { AiOutlineArrowRight } from "react-icons/ai"
-import { Block, BlockType, Transaction } from "@/types"
+import { RoochClient, getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
+
 import Link from "next/link";
 import { timeFormat } from "@/utils"
-
-export default function DataList({ txs, blocks, type }: { txs?: Transaction[], blocks?: Block[], type: BlockType }) {
-
+import { BlockType } from "@/types";
+// create a provider connected to devnet
+const provider = new RoochClient({ url: getRoochNodeUrl('devnet') });
+export default function DataList() {
+    const blocks: any[] = []
+    const txs: any[] = []
+    const type = BlockType.Block
     useEffect(() => {
+      
+
         console.log("blocks:---------", blocks);
         console.log("txs:---------", txs);
     })
