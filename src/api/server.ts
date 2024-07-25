@@ -7,6 +7,7 @@ const server = axios.create({
 
 // Add a request interceptor
 server.interceptors.request.use(function (config) {
+    
     // Do something before request is sent
     return config;
 }, function (error) {
