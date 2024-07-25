@@ -1,18 +1,14 @@
 "use client"
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
-import { RoochClient, getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
-import {
-    RiArrowDropDownLine
-} from 'react-icons/ri';
-import { BsSun, BsMoon } from "react-icons/bs"
-
+import { getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
+import useStore from "@/store"
 const items: MenuProps['items'] = [
     {
-        key: '1',
+        key: getRoochNodeUrl('testnet'),
         label: (
             <div>
                 <p className="text-[#2f2f2f] font-bold ">Testnet</p>
@@ -21,7 +17,7 @@ const items: MenuProps['items'] = [
         ),
     },
     {
-        key: '2',
+        key: getRoochNodeUrl('devnet'),
         label: (
             <div>
                 <p className="text-[#2f2f2f] font-bold">Devnet</p>
@@ -30,7 +26,7 @@ const items: MenuProps['items'] = [
         ),
     },
     {
-        key: '2',
+        key: getRoochNodeUrl('localnet'),
         label: (
             <div>
                 <p className="text-[#2f2f2f] font-bold">Localnet</p>
@@ -40,14 +36,20 @@ const items: MenuProps['items'] = [
     }
 ];
 
-export default function Home() {
-
+export default function Header() {
+    const { roochNodeUrl, setRoochNodeUrl } = useStore()
+    useEffect(() => {
+        console.log(roochNodeUrl, 'roochNodeUrl');
+    }, [roochNodeUrl])
+    const handleDropDownClick: MenuProps['onClick'] = ({ key }) => {
+        setRoochNodeUrl(key)
+    }
     return <div className="bg-white border-b border-off-white shadow-lg p-4">
         <header className="h-60 w-full flex items-center justify-between  container mx-auto">
             <Link href="/">
                 <Image src="/images/next.svg" width="120" height={60} alt="" />
             </Link>
-            <Dropdown menu={{ items }} arrow placement="bottom">
+            <Dropdown menu={{ items, onClick: handleDropDownClick, selectedKeys: [roochNodeUrl], defaultSelectedKeys: [roochNodeUrl] }} arrow placement="bottom">
                 <div className=" cursor-pointer" onClick={(e) => e.preventDefault()}>
                     <Space>
                         switch network
