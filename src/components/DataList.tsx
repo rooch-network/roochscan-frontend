@@ -2,22 +2,26 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { GiStoneBlock } from "react-icons/gi"
 import { HiViewList } from "react-icons/hi"
+import useSWR from "swr";
 import { AiOutlineArrowRight } from "react-icons/ai"
 import { RoochClient, getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
-
 import Link from "next/link";
 import { timeFormat } from "@/utils"
 import { BlockType } from "@/types";
+import useStore from "@/store"
+import { queryBlockList } from "@/api/index"
 // create a provider connected to devnet
 const provider = new RoochClient({ url: getRoochNodeUrl('devnet') });
 export default function DataList() {
     const blocks: any[] = []
     const txs: any[] = []
     const type = BlockType.Block
+    const { roochNodeUrl } = useStore()
+
+    const { data } = useSWR(roochNodeUrl, queryBlockList)
     useEffect(() => {
-        console.log("blocks:---------", blocks);
-        console.log("txs:---------", txs);
-    })
+        console.log("blocks:---------", data);
+    }, [data])
 
 
     const renderBlocks = useCallback(() => {

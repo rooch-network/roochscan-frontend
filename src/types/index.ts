@@ -90,3 +90,9 @@ export interface BlockDetail extends Block {
     transactions: Transaction[]
 }
 
+export interface IResponse<T> {
+    id: number,
+    jsonrpc: string,
+    result: T
+}
+

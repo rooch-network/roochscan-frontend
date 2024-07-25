@@ -1,11 +1,7 @@
+import { IResponse } from "@/types"
 import server from "./server"
 import useStore from "@/store"
-interface IResponse<T> {
-  id: number,
-  jsonrpc: string,
-  result: T
-}
-const generatorParams = (id: number, method: string, params = [null, null]) => (
+const generatorParams = (method: string, params = [null, null], id = Math.floor(Math.random() * 400)) => (
   {
     id,
     jsonrpc: "2.0",
@@ -15,9 +11,9 @@ const generatorParams = (id: number, method: string, params = [null, null]) => (
 )
 
 export const queryBlockList = () => {
-  return server.post(useStore.getState().roochNodeUrl)
+  return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getTransactionsByOrder'))
 }
 
 export const queyChainID = (): Promise<IResponse<string>> => {
-  return server.post(useStore.getState().roochNodeUrl, generatorParams(0, 'rooch_getChainID'))
+  return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getChainID'))
 }
