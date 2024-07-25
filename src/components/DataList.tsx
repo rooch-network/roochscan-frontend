@@ -15,8 +15,6 @@ export default function DataList() {
     const txs: any[] = []
     const type = BlockType.Block
     useEffect(() => {
-      
-
         console.log("blocks:---------", blocks);
         console.log("txs:---------", txs);
     })

@@ -1,11 +1,44 @@
+"use client"
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import type { MenuProps } from 'antd';
+import { Dropdown, Space } from 'antd';
+import { RoochClient, getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
 import {
     RiArrowDropDownLine
 } from 'react-icons/ri';
 import { BsSun, BsMoon } from "react-icons/bs"
 
+const items: MenuProps['items'] = [
+    {
+        key: '1',
+        label: (
+            <div>
+                <p className="text-[#2f2f2f] font-bold ">Testnet</p>
+                <p className="text-[#198ffd] text-sm">{getRoochNodeUrl('testnet')}</p>
+            </div>
+        ),
+    },
+    {
+        key: '2',
+        label: (
+            <div>
+                <p className="text-[#2f2f2f] font-bold">Devnet</p>
+                <p className="text-[#198ffd] text-sm">{getRoochNodeUrl('devnet')}</p>
+            </div>
+        ),
+    },
+    {
+        key: '2',
+        label: (
+            <div>
+                <p className="text-[#2f2f2f] font-bold">Localnet</p>
+                <p className="text-[#198ffd] text-sm">{getRoochNodeUrl('localnet')}</p>
+            </div>
+        ),
+    }
+];
 
 export default function Home() {
 
@@ -14,7 +47,14 @@ export default function Home() {
             <Link href="/">
                 <Image src="/images/next.svg" width="120" height={60} alt="" />
             </Link>
-            <ul className="flex items-center h-full">
+            <Dropdown menu={{ items }} arrow placement="bottom">
+                <div className=" cursor-pointer" onClick={(e) => e.preventDefault()}>
+                    <Space>
+                        switch network
+                    </Space>
+                </div>
+            </Dropdown>
+            {/* <ul className="flex items-center h-full">
                 <li className="mr-30 relative hover:text-steel-blue group">
                     <div className="cursor-pointer flex items-center hover:text-steel-blue">
                         <span>
@@ -50,11 +90,7 @@ export default function Home() {
 
                     </ul>
                 </li>
-                {/* <li className="cursor-pointer hover:text-steel-blue flex items-center">
-                    <BsSun className="ml-2 text-2xl" />
-                    <BsMoon className="ml-2 text-xl" />
-                </li> */}
-            </ul>
+            </ul> */}
         </header>
     </div>
 }
