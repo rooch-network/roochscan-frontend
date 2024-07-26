@@ -3,20 +3,13 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { GiStoneBlock } from "react-icons/gi"
 import { HiViewList } from "react-icons/hi"
 import { AiOutlineArrowRight } from "react-icons/ai"
-// import { RoochClient, getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
 import Link from "next/link";
 import { timeFormat } from "@/utils"
 import { BlockType, ITransactionsByOrderResponse } from "@/types";
 
-// create a provider connected to devnet
-// const provider = new RoochClient({ url: getRoochNodeUrl('devnet') });
 export default function DataList({ txs, blocks, type }: { txs?: any[], blocks?: ITransactionsByOrderResponse[], type: BlockType }) {
 
-
-
     const renderBlocks = useCallback(() => {
-        console.log(blocks, 'blocks');
-
         if (!blocks) return
         return blocks.map(v => (
             <div key={v.execution_info.tx_hash} className="p-10 pt-20 pb-20 ml-20 mr-20 flex items-center justify-between border-b border-light-gray">
