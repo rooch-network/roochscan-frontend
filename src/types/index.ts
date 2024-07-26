@@ -96,3 +96,34 @@ export interface IResponse<T> {
     result: T
 }
 
+export interface IExecutionInfo {
+    event_root: string,
+    gas_used: string,
+    status_root: string,
+    status: { type: string },
+    tx_hash: string
+}
+export interface IData {
+    bitcoin_block_hash: string,
+    bitcoin_txid: string,
+    block_hash: string,
+    chain_id: string,
+    txid: string,
+    type: string
+}
+export interface ISequenceInfo {
+    tx_accumulator_root: string,
+    tx_order: string,
+    tx_order_signature: string,
+    tx_timestamp: string
+}
+
+export interface ITransaction {
+    data: IData
+    sequence_info: ISequenceInfo
+}
+
+export interface ITransactionsByOrderResponse {
+    execution_info: IExecutionInfo,
+    transaction: ITransaction,
+}
