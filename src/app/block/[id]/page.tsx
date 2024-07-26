@@ -1,6 +1,5 @@
 import React from "react";
 import Block from "@/views/block"
-import { queryBlockDetail } from "@/api"
 export default async function BlockServer({ params }: { params: { id: string } }) {
 
     // if (params.id.startsWith("0x")) {
@@ -8,7 +7,5 @@ export default async function BlockServer({ params }: { params: { id: string } }
     //   } else {
     //     console.log("字符串不以 '0x' 开头");
     //   }
-    const blockDetail = await queryBlockDetail(params.id)
-
-    return <Block blockDetail ={blockDetail} />
+    return <div></div>
 }
