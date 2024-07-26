@@ -14,5 +14,6 @@ export const timeDifference = (knownTime: number) => {
 }
 
 export const timeFormat = (time: number) => {
-    return dayjs(time * 1000).format("YYYY-MM-DD HH:mm:ss")
+    
+    return dayjs(time).format("YYYY-MM-DD HH:mm:ss")
 }

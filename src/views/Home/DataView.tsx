@@ -1,7 +1,18 @@
-import React from "react";
+"use client"
+import React, { useEffect } from "react";
 import DataList from "@/components/DataList";
-export default async function DataView() {
+import useStore from "@/store"
+import { queryBlockList } from "@/api/index"
+import useSWR from "swr";
+import { BlockType } from "@/types";
+export default function DataView() {
+    const { roochNodeUrl } = useStore()
+    const { data } = useSWR(roochNodeUrl, queryBlockList)
+    useEffect(() => {
+        console.log("blocks:---------", data);
+    }, [data])
+
     return <div className="mt-120 container mx-auto flex justify-between">
-        <DataList />
+        <DataList blocks={data?.result?.data || []} type={BlockType.Block} />
     </div>
 }

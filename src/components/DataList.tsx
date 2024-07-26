@@ -2,54 +2,46 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import { GiStoneBlock } from "react-icons/gi"
 import { HiViewList } from "react-icons/hi"
-import useSWR from "swr";
 import { AiOutlineArrowRight } from "react-icons/ai"
-import { RoochClient, getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
+// import { RoochClient, getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
 import Link from "next/link";
 import { timeFormat } from "@/utils"
-import { BlockType } from "@/types";
-import useStore from "@/store"
-import { queryBlockList } from "@/api/index"
-// create a provider connected to devnet
-const provider = new RoochClient({ url: getRoochNodeUrl('devnet') });
-export default function DataList() {
-    const blocks: any[] = []
-    const txs: any[] = []
-    const type = BlockType.Block
-    const { roochNodeUrl } = useStore()
+import { BlockType, ITransactionsByOrderResponse } from "@/types";
 
-    const { data } = useSWR(roochNodeUrl, queryBlockList)
-    useEffect(() => {
-        console.log("blocks:---------", data);
-    }, [data])
+// create a provider connected to devnet
+// const provider = new RoochClient({ url: getRoochNodeUrl('devnet') });
+export default function DataList({ txs, blocks, type }: { txs?: any[], blocks?: ITransactionsByOrderResponse[], type: BlockType }) {
+
 
 
     const renderBlocks = useCallback(() => {
+        console.log(blocks, 'blocks');
+
         if (!blocks) return
         return blocks.map(v => (
-            <div key={v.id} className="p-10 pt-20 pb-20 ml-20 mr-20 flex items-center justify-between border-b border-light-gray">
+            <div key={v.execution_info.tx_hash} className="p-10 pt-20 pb-20 ml-20 mr-20 flex items-center justify-between border-b border-light-gray">
                 <div className="flex items-center">
                     <GiStoneBlock className="text-3xl" />
                     <div className="ml-10">
-                        <p className="cursor-pointer text-dark-blue text-lg">{v.height}</p>
-                        <p className="text-sm text-gray">{timeFormat(v.timestamp)} </p>
+                        <p className="cursor-pointer text-dark-blue text-lg">1</p>
+                        <p className="text-sm text-gray">{timeFormat(Number(v.transaction.sequence_info.tx_timestamp))} </p>
                     </div>
                 </div>
                 <div className="w-1/3 text-center">
                     <p className="flex">
                         <span className="mr-5">block Hash</span>
-                        <Link href={`/block/${v.id}`} className="text-dark-blue block cursor-pointer truncate flex-1">
-                            <span>{v.id}</span>
+                        <Link href={`/block/${1}`} className="text-dark-blue block cursor-pointer truncate flex-1">
+                            <span>1</span>
                         </Link>
 
                     </p>
                     <p className="text-sm text-gray text-left">
-                        <span className="text-dark-blue cursor-pointer">{v.count} txns </span>
+                        <span className="text-dark-blue cursor-pointer">{v.transaction.sequence_info.tx_order} txns </span>
                         {/* in 12 secs */}
                     </p>
                 </div>
                 <div className=" rounded-lg cursor-pointer text-xs font-bold p-5">
-                    L1 : {v.da_height}
+                    L1 : 1
                 </div>
             </div>
         ))

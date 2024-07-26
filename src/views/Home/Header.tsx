@@ -6,7 +6,6 @@ import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
 import useStore from "@/store"
-import useChainID from "@/hooks/useChainID"
 const items: MenuProps['items'] = [
     {
         key: getRoochNodeUrl('testnet'),
@@ -39,10 +38,6 @@ const items: MenuProps['items'] = [
 
 export default function Header() {
     const { roochNodeUrl, setRoochNodeUrl } = useStore()
-    const chainID = useChainID()
-    useEffect(() => {
-        console.log(chainID, 'roochNodeUrl');
-    }, [roochNodeUrl, chainID])
     const handleDropDownClick: MenuProps['onClick'] = ({ key }) => {
         setRoochNodeUrl(key)
     }

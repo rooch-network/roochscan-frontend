@@ -1,4 +1,4 @@
-import { IResponse } from "@/types"
+import { IResponse, ITransactionsByOrderResponse } from "@/types"
 import server from "./server"
 import useStore from "@/store"
 const generatorParams = (method: string, params = [null, null], id = Math.floor(Math.random() * 400)) => (
@@ -10,7 +10,7 @@ const generatorParams = (method: string, params = [null, null], id = Math.floor(
   }
 )
 
-export const queryBlockList = () => {
+export const queryBlockList = (): Promise<IResponse<{ data: ITransactionsByOrderResponse[] }>> => {
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getTransactionsByOrder'))
 }
 
