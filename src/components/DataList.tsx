@@ -16,15 +16,15 @@ export default function DataList({ txs, blocks, type }: { txs?: any[], blocks?: 
                 <div className="flex items-center">
                     <GiStoneBlock className="text-3xl" />
                     <div className="ml-10">
-                        <p className="cursor-pointer text-dark-blue text-lg">1</p>
+                        {/* <p className="cursor-pointer text-dark-blue text-lg">1</p> */}
                         <p className="text-sm text-gray">{timeFormat(Number(v.transaction.sequence_info.tx_timestamp))} </p>
                     </div>
                 </div>
                 <div className="w-1/3 text-center">
                     <p className="flex">
-                        <span className="mr-5">block Hash</span>
+                        <span className="mr-5">Block Hash</span>
                         <Link href={`/block/${1}`} className="text-dark-blue block cursor-pointer truncate flex-1">
-                            <span>1</span>
+                            <span>{v.execution_info.tx_hash}</span>
                         </Link>
 
                     </p>
@@ -34,7 +34,7 @@ export default function DataList({ txs, blocks, type }: { txs?: any[], blocks?: 
                     </p>
                 </div>
                 <div className=" rounded-lg cursor-pointer text-xs font-bold p-5">
-                    L1 : 1
+                     { v.transaction.data.type}
                 </div>
             </div>
         ))
