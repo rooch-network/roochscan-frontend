@@ -6,9 +6,12 @@ import { AiOutlineArrowRight } from "react-icons/ai"
 import Link from "next/link";
 import { timeFormat } from "@/utils"
 import { BlockType, ITransactionsByOrderResponse } from "@/types";
-
+import { useRouter } from "next/navigation"
 export default function DataList({ txs, blocks, type }: { txs?: any[], blocks?: ITransactionsByOrderResponse[], type: BlockType }) {
-
+    const router = useRouter()
+    const handleRouterAllBlock = () => {
+        router.push("/allBlock")
+    }
     const renderBlocks = useCallback(() => {
         if (!blocks) return
         return blocks.map(v => (
@@ -34,7 +37,7 @@ export default function DataList({ txs, blocks, type }: { txs?: any[], blocks?: 
                     </p>
                 </div>
                 <div className=" rounded-lg cursor-pointer text-xs font-bold p-5">
-                     { v.transaction.data.type}
+                    {v.transaction.data.type}
                 </div>
             </div>
         ))
@@ -83,12 +86,12 @@ export default function DataList({ txs, blocks, type }: { txs?: any[], blocks?: 
     }, [type])
 
 
-    return <div className="w-[49%] rounded-lg border border-light-gray">
+    return <div className="w-[100%] rounded-lg border border-light-gray">
         <div className="p-20 border-b border-light-gray">
             <span className="font-semibold">{title}</span>
         </div>
         {renderList()}
-        <div className="h-50 w-full text-center bg-off-white flex items-center justify-center text-dark-gray hover:text-dark-blue cursor-pointer">
+        <div onClick={handleRouterAllBlock} className="h-50 w-full text-center bg-off-white flex items-center justify-center text-dark-gray hover:text-dark-blue cursor-pointer">
             <span className="text-sm">views all Blocks</span>
             <AiOutlineArrowRight className="ml-5" />
         </div>
