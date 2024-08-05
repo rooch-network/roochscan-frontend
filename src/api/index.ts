@@ -22,6 +22,7 @@ export const queryBalances = (address: string) => {
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getBalances', [address, null, '5']))
 }
 
+// 查询主链的余额资产
 export const queryBalance = (address: string) => {
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getBalance', [address, '0x3::gas_coin::GasCoin']))
 }
