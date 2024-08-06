@@ -9,7 +9,11 @@ import { timeFormat } from "@/utils";
 
 export default function BlockServer({ params }: { params: { id: string } }) {
     const { roochNodeUrl } = useStore()
-    const { data } = useSWR(roochNodeUrl, () => getTransactionsByHash(params.id))
+    const { data } = useSWR(params.id ? [roochNodeUrl,params.id] : null, ([key,tx]) => getTransactionsByHash(tx), {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        refreshInterval: 0,
+    })
     const blockDetail = useMemo(() => data?.result[0], [data])
     useEffect(() => {
         console.log("blocks:---------", blockDetail);
