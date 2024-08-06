@@ -127,3 +127,24 @@ export interface ITransactionsByOrderResponse {
     execution_info: IExecutionInfo,
     transaction: ITransaction,
 }
+
+export interface IPersonAssets {
+    balance
+    :
+    string
+    coin_type
+    :
+    string
+    decimals
+    :
+    number
+    name
+    :
+    string
+    supply
+    :
+    number
+    symbol
+    :
+    string
+}
