@@ -99,7 +99,7 @@ export interface IResponse<T> {
 export interface IExecutionInfo {
     event_root: string,
     gas_used: string,
-    status_root: string,
+    state_root: string,
     status: { type: string },
     tx_hash: string
 }

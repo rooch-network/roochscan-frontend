@@ -32,8 +32,8 @@ export const queryGetStatus = () => {
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getStates', params))
 }
 
-export const getTransactionsByHash = () => {
-  const params = [['0x08156186e176ae50d5e15cd52fd1225089621eef716dbb05736422ed1be58f8a']]
+export const getTransactionsByHash = (hash: string): Promise<IResponse<ITransactionsByOrderResponse[]>> =>  {
+  const params = [[hash]]
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getTransactionsByHash', params))
 }
 

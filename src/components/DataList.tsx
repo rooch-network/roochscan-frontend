@@ -26,7 +26,7 @@ export default function DataList({ txs, blocks, type, isAll }: { txs?: any[], bl
                 <div className="w-1/3 text-center">
                     <p className="flex">
                         <span className="mr-5">Block Hash</span>
-                        <Link href={`/block/${1}`} className="text-dark-blue block cursor-pointer truncate flex-1">
+                        <Link href={`/block/${v.execution_info.tx_hash}`} className="text-dark-blue block cursor-pointer truncate flex-1">
                             <span>{v.execution_info.tx_hash}</span>
                         </Link>
 
