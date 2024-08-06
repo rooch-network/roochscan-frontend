@@ -7,7 +7,7 @@ import Link from "next/link";
 import { timeFormat } from "@/utils"
 import { BlockType, ITransactionsByOrderResponse } from "@/types";
 import { useRouter } from "next/navigation"
-export default function DataList({ txs, blocks, type }: { txs?: any[], blocks?: ITransactionsByOrderResponse[], type: BlockType }) {
+export default function DataList({ txs, blocks, type, isAll }: { txs?: any[], blocks?: ITransactionsByOrderResponse[], type: BlockType, isAll?: boolean }) {
     const router = useRouter()
     const handleRouterAllBlock = () => {
         router.push("/allBlock")
@@ -91,9 +91,12 @@ export default function DataList({ txs, blocks, type }: { txs?: any[], blocks?: 
             <span className="font-semibold">{title}</span>
         </div>
         {renderList()}
-        <div onClick={handleRouterAllBlock} className="h-50 w-full text-center bg-off-white flex items-center justify-center text-dark-gray hover:text-dark-blue cursor-pointer">
-            <span className="text-sm">views all Blocks</span>
-            <AiOutlineArrowRight className="ml-5" />
-        </div>
+        {
+            isAll && <div onClick={handleRouterAllBlock} className="h-50 w-full text-center bg-off-white flex items-center justify-center text-dark-gray hover:text-dark-blue cursor-pointer">
+                <span className="text-sm">views all Blocks</span>
+                <AiOutlineArrowRight className="ml-5" />
+            </div>
+        }
+
     </div>
 }

@@ -10,8 +10,8 @@ const generatorParams = (method: string, params: any[] = [null, null], id = Math
   }
 )
 
-export const queryBlockList = (): Promise<IResponse<{ data: ITransactionsByOrderResponse[] }>> => {
-  return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getTransactionsByOrder'))
+export const queryBlockList = (params: any[] = [null, null]): Promise<IResponse<{ data: ITransactionsByOrderResponse[] }>> => {
+  return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getTransactionsByOrder', params))
 }
 
 export const queyChainID = (): Promise<IResponse<string>> => {
