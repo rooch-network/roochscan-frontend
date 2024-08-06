@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from "react";
 import Block from "@/views/block"
 import useStore from "@/store"
 import useSWR from "swr";
-import { getTransactionsByHash, queryBalance } from "@/api";
+import { getTransactionsByHash, queryBalance, queryBalances } from "@/api";
 import { Breadcrumb } from "antd";
 import { timeFormat } from "@/utils";
 
@@ -14,10 +14,15 @@ export default function BlockServer({ params }: { params: { id: string } }) {
         revalidateOnReconnect: false,
         refreshInterval: 0,
     })
+    const { data: balanceData } = useSWR(params.id ? ["getBalances", params.id] : null, ([key, tx]) => queryBalances(tx), {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: false,
+        refreshInterval: 0,
+    })
 
     useEffect(() => {
-        console.log("blocks:---------", data);
-    }, [data])
+        console.log("balanceData:---------", balanceData?.result.data);
+    }, [balanceData])
     // getTransactionsByHash
     if (params.id.startsWith("0x")) {
         console.log("字符串以 '0x' 开头");
@@ -87,5 +92,58 @@ export default function BlockServer({ params }: { params: { id: string } }) {
                 </div>
             </div>
         </div>
+        {
+            balanceData?.result.data.map((v,index) => <div key={index} className=" rounded-md mt-20 border border-light-gray shadow-md p-20 bg-white">
+
+                <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+                    <div className="w-1/4">
+                        balance
+                    </div>
+                    <div>
+                        {v.balance}
+                    </div>
+                </div>
+                <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+                    <div className="w-1/4">
+                        coin_type
+                    </div>
+                    <div>
+                        {v.coin_type}
+                    </div>
+                </div>
+                <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+                    <div className="w-1/4">
+                        decimals
+                    </div>
+                    <div>
+                        {v.decimals}
+                    </div>
+                </div>
+                <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+                    <div className="w-1/4">
+                        name
+                    </div>
+                    <div>
+                        {v.name}
+                    </div>
+                </div>
+                <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+                    <div className="w-1/4">
+                        supply
+                    </div>
+                    <div>
+                        {v.supply}
+                    </div>
+                </div>
+                <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+                    <div className="w-1/4">
+                        symbol
+                    </div>
+                    <div>
+                        {v.symbol}
+                    </div>
+                </div>
+            </div>)
+        }
     </div>
 }
