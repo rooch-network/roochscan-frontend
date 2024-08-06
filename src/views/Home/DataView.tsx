@@ -7,12 +7,12 @@ import useSWR from "swr";
 import { BlockType } from "@/types";
 export default function DataView() {
     const { roochNodeUrl } = useStore()
-    const { data } = useSWR(roochNodeUrl, queryBlockList)
+    const { data } = useSWR(roochNodeUrl, () => queryBlockList([null,null]))
     useEffect(() => {
         console.log("blocks:---------", data);
     }, [data])
 
     return <div className="mt-120 container mx-auto flex justify-between">
-        <DataList blocks={data?.result?.data || []} type={BlockType.Block} />
+        <DataList blocks={data?.result?.data || []} type={BlockType.Block} isAll  />
     </div>
 }
