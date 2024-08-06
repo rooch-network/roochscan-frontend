@@ -1,4 +1,4 @@
-import { IResponse, ITransactionsByOrderResponse } from "@/types"
+import { IPersonAssets, IResponse, ITransactionsByOrderResponse } from "@/types"
 import server from "./server"
 import useStore from "@/store"
 const generatorParams = (method: string, params: any[] = [null, null], id = Math.floor(Math.random() * 400)) => (
@@ -23,7 +23,7 @@ export const queryBalances = (address: string) => {
 }
 
 // 查询主链的余额资产
-export const queryBalance = (address: string) => {
+export const queryBalance = (address: string): Promise<IResponse<IPersonAssets>> => {
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getBalance', [address, '0x3::gas_coin::GasCoin']))
 }
 
@@ -32,7 +32,7 @@ export const queryGetStatus = () => {
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getStates', params))
 }
 
-export const getTransactionsByHash = (hash: string): Promise<IResponse<ITransactionsByOrderResponse[]>> =>  {
+export const getTransactionsByHash = (hash: string): Promise<IResponse<ITransactionsByOrderResponse[]>> => {
   const params = [[hash]]
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getTransactionsByHash', params))
 }
