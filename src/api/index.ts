@@ -18,7 +18,7 @@ export const queyChainID = (): Promise<IResponse<string>> => {
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getChainID'))
 }
 
-export const queryBalances = (address: string) => {
+export const queryBalances = (address: string): Promise<IResponse<{ data: IPersonAssets[] }>> => {
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getBalances', [address, null, '5']))
 }
 
