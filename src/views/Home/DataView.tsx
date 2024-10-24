@@ -10,9 +10,10 @@ import { CopyOutlined } from "@ant-design/icons";
 import { getTokenShortHash, timeFormat } from "@/utils";
 import { Button, message, Space } from "antd";
 import Copy from "copy-to-clipboard";
-
+import {useRouter} from "next/navigation"
 export default function DataView() {
   const { roochNodeUrl } = useStore();
+  const router = useRouter()
   const { data } = useSWR(roochNodeUrl, () => queryBlockList([null, 10]),{refreshInterval: 3500});
   useEffect(() => {
     console.log("blocks:---------", data);
@@ -25,6 +26,10 @@ export default function DataView() {
       content: "Copy Success",
     });
   };
+
+  const handleRouter = (tx_hash:string) =>{
+    router.push(`/block/${tx_hash}`)
+  }
 
   return (
     <div className="mt-20 container mx-auto ">
@@ -44,6 +49,7 @@ export default function DataView() {
         </div>
         { Array.isArray(data?.result?.data) && data?.result?.data?.map((v) => (
           <div
+          onClick={() =>handleRouter(v.execution_info.tx_hash || "")}
             key={v.execution_info?.tx_hash || "1"}
             className=" w-full flex items-center mb-[10px] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
           >
