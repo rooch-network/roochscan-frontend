@@ -10,11 +10,11 @@ import { CopyOutlined } from "@ant-design/icons";
 import { getTokenShortHash, timeFormat } from "@/utils";
 import { Button, message, Space } from "antd";
 import Copy from "copy-to-clipboard";
-import {useRouter} from "next/navigation"
+import { useRouter } from "next/navigation"
 export default function DataView() {
   const { roochNodeUrl } = useStore();
   const router = useRouter()
-  const { data } = useSWR(roochNodeUrl, () => queryBlockList([null, 10]),{refreshInterval: 3500});
+  const { data } = useSWR(roochNodeUrl, () => queryBlockList([null, 10]), { refreshInterval: 3500 });
   useEffect(() => {
     console.log("blocks:---------", data);
   }, [data]);
@@ -47,9 +47,9 @@ export default function DataView() {
           <div className="w-[20%] text-center">Function</div>
           <div className="w-[20%] text-center">Amount</div>
         </div>
-        { Array.isArray(data?.result?.data) && data?.result?.data?.map((v) => (
+        {Array.isArray(data?.result?.data) && data?.result?.data?.map((v) => (
           <div
-          onClick={() =>handleRouter(v.execution_info.tx_hash || "")}
+            onClick={() => handleRouter(v.execution_info.tx_hash || "")}
             key={v.execution_info?.tx_hash || "1"}
             className=" w-full flex items-center mb-[10px] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
           >
@@ -65,12 +65,12 @@ export default function DataView() {
               <div
                 className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md"
                 onClick={(e) => {
-                    e.stopPropagation();
-                    handleCopy(v.transaction.data.sender)
+                  e.stopPropagation();
+                  handleCopy(v.transaction.data.sender)
                 }}
               >
-                <Tooltip title={v.transaction.data.sender}>
-                  <span>{getTokenShortHash(v.transaction.data.sender)}</span>
+                <Tooltip title={v.transaction.data.sender_bitcoin_address}>
+                  <span>{getTokenShortHash(v.transaction.data.sender_bitcoin_address)}</span>
                 </Tooltip>
 
                 <CopyOutlined className="ml-[5px]" />
@@ -79,9 +79,8 @@ export default function DataView() {
             <div className="w-[20%] text-center flex justify-center items-center">
               <div
                 className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md"
-                onClick={(e) =>
-                {
-                    e.stopPropagation();
+                onClick={(e) => {
+                  e.stopPropagation();
                   handleCopy(
                     v.transaction.data.action?.function_call?.function_id
                   )
@@ -107,7 +106,7 @@ export default function DataView() {
               </div>
             </div>
             <div className="w-[20%] text-center">
-              {v.execution_info?.gas_used || "0"}
+              {(Number(v.execution_info?.gas_used) / 1e9).toFixed(6) || "0.0"} RGas
             </div>
           </div>
         ))}
