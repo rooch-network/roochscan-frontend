@@ -97,7 +97,7 @@ export default function Header() {
             onClick={(e) => e.preventDefault()}
           >
             <Space>
-              {mapNetName} netWork
+              {mapNetName} NetWork
               {!dropdownVisible ? (
                 <DownOutlined className="text-[14px]" />
               ) : (
