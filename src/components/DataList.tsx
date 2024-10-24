@@ -14,8 +14,12 @@ export default function DataList({ txs, blocks, type, isAll }: { txs?: any[], bl
     }
     const renderBlocks = useCallback(() => {
         if (!blocks) return
+        console.log(blocks,"blocks");
+
+   
+        
         return blocks.map(v => (
-            <div key={v.execution_info.tx_hash} className="p-10 pt-20 pb-20 ml-20 mr-20 flex items-center justify-between border-b border-light-gray">
+            <div key={v.execution_info?.tx_hash || ""} className="p-10 pt-20 pb-20 ml-20 mr-20 flex items-center justify-between border-b border-light-gray">
                 <div className="flex items-center">
                     <GiStoneBlock className="text-3xl" />
                     <div className="ml-10">
@@ -26,8 +30,8 @@ export default function DataList({ txs, blocks, type, isAll }: { txs?: any[], bl
                 <div className="w-1/3 text-center">
                     <p className="flex">
                         <span className="mr-5">Block Hash</span>
-                        <Link href={`/block/${v.execution_info.tx_hash}`} className="text-dark-blue block cursor-pointer truncate flex-1">
-                            <span>{v.execution_info.tx_hash}</span>
+                        <Link href={`/block/${v.execution_info?.tx_hash || ""}`} className="text-dark-blue block cursor-pointer truncate flex-1">
+                            <span>{v.execution_info?.tx_hash}</span>
                         </Link>
 
                     </p>

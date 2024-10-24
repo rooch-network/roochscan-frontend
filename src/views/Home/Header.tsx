@@ -6,7 +6,17 @@ import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
 import useStore from "@/store"
+const defaultMainnetUrl = "https://main-seed.rooch.network"
 const items: MenuProps['items'] = [
+    {
+        key:defaultMainnetUrl,
+        label: (
+            <div>
+                <p className="text-[#2f2f2f] font-bold ">Mainnet</p>
+                <p className="text-[#198ffd] text-sm">{defaultMainnetUrl}</p>
+            </div>
+        ),
+    },
     {
         key: getRoochNodeUrl('testnet'),
         label: (
