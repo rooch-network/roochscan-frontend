@@ -66,20 +66,18 @@ export default function Header() {
         setRoochNodeUrl(key)
         setDropdownVisible(false)
     }
-    return <div className="p-4">
-        <header className="h-60 w-full flex items-center justify-between  container mx-auto">
-            <Link href="/">
-                <Image src="/images/logo.png" width="120" height={60} alt="" />
-            </Link>
-            <Dropdown  onVisibleChange={handleVisibleChange}  className="border p-[5px] rounded-lg border-gray-light" menu={{ items, onClick: handleDropDownClick, selectedKeys: [roochNodeUrl], defaultSelectedKeys: [roochNodeUrl] }} arrow placement="bottom">
-                <div className=" cursor-pointer text-[15px]" onClick={(e) => e.preventDefault()}>
-                    <Space>
-                        {mapNetName} netWork
-                       {!dropdownVisible ? <DownOutlined className="text-[14px]" /> : <UpOutlined className="text-[14px]" />}  
-                        
-                    </Space>
-                </div>
-            </Dropdown>
-        </header>
-    </div>
+    return <header className="h-60 w-full flex items-center justify-between  px-[20px] fixed top-[0px] bg-white z-10">
+    <Link href="/">
+        <Image src="/images/logo.png" width="120" height={60} alt="" />
+    </Link>
+    <Dropdown  onVisibleChange={handleVisibleChange}  className="border p-[5px] rounded-lg border-gray-light" menu={{ items, onClick: handleDropDownClick, selectedKeys: [roochNodeUrl], defaultSelectedKeys: [roochNodeUrl] }} arrow placement="bottom">
+        <div className=" cursor-pointer text-[15px]" onClick={(e) => e.preventDefault()}>
+            <Space>
+                {mapNetName} netWork
+               {!dropdownVisible ? <DownOutlined className="text-[14px]" /> : <UpOutlined className="text-[14px]" />}  
+                
+            </Space>
+        </div>
+    </Dropdown>
+</header>
 }
