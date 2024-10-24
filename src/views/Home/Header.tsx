@@ -1,46 +1,53 @@
 "use client"
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { MenuProps } from 'antd';
 import { Dropdown, Space } from 'antd';
 import { getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
 import useStore from "@/store"
+
 const defaultMainnetUrl = "https://main-seed.rooch.network"
+const  NetWork:any = {
+    Mainnet :defaultMainnetUrl,
+    Testnet:getRoochNodeUrl('testnet'),
+    Devnet:getRoochNodeUrl('devnet'),
+    Localnet:getRoochNodeUrl('localnet'),
+}
 const items: MenuProps['items'] = [
     {
-        key:defaultMainnetUrl,
+        key:NetWork.Mainnet,
         label: (
             <div>
                 <p className="text-[#2f2f2f] font-bold ">Mainnet</p>
-                <p className="text-[#198ffd] text-sm">{defaultMainnetUrl}</p>
+                <p className="text-[#198ffd] text-sm">{NetWork.Mainnet}</p>
             </div>
         ),
     },
     {
-        key: getRoochNodeUrl('testnet'),
+        key: NetWork.Testnet,
         label: (
             <div>
                 <p className="text-[#2f2f2f] font-bold ">Testnet</p>
-                <p className="text-[#198ffd] text-sm">{getRoochNodeUrl('testnet')}</p>
+                <p className="text-[#198ffd] text-sm">{NetWork.Testnet}</p>
             </div>
         ),
     },
     {
-        key: getRoochNodeUrl('devnet'),
+        key: NetWork.Devnet,
         label: (
             <div>
                 <p className="text-[#2f2f2f] font-bold">Devnet</p>
-                <p className="text-[#198ffd] text-sm">{getRoochNodeUrl('devnet')}</p>
+                <p className="text-[#198ffd] text-sm">{NetWork.Devnet}</p>
             </div>
         ),
     },
     {
-        key: getRoochNodeUrl('localnet'),
+        key: NetWork.Localnet,
         label: (
             <div>
                 <p className="text-[#2f2f2f] font-bold">Localnet</p>
-                <p className="text-[#198ffd] text-sm">{getRoochNodeUrl('localnet')}</p>
+                <p className="text-[#198ffd] text-sm">{NetWork.Localnet}</p>
             </div>
         ),
     }
@@ -48,18 +55,19 @@ const items: MenuProps['items'] = [
 
 export default function Header() {
     const { roochNodeUrl, setRoochNodeUrl } = useStore()
+    const mapNetName = useMemo(()=> Object.keys(NetWork).find((item:any) => NetWork[item] === roochNodeUrl),[roochNodeUrl])
     const handleDropDownClick: MenuProps['onClick'] = ({ key }) => {
         setRoochNodeUrl(key)
     }
     return <div className="bg-white border-b border-off-white shadow-lg p-4">
         <header className="h-60 w-full flex items-center justify-between  container mx-auto">
             <Link href="/">
-                <Image src="/images/next.svg" width="120" height={60} alt="" />
+                <Image src="/images/logo.png" width="120" height={60} alt="" />
             </Link>
             <Dropdown menu={{ items, onClick: handleDropDownClick, selectedKeys: [roochNodeUrl], defaultSelectedKeys: [roochNodeUrl] }} arrow placement="bottom">
                 <div className=" cursor-pointer" onClick={(e) => e.preventDefault()}>
                     <Space>
-                        switch network
+                        {mapNetName} netWork
                     </Space>
                 </div>
             </Dropdown>
