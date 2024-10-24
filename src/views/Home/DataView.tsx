@@ -28,7 +28,7 @@ export default function DataView() {
   };
 
   const handleRouter = (tx_hash:string) =>{
-    router.push(`/block/${tx_hash}`)
+    router.push(`/tx/${tx_hash}`)
   }
 
   return (
