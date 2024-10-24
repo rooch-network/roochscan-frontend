@@ -11,17 +11,6 @@ import { ITransactionsByOrderResponse } from "@/types";
 export default function BlockServer({ blockDetail }: { blockDetail: ITransactionsByOrderResponse }) {
    
     return <div className="container mx-auto mt-[80px]">
-    <Breadcrumb
-        items={[
-            {
-                title: 'Home',
-            },
-
-            {
-                title: 'Block',
-            },
-        ]}
-    />
     
     <div className=" rounded-md mt-20 border border-light-gray shadow-md p-20 bg-white">
 
