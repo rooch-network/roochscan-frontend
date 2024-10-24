@@ -76,9 +76,10 @@ export default function Header() {
         <Image src="/images/logo.png" width="120" height={60} alt="" />
       </Link>
       <div className="flex items-center">
-        <div className="w-[140px] cursor-pointer text-[#151918]">Transactions</div>
+        <div className="w-[140px] cursor-pointer text-[#151918]">
+          <Link href={'/txs'}>Transactions</Link>
+        </div>
         <div className="w-[140px] cursor-pointer text-[#151918]">Analytics</div>
-        <div className="w-[140px] cursor-pointer text-[#151918]">Blocks</div>
         <Dropdown
           onVisibleChange={handleVisibleChange}
           className="border p-[5px] rounded-lg border-gray-light"
