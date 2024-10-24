@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.5.1",
     "@roochnetwork/rooch-sdk": "^0.2.7",
     "@types/node": "20.4.8",
     "@types/react": "18.2.18",
