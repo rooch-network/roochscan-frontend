@@ -8,7 +8,7 @@ interface StoreState {
 const useStore = create(
     persist<StoreState>(
         (set, get) => ({
-            roochNodeUrl: getRoochNodeUrl("devnet"),
+            roochNodeUrl: process.env.NEXT_PUBLIC_DEFAULT_NETWORK as string,
             setRoochNodeUrl: (val: string) => set({ roochNodeUrl: val }),
         }),
         {

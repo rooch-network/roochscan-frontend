@@ -7,7 +7,8 @@ import { Dropdown, Space } from 'antd';
 import { getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
 import useStore from "@/store"
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
-const defaultMainnetUrl = "https://main-seed.rooch.network"
+
+const defaultMainnetUrl = process.env.NEXT_PUBLIC_DEFAULT_NETWORK
 const  NetWork:any = {
     Mainnet :defaultMainnetUrl,
     Testnet:getRoochNodeUrl('testnet'),
