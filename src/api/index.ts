@@ -10,6 +10,7 @@ const generatorParams = (method: string, params: any[] = [null, null], id = Math
   }
 )
 
+// 查询区块列表
 export const queryBlockList = (params: any[] = [null, null]): Promise<IResponse<{ data: ITransactionsByOrderResponse[] }>> => {
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getTransactionsByOrder', params))
 }
