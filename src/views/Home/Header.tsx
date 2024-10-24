@@ -67,8 +67,10 @@ export default function Header() {
   const [btnText, setBtnText] = useState("Connect Wallet");
 
   useEffect(()=>{
-    setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))
-  }, [])
+    if(currentAddress){
+      setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))
+    }
+  }, [currentAddress])
 
   const handleVisibleChange = (flag: boolean) => {
     setDropdownVisible(flag); // 更新 dropdown 的可见状态
@@ -98,14 +100,14 @@ export default function Header() {
       return <div
         onMouseEnter={() => setBtnText("Disconnect")}
         onMouseLeave={() => setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))}
-        onClick={handleConnect} className={"px-[10px] w-[150px] text-center py-[5px] rounded ml-[30px] transition-all cursor-pointer bg-[#00ADB280] hover:bg-[#ff000060]"}>
+        onClick={handleConnect} className={"px-[10px] w-[180px] text-center py-[5px] rounded ml-[30px] transition-all cursor-pointer bg-[#00ADB280] hover:bg-[#ff000060]"}>
         {
           btnText
         }
       </div>;
     }
     return (
-      <div onClick={handleConnect} className={"px-[10px] w-[150px] text-center py-[5px] rounded ml-[30px] cursor-pointer bg-[#00ADB2]"}>
+      <div onClick={handleConnect} className={"px-[10px] w-[180px] text-center py-[5px] rounded ml-[30px] cursor-pointer bg-[#00ADB2]"}>
         {
           'Connect Wallet'
         }
@@ -156,7 +158,9 @@ export default function Header() {
         }
 
       </div>
-      <WalletConnectModal open={walletConnectModal} onCancel={()=>setWalletConnectModal(false)}></WalletConnectModal>
+      <WalletConnectModal open={walletConnectModal} onCancel={()=>{
+        setWalletConnectModal(false)
+      }}></WalletConnectModal>
     </header>
   );
 }
