@@ -33,11 +33,11 @@ const WalletButton = ({wallet, onSelect,}: {
       onSelect();
     }}
     disabled={walletInstalled === false || checkingInstall}
-    className={"flex items-center w-full h-[65px] px-[15px] justify-between my-[10px] rounded"}>
+    className={"flex items-center w-full h-[65px] px-[15px] justify-between my-[10px] rounded-xl"}>
 
     <div className={"flex items-center"}>
       <img src={wallet.getIcon()} width="36px" alt="" />
-      <div className={"ml-[15px]"}>{wallet.getName()}</div>
+      <div className={"ml-[15px] font-bold text-lg"}>{wallet.getName()}</div>
     </div>
     <div className={"text-[#009000] bg-[#00900060] px-10 rounded"}>
       {
