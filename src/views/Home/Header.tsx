@@ -106,6 +106,12 @@ export default function Header() {
             </Space>
           </div>
         </Dropdown>
+
+
+        <div className={"px-[10px] py-[5px] rounded ml-[30px] cursor-pointer bg-[#00ADB2]"}>
+          CONNECT WALLET
+        </div>
+
       </div>
     </header>
   );
