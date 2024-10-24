@@ -112,9 +112,13 @@ export interface IData {
     type: string,
     sender:string,
     action_type:string,
+    raw:string,
+    sender_bitcoin_address:string,
+    sequence_number:string,
     action:{
     function_call:{
-        function_id:string
+        function_id:string,
+        args:string[]
     }
     }
     
