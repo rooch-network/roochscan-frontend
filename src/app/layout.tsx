@@ -2,6 +2,7 @@ import React from "react";
 import "@/assets/css/globals.css";
 import Header from "@/views/Home/Header";
 import Footer from "@/components/Footer";
+import RoochDappProvider from "@/app/rooch-dapp-provider";
 export const metadata = {
   title: " Rooch  Explorer",
   description: "Rooch  Explorer",
@@ -22,9 +23,11 @@ export default function RootLayout({
         ></meta>
       </head>
       <body>
+      <RoochDappProvider>
         <Header />
         {children}
         <Footer />
+      </RoochDappProvider>
       </body>
     </html>
   );
