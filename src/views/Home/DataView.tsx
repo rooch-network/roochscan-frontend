@@ -64,7 +64,10 @@ export default function DataView() {
             <div className="w-[20%] text-center flex justify-center items-center">
               <div
                 className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md"
-                onClick={() => handleCopy(v.transaction.data.sender)}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopy(v.transaction.data.sender)
+                }}
               >
                 <Tooltip title={v.transaction.data.sender}>
                   <span>{getTokenShortHash(v.transaction.data.sender)}</span>
@@ -76,10 +79,13 @@ export default function DataView() {
             <div className="w-[20%] text-center flex justify-center items-center">
               <div
                 className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md"
-                onClick={() =>
+                onClick={(e) =>
+                {
+                    e.stopPropagation();
                   handleCopy(
                     v.transaction.data.action?.function_call?.function_id
                   )
+                }
                 }
               >
                 <Tooltip
