@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-import { Card, Col, Row, Select, Statistic } from "antd";
+import { Card, Col, Input, Row, Select, Statistic } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 export default function Home() {
   const [val, setVal] = useState("");
   const [select, setSelect] = useState("hash");
@@ -55,12 +56,13 @@ export default function Home() {
             </Card>
           </Col>
         </Row>
-        <input
+        <Input
             onKeyPress={handleEnter}
             value={val}
+            prefix={<SearchOutlined className=" text-[20px]" />}
             onChange={handleInput}
             type="text"
-            className="h-50 w-full bg-white border border-[#e4e4e7] flex items-center p-4 mt-40  focus:outline-none focus:ring-2 focus:ring-light-gray focus:border-light-gray pl-20 pr-10 rounded-md"
+            className="h-50 w-full bg-white border border-[#e4e4e7] flex items-center p-4 mt-40  focus:outline-none focus:ring-2 focus:ring-light-gray focus:border-light-gray hover:border-light-gray pl-20 pr-10 rounded-md"
             placeholder="Search by Address / Txn Hash / Block / Token / Domain Name"
           />
       </div>
