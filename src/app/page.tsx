@@ -5,7 +5,7 @@ import DataView from "@/views/Home/DataView";
 
 export default function Home() {
 
-    return <main>
+    return <main className="w-full h-full mt-[70px]">
         <Search />
         <DataView />
     </main>
