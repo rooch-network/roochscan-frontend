@@ -17,6 +17,7 @@
     "antd": "^5.19.3",
     "autoprefixer": "10.4.14",
     "axios": "^1.7.2",
+    "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.9",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",

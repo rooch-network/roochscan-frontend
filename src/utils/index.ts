@@ -17,3 +17,11 @@ export const timeFormat = (time: number) => {
     
     return dayjs(time).format("YYYY-MM-DD HH:mm:ss")
 }
+
+
+export const getTokenShortHash = (key: string) => {
+    if (key && key.length > 10) {
+        return `${key.slice(0, 5)}****${key.slice(-4)}`
+    }
+    return key
+}
