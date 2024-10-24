@@ -7,6 +7,7 @@ import { Dropdown, Space } from "antd";
 import { getRoochNodeUrl } from "@roochnetwork/rooch-sdk";
 import useStore from "@/store";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
+import {useConnectWallet, useWallets, useWalletStore} from "@roochnetwork/rooch-sdk-kit";
 
 const defaultMainnetUrl = process.env.NEXT_PUBLIC_DEFAULT_NETWORK;
 const NetWork: any = {
@@ -57,6 +58,10 @@ const items: MenuProps["items"] = [
 export default function Header() {
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
+  const account = useWalletStore((state) => state.currentAccount)
+  const { mutateAsync: connectWallet } = useConnectWallet()
+  const wallets = useWallets();
+
   const handleVisibleChange = (flag: boolean) => {
     setDropdownVisible(flag); // 更新 dropdown 的可见状态
   };
@@ -70,6 +75,15 @@ export default function Header() {
     setRoochNodeUrl(key);
     setDropdownVisible(false);
   };
+
+  const handleConnect = async () =>{
+    console.log(wallets, "wallets")
+    if (account === null && wallets.length > 0) {
+      await connectWallet({ wallet: wallets[0] })
+    }
+  }
+
+
   return (
     <header className="h-60 w-full flex items-center justify-between  px-[20px] fixed top-[0px] bg-white z-10">
       <Link href="/">
@@ -108,8 +122,10 @@ export default function Header() {
         </Dropdown>
 
 
-        <div className={"px-[10px] py-[5px] rounded ml-[30px] cursor-pointer bg-[#00ADB2]"}>
-          CONNECT WALLET
+        <div onClick={handleConnect} className={"px-[10px] py-[5px] rounded ml-[30px] cursor-pointer bg-[#00ADB2]"}>
+          {
+            account ? account : "CONNECT WALLET"
+          }
         </div>
 
       </div>
