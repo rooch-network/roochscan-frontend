@@ -109,7 +109,15 @@ export interface IData {
     block_hash: string,
     chain_id: string,
     txid: string,
-    type: string
+    type: string,
+    sender:string,
+    action_type:string,
+    action:{
+    function_call:{
+        function_id:string
+    }
+    }
+    
 }
 export interface ISequenceInfo {
     tx_accumulator_root: string,

@@ -86,6 +86,7 @@ export default function DataList({ txs, blocks, type, isAll }: { txs?: any[], bl
     }, [renderBlocks, renderTsx, type])
 
     const title = useMemo(() => {
+        return 'Latest Transactions'
         return type == BlockType.Block ? "Latest Blocks" : "Latest Transactions"
     }, [type])
 
