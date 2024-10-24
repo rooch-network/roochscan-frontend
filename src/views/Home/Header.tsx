@@ -65,7 +65,7 @@ export default function Header() {
         setRoochNodeUrl(key)
         setDropdownVisible(false)
     }
-    return <div className="bg-white border-b border-off-white shadow-lg p-4">
+    return <div className="p-4">
         <header className="h-60 w-full flex items-center justify-between  container mx-auto">
             <Link href="/">
                 <Image src="/images/logo.png" width="120" height={60} alt="" />

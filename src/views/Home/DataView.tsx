@@ -12,7 +12,7 @@ export default function DataView() {
         console.log("blocks:---------", data);
     }, [data])
 
-    return <div className="mt-120 container mx-auto flex justify-between">
+    return <div className="mt-20 container mx-auto flex justify-between">
         <DataList blocks={data?.result?.data || []} type={BlockType.Block} isAll  />
     </div>
 }
