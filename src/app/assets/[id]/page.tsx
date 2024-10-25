@@ -46,6 +46,7 @@ export default function BlockServer({ params }: { params: { id: string } }) {
   return (
     <div className="container mx-auto mt-[80px]">
       <Breadcrumb
+      className="cursor-pointer"
         items={[
           {
             title: "Home",
