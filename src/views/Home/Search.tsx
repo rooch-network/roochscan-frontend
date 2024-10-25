@@ -13,7 +13,14 @@ export default function Home() {
     setVal(val);
   };
   const handleEnter = (event: any) => {
-    router.push(`tx/${val}`);
+    console.log(val);
+    if (val.startsWith("rooch")) {
+      router.push(`assets/${val}`);
+      console.log("字符串是以 'rooch' 开头的");
+    } else {
+      router.push(`tx/${val}`);
+      console.log("字符串不是以 'rooch' 开头的");
+    }
   };
   return (
     <section className="w-full ">
@@ -45,14 +52,14 @@ export default function Home() {
           </Col>
         </Row>
         <Input
-            onKeyPress={handleEnter}
-            value={val}
-            prefix={<SearchOutlined className=" text-[20px]" />}
-            onChange={handleInput}
-            type="text"
-            className="h-50 w-full bg-white border border-[#e4e4e7] flex items-center p-4 mt-40  focus:outline-none focus:ring-2 focus:ring-light-gray focus:border-light-gray hover:border-light-gray pl-20 pr-10 rounded-md"
-            placeholder="Search by Address / Txn Hash / Block / Token / Domain Name"
-          />
+          onKeyPress={handleEnter}
+          value={val}
+          prefix={<SearchOutlined className=" text-[20px]" />}
+          onChange={handleInput}
+          type="text"
+          className="h-50 w-full bg-white border border-[#e4e4e7] flex items-center p-4 mt-40  focus:outline-none focus:ring-2 focus:ring-light-gray focus:border-light-gray hover:border-light-gray pl-20 pr-10 rounded-md"
+          placeholder="Search by Address / Txn Hash / Block / Token / Domain Name"
+        />
       </div>
     </section>
   );

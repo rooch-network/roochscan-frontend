@@ -110,7 +110,7 @@ export default function DataView() {
               </div>
             </div>
             <div className="w-[20%] text-center">
-              {(Number(v.execution_info?.gas_used) / 1e9).toFixed(6) || "0.0"} RGas
+              {(Number(v.execution_info?.gas_used) / 1e9 || 0).toFixed(6) || "0.0"} RGas
             </div>
           </div>
         ))}

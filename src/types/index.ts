@@ -159,4 +159,6 @@ export interface IPersonAssets {
     symbol
     :
     string
+
+    icon_url:string
 }
