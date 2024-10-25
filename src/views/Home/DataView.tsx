@@ -41,11 +41,12 @@ export default function DataView() {
       <div className="w-full">
         <div className=" w-full flex items-center mb-[20px]">
           <div className="w-[20%] text-center">Version</div>
+          <div className="w-[20%] text-center">Transactions Type</div>
           <div className="w-[20%] text-center">Timestamp</div>
           <div className="w-[20%] text-center">Sender</div>
           <div className="w-[20%] text-center">Sent To</div>
           <div className="w-[20%] text-center">Function</div>
-          <div className="w-[20%] text-center">Amount</div>
+          <div className="w-[20%] text-center">Gas</div>
         </div>
         { Array.isArray(data?.result?.data) && data?.result?.data?.map((v) => (
           <div
@@ -55,6 +56,9 @@ export default function DataView() {
           >
             <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
               {v.transaction.sequence_info.tx_order}
+            </div>
+            <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
+              {v.transaction.data.type}
             </div>
             <div className="w-[20%] text-center text-[#121615]">
               {timeFormat(

@@ -10,13 +10,13 @@ import { ITransactionsByOrderResponse } from "@/types";
 
 export default function BlockServer({ blockDetail }: { blockDetail: ITransactionsByOrderResponse }) {
    
-    return <div className="container mx-auto mt-[80px]">
+    return <div className="container mx-auto ">
     
     <div className=" rounded-md mt-20 border border-light-gray shadow-md p-20 bg-white">
 
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
             <div className="w-1/4">
-                event_root
+            event root hash
             </div>
             <div>
                 {blockDetail?.execution_info.event_root}
@@ -24,15 +24,16 @@ export default function BlockServer({ blockDetail }: { blockDetail: ITransaction
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
             <div className="w-1/4">
-                gas_used
+            Gas
             </div>
             <div>
-                {blockDetail?.execution_info.gas_used}
+            {(Number(blockDetail?.execution_info?.gas_used) / 1e9).toFixed(6) || "0.0"} RGas
+                {/* {blockDetail?.execution_info.gas_used} */}
             </div>
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
             <div className="w-1/4">
-                state_root
+            state root
             </div>
             <div>
                 {blockDetail?.execution_info.state_root}
@@ -48,7 +49,7 @@ export default function BlockServer({ blockDetail }: { blockDetail: ITransaction
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
             <div className="w-1/4">
-                tx_hash
+            tx hash
             </div>
             <div>
                 {blockDetail?.execution_info.tx_hash}
@@ -56,7 +57,7 @@ export default function BlockServer({ blockDetail }: { blockDetail: ITransaction
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
             <div className="w-1/4">
-                bitcoin_block_hash
+                bitcoin block hash
             </div>
             <div>
                 {blockDetail?.transaction.data.bitcoin_block_hash}
@@ -72,7 +73,7 @@ export default function BlockServer({ blockDetail }: { blockDetail: ITransaction
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
             <div className="w-1/4">
-                block_hash
+                block hash
             </div>
             <div>
                 {blockDetail?.transaction.data.block_hash}
@@ -80,7 +81,7 @@ export default function BlockServer({ blockDetail }: { blockDetail: ITransaction
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
             <div className="w-1/4">
-                chain_id
+                chain id
             </div>
             <div>
                 {blockDetail?.transaction.data.chain_id}
@@ -104,7 +105,7 @@ export default function BlockServer({ blockDetail }: { blockDetail: ITransaction
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
             <div className="w-1/4">
-                tx_accumulator_root
+                tx accumulator root
             </div>
             <div>
                 {blockDetail?.transaction.sequence_info.tx_accumulator_root}
@@ -112,7 +113,7 @@ export default function BlockServer({ blockDetail }: { blockDetail: ITransaction
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
             <div className="w-1/4">
-                tx_order
+                tx order
             </div>
             <div>
                 {blockDetail?.transaction.sequence_info.tx_order}
@@ -120,7 +121,7 @@ export default function BlockServer({ blockDetail }: { blockDetail: ITransaction
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
             <div className="w-1/4">
-                tx_order_signature
+                tx order signature
             </div>
             <div className="  w-3/4 break-words">
                 {blockDetail?.transaction.sequence_info.tx_order_signature}
