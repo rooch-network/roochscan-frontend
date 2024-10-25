@@ -1,4 +1,4 @@
-import { IPersonAssets, IResponse, ITransactionsByOrderResponse } from "@/types"
+import {IObject, IObjectData, IPersonAssets, IResponse, ITransactionsByOrderResponse} from "@/types"
 import server from "./server"
 import useStore from "@/store"
 const generatorParams = (method: string, params: any[] = [null, null], id = Math.floor(Math.random() * 400)) => (
@@ -47,11 +47,11 @@ export const queryEvents = () => {
 }
 
 
-export const getObjectById = (objectId: string,): Promise<any> => {
+export const getObjectById = (objectId: string): Promise<IResponse<IObjectData>> => {
   const params = [
     {
       object_id:objectId,
    }
   ]
-  return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_queryObjectStates', params))
+  return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_queryObjectStates', params));
 }
