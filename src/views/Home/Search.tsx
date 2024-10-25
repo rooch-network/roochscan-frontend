@@ -13,19 +13,7 @@ export default function Home() {
     setVal(val);
   };
   const handleEnter = (event: any) => {
-    if (event.key === "Enter") {
-      if (select == "hash") {
-        if (val.startsWith("0x") && val.length === 66) {
-          router.push(`block/${val}`);
-        }
-      } else {
-        router.push(`assets/${val}`);
-      }
-    }
-  };
-  const handleChange = (value: string) => {
-    console.log(`selected ${value}`);
-    setSelect(value);
+    router.push(`tx/${val}`);
   };
   return (
     <section className="w-full ">
