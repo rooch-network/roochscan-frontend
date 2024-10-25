@@ -96,7 +96,21 @@ export default function DataView() {
               </div>
               <div className="w-[20%] text-center flex justify-center items-center">
                 <div className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md">
-                  {v.transaction.data.action_type}
+                <Tooltip
+                    title={
+                      (v.transaction.data.action?.function_call?.function_id)
+                    }
+                  >
+                    <span>
+                    {getTokenShortHash(v.transaction?.data?.action?.function_call?.function_id.split("::")[0] || "")}
+                    </span>
+                  </Tooltip>
+
+                  <CopyOutlined className="ml-[5px]" onClick={(e) => {
+                      e.stopPropagation();
+                      handleCopy(v.transaction.data.action?.function_call?.function_id);
+                    }} />
+                 
                 </div>
               </div>
               <div className="w-[20%] text-center flex justify-center items-center">
@@ -120,8 +134,6 @@ export default function DataView() {
                       )}
                     </span>
                   </Tooltip>
-
-                  <CopyOutlined className="ml-[5px]" />
                 </div>
               </div>
            
