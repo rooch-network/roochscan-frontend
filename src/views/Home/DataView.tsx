@@ -95,6 +95,11 @@ export default function DataView() {
                 </div>
               </div>
               <div className="w-[20%] text-center flex justify-center items-center">
+                <div className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md">
+                  {v.transaction.data.action_type}
+                </div>
+              </div>
+              <div className="w-[20%] text-center flex justify-center items-center">
                 <div
                   className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md"
                   onClick={(e) => {
@@ -119,11 +124,7 @@ export default function DataView() {
                   <CopyOutlined className="ml-[5px]" />
                 </div>
               </div>
-              <div className="w-[20%] text-center flex justify-center items-center">
-                <div className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md">
-                  {v.transaction.data.action_type}
-                </div>
-              </div>
+           
               <div className="w-[20%] text-center">
                 {(Number(v.execution_info?.gas_used) / 1e9 || 0).toFixed(6) ||
                   "0.0"}{" "}
