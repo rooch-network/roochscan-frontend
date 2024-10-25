@@ -25,3 +25,9 @@ export const getTokenShortHash = (key: string) => {
     }
     return key
 }
+
+export const shotSentTo = (val:string) =>{
+    if(!val) return ""
+    const valList = val.split("::")
+    return valList[1] + "::"+ valList[valList.length -1]
+}

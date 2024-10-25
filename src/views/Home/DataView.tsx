@@ -7,14 +7,16 @@ import useSWR from "swr";
 import { BlockType, ITransactionsByOrderResponse } from "@/types";
 import { Table, TableProps, Tag, Tooltip } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
-import { getTokenShortHash, timeFormat } from "@/utils";
+import { getTokenShortHash, shotSentTo, timeFormat } from "@/utils";
 import { Button, message, Space } from "antd";
 import Copy from "copy-to-clipboard";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 export default function DataView() {
   const { roochNodeUrl } = useStore();
-  const router = useRouter()
-  const { data } = useSWR(roochNodeUrl, () => queryBlockList([null, 10]), { refreshInterval: 3500 });
+  const router = useRouter();
+  const { data } = useSWR(roochNodeUrl, () => queryBlockList([null, 10]), {
+    refreshInterval: 3500,
+  });
   useEffect(() => {
     console.log("blocks:---------", data);
   }, [data]);
@@ -27,9 +29,9 @@ export default function DataView() {
     });
   };
 
-  const handleRouter = (tx_hash:string) =>{
-    router.push(`/tx/${tx_hash}`)
-  }
+  const handleRouter = (tx_hash: string) => {
+    router.push(`/tx/${tx_hash}`);
+  };
 
   return (
     <div className="mt-20 container mx-auto ">
@@ -48,72 +50,87 @@ export default function DataView() {
           <div className="w-[20%] text-center">Function</div>
           <div className="w-[20%] text-center">Gas</div>
         </div>
-        {Array.isArray(data?.result?.data) && data?.result?.data?.map((v) => (
-          <div
-            onClick={() => handleRouter(v.execution_info.tx_hash || "")}
-            key={v.execution_info?.tx_hash || "1"}
-            className=" w-full flex items-center mb-[10px] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
-          >
-            <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
-              {v.transaction.sequence_info.tx_order}
-            </div>
-            <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
-              {v.transaction.data.type}
-            </div>
-            <div className="w-[20%] text-center text-[#121615]">
-              {timeFormat(
-                Number(v.transaction.sequence_info.tx_timestamp) || 0
-              )}
-            </div>
-            <div className="w-[20%] text-center flex justify-center items-center">
-              <div
-                className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCopy(v.transaction.data.sender)
-                }}
-              >
-                <Tooltip title={v.transaction.data.sender_bitcoin_address}>
-                  <span>{getTokenShortHash(v.transaction.data.sender_bitcoin_address)}</span>
-                </Tooltip>
-
-                <CopyOutlined className="ml-[5px]" />
+        {Array.isArray(data?.result?.data) &&
+          data?.result?.data?.map((v) => (
+            <div
+              onClick={() => handleRouter(v.execution_info.tx_hash || "")}
+              key={v.execution_info?.tx_hash || "1"}
+              className=" w-full flex items-center mb-[10px] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
+            >
+              <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
+                {v.transaction.sequence_info.tx_order}
               </div>
-            </div>
-            <div className="w-[20%] text-center flex justify-center items-center">
-              <div
-                className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCopy(
-                    v.transaction.data.action?.function_call?.function_id
-                  )
-                }
-                }
-              >
-                <Tooltip
-                  title={v.transaction.data.action?.function_call?.function_id}
-                >
-                  <span>
-                    {getTokenShortHash(
+              <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
+                {v.transaction.data.type}
+              </div>
+              <div className="w-[20%] text-center text-[#121615]">
+                {timeFormat(
+                  Number(v.transaction.sequence_info.tx_timestamp) || 0
+                )}
+              </div>
+              <div className="w-[20%] text-center flex justify-center items-center">
+                <div className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md">
+                  <Tooltip title={v.transaction.data.sender_bitcoin_address}>
+                    <span
+                      onClick={(e: any) => {
+                        e.stopPropagation();
+                        router.push(
+                          `/assets/${v.transaction.data.sender_bitcoin_address}`
+                        );
+                      }}
+                    >
+                      {getTokenShortHash(
+                        v.transaction.data.sender_bitcoin_address
+                      )}
+                    </span>
+                  </Tooltip>
+
+                  <CopyOutlined
+                    className="ml-[5px]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleCopy(v.transaction.data.sender);
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="w-[20%] text-center flex justify-center items-center">
+                <div
+                  className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopy(
                       v.transaction.data.action?.function_call?.function_id
-                    )}
-                  </span>
-                </Tooltip>
+                    );
+                  }}
+                >
+                  <Tooltip
+                    title={
+                      shotSentTo(v.transaction.data.action?.function_call?.function_id)
+                    }
+                  >
+                    <span>
+                      {getTokenShortHash(
+                        shotSentTo(v.transaction.data.action?.function_call?.function_id)
+                      )}
+                    </span>
+                  </Tooltip>
 
-                <CopyOutlined className="ml-[5px]" />
+                  <CopyOutlined className="ml-[5px]" />
+                </div>
+              </div>
+              <div className="w-[20%] text-center flex justify-center items-center">
+                <div className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md">
+                  {v.transaction.data.action_type}
+                </div>
+              </div>
+              <div className="w-[20%] text-center">
+                {(Number(v.execution_info?.gas_used) / 1e9 || 0).toFixed(6) ||
+                  "0.0"}{" "}
+                RGas
               </div>
             </div>
-            <div className="w-[20%] text-center flex justify-center items-center">
-              <div className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md">
-                {v.transaction.data.action_type}
-              </div>
-            </div>
-            <div className="w-[20%] text-center">
-              {(Number(v.execution_info?.gas_used) / 1e9 || 0).toFixed(6) || "0.0"} RGas
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
 
       {/* <DataList blocks={data?.result?.data || []} type={BlockType.Block} isAll  /> */}
