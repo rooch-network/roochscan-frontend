@@ -10,8 +10,10 @@ import L1Page from "./l1";
 import L2Page from "./l2";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { duotoneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {useRouter} from "next/navigation"
 export default function BlockServer({ params }: { params: { id: string } }) {
-  const { roochNodeUrl } = useStore();
+    const router = useRouter()
+    const { roochNodeUrl } = useStore();
   const { data } = useSWR(
     params.id ? [roochNodeUrl, params.id] : null,
     ([key, tx]) => getTransactionsByHash(tx),
@@ -64,12 +66,18 @@ export default function BlockServer({ params }: { params: { id: string } }) {
       ),
     },
   ];
+  const handleRouteHome = () =>{
+    router.push("/")
+  }
   return (
     <div className="container mx-auto mt-[80px]">
       <Breadcrumb
+      className="cursor-pointer"
+        
         items={[
           {
             title: "Home",
+            onClick:handleRouteHome
           },
 
           {
