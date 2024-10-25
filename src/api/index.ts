@@ -45,3 +45,13 @@ export const queryEvents = () => {
   ]
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_queryEvents', params))
 }
+
+
+export const getObjectById = (objectId: string,): Promise<any> => {
+  const params = [
+    {
+      object_id:objectId,
+   }
+  ]
+  return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_queryObjectStates', params))
+}
