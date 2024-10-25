@@ -121,7 +121,7 @@ export interface IData {
         args:string[]
     }
     }
-    
+
 }
 export interface ISequenceInfo {
     tx_accumulator_root: string,
@@ -161,4 +161,26 @@ export interface IPersonAssets {
     string
 
     icon_url:string
+}
+
+
+export interface IObjectData{
+  data:IObject[]
+}
+
+export interface IObject{
+  created_at:string,
+  decoded_value:string,
+  display_fields:string,
+  flag:number,
+  id:string,
+  object_type:string,
+  owner:string,
+  owner_bitcoin_address:string,
+  size:string,
+  state_index:string,
+  state_root:string,
+  tx_order:string,
+  updated_at:string,
+  value:string
 }
