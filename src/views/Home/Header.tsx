@@ -7,7 +7,9 @@ import { Dropdown, Space } from "antd";
 import { getRoochNodeUrl } from "@roochnetwork/rooch-sdk";
 import useStore from "@/store";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
-import {useConnectWallet, useWallets, useWalletStore} from "@roochnetwork/rooch-sdk-kit";
+import {useConnectWallet, useCurrentAddress, useWallets, useWalletStore} from "@roochnetwork/rooch-sdk-kit";
+import WalletConnectModal from "@/components/WalletConnectModal";
+import {shortAddress} from "@/utils/address";
 
 const defaultMainnetUrl = process.env.NEXT_PUBLIC_DEFAULT_NETWORK;
 const NetWork: any = {
@@ -57,10 +59,18 @@ const items: MenuProps["items"] = [
 
 export default function Header() {
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [walletConnectModal, setWalletConnectModal] = useState(false);
+  const currentAddress = useCurrentAddress();
+  const connectionStatus = useWalletStore((state) => state.connectionStatus);
+  const setWalletDisconnected = useWalletStore((state) => state.setWalletDisconnected);
 
-  const account = useWalletStore((state) => state.currentAccount)
-  const { mutateAsync: connectWallet } = useConnectWallet()
-  const wallets = useWallets();
+  const [btnText, setBtnText] = useState("Connect Wallet");
+
+  useEffect(()=>{
+    if(currentAddress){
+      setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))
+    }
+  }, [currentAddress])
 
   const handleVisibleChange = (flag: boolean) => {
     setDropdownVisible(flag); // 更新 dropdown 的可见状态
@@ -77,10 +87,32 @@ export default function Header() {
   };
 
   const handleConnect = async () =>{
-    console.log(wallets, "wallets")
-    if (account === null && wallets.length > 0) {
-      await connectWallet({ wallet: wallets[0] })
+    if (connectionStatus === 'connected') {
+      setWalletDisconnected();
+      return;
     }
+    setWalletConnectModal(true)
+  }
+
+
+  const renderWalletBtn = () =>{
+    if (connectionStatus === 'connected') {
+      return <div
+        onMouseEnter={() => setBtnText("Disconnect")}
+        onMouseLeave={() => setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))}
+        onClick={handleConnect} className={"px-[10px] w-[180px] text-center py-[5px] rounded ml-[30px] transition-all cursor-pointer bg-[#00ADB280] hover:bg-[#ff000060]"}>
+        {
+          btnText
+        }
+      </div>;
+    }
+    return (
+      <div onClick={handleConnect} className={"px-[10px] w-[180px] text-center py-[5px] rounded ml-[30px] cursor-pointer bg-[#00ADB2]"}>
+        {
+          'Connect Wallet'
+        }
+      </div>
+    )
   }
 
 
@@ -121,14 +153,14 @@ export default function Header() {
           </div>
         </Dropdown>
 
-
-        <div onClick={handleConnect} className={"px-[10px] py-[5px] rounded ml-[30px] cursor-pointer bg-[#00ADB2]"}>
-          {
-            account ? account : "CONNECT WALLET"
-          }
-        </div>
+        {
+          renderWalletBtn()
+        }
 
       </div>
+      <WalletConnectModal open={walletConnectModal} onCancel={()=>{
+        setWalletConnectModal(false)
+      }}></WalletConnectModal>
     </header>
   );
 }
