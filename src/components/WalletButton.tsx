@@ -1,6 +1,6 @@
 import {useConnectWallet, Wallet} from "@roochnetwork/rooch-sdk-kit";
 import {useEffect, useState} from "react";
-import {Button} from "antd";
+import {Button, message} from "antd";
 
 const WalletButton = ({wallet, onSelect,}: {
   wallet: Wallet;
@@ -25,9 +25,9 @@ const WalletButton = ({wallet, onSelect,}: {
     onClick={async () => {
       try {
         await connectWallet({ wallet });
-      } catch (e) {
+      } catch (e:any) {
         if (wallet.getName() === 'OneKey' && e.message.includes('Invalid address')) {
-          toast.error('Please disconnect and re-authorize the taproot address')
+          message.error('Please disconnect and re-authorize the taproot address')
         }
       }
       onSelect();
