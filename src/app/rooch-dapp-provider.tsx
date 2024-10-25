@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RoochProvider, WalletProvider, SupportChain, WalletAdapter } from '@roochnetwork/rooch-sdk-kit';
+import { RoochProvider, WalletProvider, SupportChain } from '@roochnetwork/rooch-sdk-kit';
 import {networkConfig} from "@/hooks/use-networks";
 
 const queryClient = new QueryClient();
