@@ -4,11 +4,11 @@ import DataList from "@/components/DataList";
 import useStore from "@/store";
 import { queryBlockList } from "@/api/index";
 import useSWR from "swr";
-import { BlockType, ITransactionsByOrderResponse } from "@/types";
-import { Table, TableProps, Tag, Tooltip } from "antd";
+import { Tooltip } from "antd";
 import { CopyOutlined } from "@ant-design/icons";
 import { getTokenShortHash, shotSentTo, timeFormat } from "@/utils";
-import { Button, message, Space } from "antd";
+import { message } from "antd";
+
 import Copy from "copy-to-clipboard";
 import { useRouter } from "next/navigation";
 export default function DataView() {
@@ -96,21 +96,21 @@ export default function DataView() {
               </div>
               <div className="w-[20%] text-center flex justify-center items-center">
                 <div className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md">
-                <Tooltip
+                  <Tooltip
                     title={
                       (v.transaction.data.action?.function_call?.function_id)
                     }
                   >
                     <span>
-                    {getTokenShortHash(v.transaction?.data?.action?.function_call?.function_id.split("::")[0] || "")}
+                      {getTokenShortHash(v.transaction?.data?.action?.function_call?.function_id.split("::")[0] || "")}
                     </span>
                   </Tooltip>
 
                   <CopyOutlined className="ml-[5px]" onClick={(e) => {
-                      e.stopPropagation();
-                      handleCopy(v.transaction.data.action?.function_call?.function_id);
-                    }} />
-                 
+                    e.stopPropagation();
+                    handleCopy(getTokenShortHash(v.transaction?.data?.action?.function_call?.function_id.split("::")[0] || ""));
+                  }} />
+
                 </div>
               </div>
               <div className="w-[20%] text-center flex justify-center items-center">
@@ -129,14 +129,14 @@ export default function DataView() {
                     }
                   >
                     <span>
-                      {getTokenShortHash(
+                      {
                         shotSentTo(v.transaction.data.action?.function_call?.function_id)
-                      )}
+                      }
                     </span>
                   </Tooltip>
                 </div>
               </div>
-           
+
               <div className="w-[20%] text-center">
                 {(Number(v.execution_info?.gas_used) / 1e9 || 0).toFixed(6) ||
                   "0.0"}{" "}
