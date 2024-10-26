@@ -35,7 +35,7 @@ export default function Object ({ params }: { params: { id: string } }) {
       children:<div>
         {
           objectDetail?.map(item=>{
-            return <ObjectDetail object={item}></ObjectDetail>
+            return <ObjectDetail key={item.id} object={item}></ObjectDetail>
           })
         }
       </div>,
