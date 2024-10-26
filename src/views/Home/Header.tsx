@@ -38,15 +38,15 @@ const items: MenuProps["items"] = [
       </div>
     ),
   },
-  {
-    key: NetWork.Devnet,
-    label: (
-      <div>
-        <p className="text-[#2f2f2f] font-bold">Devnet</p>
-        <p className="text-[#198ffd] text-sm">{NetWork.Devnet}</p>
-      </div>
-    ),
-  },
+  // {
+  //   key: NetWork.Devnet,
+  //   label: (
+  //     <div>
+  //       <p className="text-[#2f2f2f] font-bold">Devnet</p>
+  //       <p className="text-[#198ffd] text-sm">{NetWork.Devnet}</p>
+  //     </div>
+  //   ),
+  // },
   {
     key: NetWork.Localnet,
     label: (
