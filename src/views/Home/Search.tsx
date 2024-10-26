@@ -1,6 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
-import { FiSearch } from "react-icons/fi";
+import React, {useState, useCallback} from "react";
 import { useRouter } from "next/navigation";
 import {Card, Col, Input, Popover, Row, Statistic} from "antd";
 import {LoadingOutlined, SearchOutlined} from "@ant-design/icons";
@@ -15,7 +14,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
 
 
-  const handleInput = (e) => {
+  const handleInput = (e:string) => {
     const value = e;
     setVal(value);
     setAddressType("none");
@@ -111,7 +110,9 @@ export default function Home() {
         </Row>
         <Popover content={content} open={addressType !== "none"} arrow={false} placement="bottomLeft">
           <Input
-            onKeyPress={queryObjectOrTx}
+            onPressEnter={(e:React.KeyboardEvent<HTMLInputElement>)=>{
+              queryObjectOrTx(val)
+            }}
             onChange={(e) => handleInput(e.target.value.trim())} // 调用防抖输入处理
             value={val}
             prefix={<SearchOutlined className=" text-[20px]" />}

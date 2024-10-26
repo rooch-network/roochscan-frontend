@@ -37,5 +37,8 @@
     "typescript": "5.1.6",
     "viem": "^2.21.34",
     "zustand": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.12"
   }
 }
