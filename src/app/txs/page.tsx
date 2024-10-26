@@ -27,9 +27,9 @@ export default function DataView() {
     });
   };
 
-  const handleRouter = (tx_hash:string) =>{
-    router.push(`/block/${tx_hash}`)
-  }
+  const handleRouter = (tx_hash: string) => {
+    router.push(`/tx/${tx_hash}`);
+  };
 
   return (
     <div className="mt-20 container mx-auto ">
