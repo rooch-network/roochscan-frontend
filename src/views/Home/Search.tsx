@@ -3,13 +3,13 @@ import React, {useState, useCallback} from "react";
 import { useRouter } from "next/navigation";
 import {Card, Col, Input, Popover, Row, Statistic} from "antd";
 import {LoadingOutlined, SearchOutlined} from "@ant-design/icons";
-import {getObjectById, getTransactionsByHash, queryBalance, queryBalances} from "@/api";
+import {getABIByPKGId, getObjectById, getTransactionsByHash, queryBalance, queryBalances} from "@/api";
 import debounce from "lodash/debounce";
 
 export default function Home() {
   const [val, setVal] = useState("");
   const router = useRouter();
-  const [addressType, setAddressType] = useState<"assets"  | "tx" | "object" | "none">("none");
+  const [addressType, setAddressType] = useState<"assets"  | "tx" | "object" | "module" | "none">("none");
   const [notFound, setNotFound] = useState(false);
   const [loading, setLoading] = useState(false)
 
@@ -35,9 +35,16 @@ export default function Home() {
           setAddressType("assets")
           haveData = true;
         }
+      } else if(id.includes("::")){
+        const [moduleId, moduleName] = id.split("::");
+        const res = await getABIByPKGId(moduleId, moduleName);
+        if(res.result){
+          haveData = true;
+          setAddressType("module")
+        }
       } else {
         const tx = await getTransactionsByHash(id)
-        if(tx.result.length > 0 && tx.result[0]){
+        if(tx.result && tx.result.length > 0 && tx.result[0]){
           setAddressType("tx")
           haveData = true;
         } else {

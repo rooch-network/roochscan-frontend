@@ -1,4 +1,4 @@
-import {IObject, IObjectData, IPersonAssets, IResponse, ITransactionsByOrderResponse} from "@/types"
+import {IModule, IObject, IObjectData, IPersonAssets, IResponse, ITransactionsByOrderResponse} from "@/types"
 import server from "./server"
 import useStore from "@/store"
 const generatorParams = (method: string, params: any[] = [null, null], id = Math.floor(Math.random() * 400)) => (
@@ -54,4 +54,12 @@ export const getObjectById = (objectId: string): Promise<IResponse<IObjectData>>
    }
   ]
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_queryObjectStates', params));
+}
+
+export const getABIByPKGId = (address: string, moduleName:string): Promise<IResponse<IModule>> => {
+  const params = [
+    address,
+    moduleName
+  ]
+  return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getModuleABI', params));
 }

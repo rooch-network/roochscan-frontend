@@ -184,3 +184,24 @@ export interface IObject{
   updated_at:string,
   value:string
 }
+
+export interface IModule{
+  address: string;
+  name: string;
+  friends: string[];
+  functions: FunctionDetail[];
+  structs: any[];
+}
+
+export interface FunctionDetail {
+  name: string;
+  is_entry: boolean;
+  type_params: TypeParam[];
+  params: string[];
+  return: any[];
+}
+
+interface TypeParam {
+  constraints: string[];
+}
+
