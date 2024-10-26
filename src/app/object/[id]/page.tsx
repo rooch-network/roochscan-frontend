@@ -1,11 +1,13 @@
 "use client";
-import React from "react";
+import React, {useMemo} from "react";
 import {Breadcrumb, Tabs, TabsProps} from "antd";
 import {useRouter} from "next/navigation"
-import L2Page from "@/app/tx/[id]/l2";
-import L1Page from "@/app/tx/[id]/l1";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {duotoneLight} from "react-syntax-highlighter/dist/esm/styles/prism";
+import useSWR from "swr";
+import {getObjectById, getTransactionsByHash} from "@/api";
+import useStore from "@/store";
+import ObjectDetail from "@/app/object/[id]/object";
 
 
 export default function Object ({ params }: { params: { id: string } }) {
@@ -13,12 +15,30 @@ export default function Object ({ params }: { params: { id: string } }) {
   const handleRouteHome = () =>{
     router.push("/")
   }
-
+  const { roochNodeUrl } = useStore();
+  const { data } = useSWR(
+    params.id ? [roochNodeUrl, params.id] : null,
+    ([key, tx]) => getObjectById(tx),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      refreshInterval: 0,
+    }
+  );
+  const objectDetail = useMemo(() => {
+    return data?.result.data;
+  }, [data]);
   const items: TabsProps["items"] = [
     {
       key: "1",
       label: "Overview",
-      children:<div></div>,
+      children:<div>
+        {
+          objectDetail?.map(item=>{
+            return <ObjectDetail object={item}></ObjectDetail>
+          })
+        }
+      </div>,
     },
     {
       key: "2",
@@ -37,7 +57,7 @@ export default function Object ({ params }: { params: { id: string } }) {
           wrapLines
           wrapLongLines
         >
-          {/* {JSON.stringify(blockDetail, null, 2)}*/}
+           { JSON.stringify(objectDetail, null, 2)}
         </SyntaxHighlighter>
       ),
     },
