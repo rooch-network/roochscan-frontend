@@ -7,15 +7,16 @@ import { Dropdown, Space } from "antd";
 import { getRoochNodeUrl } from "@roochnetwork/rooch-sdk";
 import useStore from "@/store";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
-import {useConnectWallet, useCurrentAddress, useWallets, useWalletStore} from "@roochnetwork/rooch-sdk-kit";
+import { useConnectWallet, useCurrentAddress, useWallets, useWalletStore } from "@roochnetwork/rooch-sdk-kit";
 import WalletConnectModal from "@/components/WalletConnectModal";
-import {shortAddress} from "@/utils/address";
+import { shortAddress } from "@/utils/address";
 
 const defaultMainnetUrl = process.env.NEXT_PUBLIC_DEFAULT_NETWORK;
+
 const NetWork: any = {
   Mainnet: defaultMainnetUrl,
   Testnet: getRoochNodeUrl("testnet"),
-  Devnet: getRoochNodeUrl("devnet"),
+  //Devnet: getRoochNodeUrl("devnet"),
   Localnet: getRoochNodeUrl("localnet"),
 };
 const items: MenuProps["items"] = [
@@ -66,8 +67,8 @@ export default function Header() {
 
   const [btnText, setBtnText] = useState("Connect Wallet");
 
-  useEffect(()=>{
-    if(currentAddress){
+  useEffect(() => {
+    if (currentAddress) {
       setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))
     }
   }, [currentAddress])
@@ -81,12 +82,13 @@ export default function Header() {
       Object.keys(NetWork).find((item: any) => NetWork[item] === roochNodeUrl),
     [roochNodeUrl]
   );
+
   const handleDropDownClick: MenuProps["onClick"] = ({ key }) => {
     setRoochNodeUrl(key);
     setDropdownVisible(false);
   };
 
-  const handleConnect = async () =>{
+  const handleConnect = async () => {
     if (connectionStatus === 'connected') {
       setWalletDisconnected();
       return;
@@ -95,7 +97,7 @@ export default function Header() {
   }
 
 
-  const renderWalletBtn = () =>{
+  const renderWalletBtn = () => {
     if (connectionStatus === 'connected') {
       return <div
         onMouseEnter={() => setBtnText("Disconnect")}
@@ -158,7 +160,7 @@ export default function Header() {
         }
 
       </div>
-      <WalletConnectModal open={walletConnectModal} onCancel={()=>{
+      <WalletConnectModal open={walletConnectModal} onCancel={() => {
         setWalletConnectModal(false)
       }}></WalletConnectModal>
     </header>
