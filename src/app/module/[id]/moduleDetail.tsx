@@ -31,7 +31,7 @@ const ModuleDetail = ({moduleDetail}:{
         })
       }
     </div>
-    <div className={"flex ml-[20px]"}>
+    <div className={"flex ml-[20px] p-[20px]"}>
       {
         currentFunc && <Form className={"w-[700px]"}>
           {
