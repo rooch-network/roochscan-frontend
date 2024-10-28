@@ -1,10 +1,14 @@
 import {FunctionDetail, IModule} from "@/types";
-import {useState} from "react";
+import {useMemo, useState} from "react";
+import {Form, Input} from "antd";
 
 
-function convertToFunctionDetailMap(functions: FunctionDetail[]): Map<string, FunctionDetail> {
+function convertToFunctionDetailMap(functions?: FunctionDetail[]): Map<string, FunctionDetail> {
+  if(!functions){
+    return new Map<string, FunctionDetail>();
+  }
   const functionDetailMap = new Map<string, FunctionDetail>();
-  functions.forEach((func) => {
+  functions!.forEach((func) => {
     functionDetailMap.set(func.name, func);
   });
   return functionDetailMap;
@@ -13,15 +17,17 @@ function convertToFunctionDetailMap(functions: FunctionDetail[]): Map<string, Fu
 const ModuleDetail = ({moduleDetail}:{
   moduleDetail:IModule
 }) =>{
+  const [currentFunc, setCurrentFunc] = useState<string>();
+  const funcMap = useMemo(()=>{
+    return convertToFunctionDetailMap(moduleDetail?.functions)
+  }, [moduleDetail])
 
-  const funcMap = convertToFunctionDetailMap(moduleDetail.functions)
-  const [currentFunc, setCurrentFunc] = useState();
 
   return  <div className="container mx-auto flex">
     <div>
       {
-        moduleDetail.functions.map(item=>{
-          return <div onClick={()=>setCurrentFunc(item.name)} className={"px-[15px] cursor-pointer py-10 bg-[#66666610] my-10 rounded text-[16px] hover:bg-[#66666620]"}>{item.name}</div>
+        moduleDetail?.functions.map(item=>{
+          return <div key={item.name} onClick={()=>setCurrentFunc(item.name)} className={"px-[15px] cursor-pointer py-10 bg-[#66666610] my-10 rounded text-[16px] hover:bg-[#66666620]"}>{item.name}</div>
         })
       }
     </div>
@@ -29,10 +35,20 @@ const ModuleDetail = ({moduleDetail}:{
       {
         currentFunc && <div>
           {
-            funcMap.get(currentFunc).params.map(item=>{
-              return <div>{
-                item
-              }</div>
+            funcMap.get(currentFunc)?.params.map(item=>{
+              return (
+                <Form.Item
+                  name={item}
+                  label={item}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <Input placeholder={item} key={item}></Input>
+                </Form.Item>
+              )
             })
           }
         </div>
