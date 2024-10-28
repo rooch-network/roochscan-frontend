@@ -29,9 +29,9 @@ export const queryBalance = (address: string): Promise<IResponse<IPersonAssets>>
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getBalance', [address, '0x3::gas_coin::GasCoin']))
 }
 
-export const queryGetStatus = () => {
-  const params = ["/object/0xd9858821a52538c99f822d3f90ec798f76466bb7a1e82ebdb42d19b62a030069::quick_start_object_counter::Counter", { "decode": true }]
-  return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getStates', params))
+export const queryGetStatus = (tx:string) => {
+  const params = [  {object_i_d: tx}]
+  return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_syncStates', params))
 }
 
 export const getTransactionsByHash = (hash: string): Promise<IResponse<ITransactionsByOrderResponse[]>> => {
@@ -63,3 +63,4 @@ export const getABIByPKGId = (address: string, moduleName:string): Promise<IResp
   ]
   return server.post(useStore.getState().roochNodeUrl, generatorParams('rooch_getModuleABI', params));
 }
+
