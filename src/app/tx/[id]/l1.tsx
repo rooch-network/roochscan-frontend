@@ -7,6 +7,7 @@ import { getTransactionsByHash } from "@/api";
 import { Breadcrumb } from "antd";
 import { timeFormat } from "@/utils";
 import { ITransactionsByOrderResponse } from "@/types";
+import Link from "next/link";
 
 export default function BlockServer({ blockDetail }: { blockDetail: ITransactionsByOrderResponse }) {
    
@@ -133,6 +134,17 @@ export default function BlockServer({ blockDetail }: { blockDetail: ITransaction
             </div>
             <div>
                 {timeFormat(Number(blockDetail?.transaction.sequence_info.tx_timestamp))}
+            </div>
+        </div>
+
+        <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+            <div className="w-1/4">
+            more details
+
+            </div>
+            <div>
+               <Link className="text-blue"  target="_blank" href={`https://mempool.space/tx/${blockDetail?.transaction?.data?.bitcoin_txid}`} >more details
+               </Link>
             </div>
         </div>
     </div>

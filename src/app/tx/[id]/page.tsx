@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from "react";
 import Block from "@/views/block";
 import useStore from "@/store";
 import useSWR from "swr";
-import { getTransactionsByHash } from "@/api";
+import { getTransactionsByHash, queryGetStatus } from "@/api";
 import { Breadcrumb, Tabs, TabsProps } from "antd";
 import { timeFormat } from "@/utils";
 import L1Page from "./l1";
@@ -24,9 +24,17 @@ export default function BlockServer({ params }: { params: { id: string } }) {
     }
   );
   const blockDetail = useMemo(() => data?.result[0], [data]);
-  useEffect(() => {
-    console.log("blockDetail:---------", blockDetail);
-  }, [blockDetail]);
+  
+  const { data:userStatus } = useSWR(
+    blockDetail?.transaction.sequence_info.tx_order ? [roochNodeUrl +"QueryGetStatus", blockDetail?.transaction.sequence_info.tx_order] : null,
+    ([key, tx]) => queryGetStatus(tx),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      refreshInterval: 0,
+    }
+  );
+
   // getTransactionsByHash
   if (params.id.startsWith("0x")) {
     console.log("字符串以 '0x' 开头");
