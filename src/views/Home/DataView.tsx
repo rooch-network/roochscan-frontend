@@ -37,11 +37,11 @@ export default function DataView({ count }: { count: number }) {
     <div className="mt-20 container mx-auto ">
       <div className="w-[100%] rounded-lg">
         <div className="p-20">
-          <span className="font-semibold">Last Transactions</span>
+          <span className="font-semibold dark:text-white">Last Transactions</span>
         </div>
       </div>
-      <div className=" w-full overflow-x-scroll">
-        <div className=" pc:w-full w-[1400px] flex items-center mb-[20px]">
+      <div className=" w-full  pc:overflow-auto overflow-x-scroll">
+        <div className=" pc:w-full w-[1400px] flex items-center mb-[20px] dark:text-white">
           <div className="w-[20%] text-center">Transaction Hash</div>
           <div className="w-[20%] text-center">Version</div>
           <div className="w-[20%] text-center">Transactions Type</div>
@@ -62,7 +62,7 @@ export default function DataView({ count }: { count: number }) {
                   : handleRouter(v.execution_info?.tx_hash || "")
               }
               key={v.execution_info?.tx_hash || "1"}
-              className=" pc:w-full w-[1400px] flex items-center mb-[10px] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
+              className=" pc:w-full w-[1400px] flex items-center mb-[10px] dark:bg-[#1c2939] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
             >
               <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
                 {getTokenShortHash(
@@ -166,13 +166,13 @@ export default function DataView({ count }: { count: number }) {
                 </div>
               </div>
 
-              <div className="w-[20%] text-center">
+              <div className="w-[20%] text-center dark:text-white">
                 {(Number(v.execution_info?.gas_used) / 1e9 || 0).toFixed(6) ||
                   "0.0"}{" "}
                 RGas
               </div>
 
-              <div className="w-[20%] text-center text-[#121615]">
+              <div className="w-[20%] text-center text-[#121615] dark:text-white">
                 {timeFormat(
                   Number(v.transaction.sequence_info.tx_timestamp) || 0
                 )}

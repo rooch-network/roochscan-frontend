@@ -22,7 +22,7 @@ export default function RootLayout({
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         ></meta>
       </head>
-      <body>
+      <body className="dark:bg-[#0e1729]">
       <RoochDappProvider>
         <Header />
         {children}
