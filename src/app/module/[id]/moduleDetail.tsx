@@ -1,10 +1,15 @@
 import {FunctionDetail, IModule} from "@/types";
-import {useState} from "react";
+import {useMemo, useState} from "react";
+import {Button, Form, Input} from "antd";
+import MethodCall from "@/app/module/[id]/methodCall";
 
 
-function convertToFunctionDetailMap(functions: FunctionDetail[]): Map<string, FunctionDetail> {
+function convertToFunctionDetailMap(functions?: FunctionDetail[]): Map<string, FunctionDetail> {
+  if(!functions){
+    return new Map<string, FunctionDetail>();
+  }
   const functionDetailMap = new Map<string, FunctionDetail>();
-  functions.forEach((func) => {
+  functions!.forEach((func) => {
     functionDetailMap.set(func.name, func);
   });
   return functionDetailMap;
@@ -13,29 +18,23 @@ function convertToFunctionDetailMap(functions: FunctionDetail[]): Map<string, Fu
 const ModuleDetail = ({moduleDetail}:{
   moduleDetail:IModule
 }) =>{
+  const [currentFunc, setCurrentFunc] = useState<string>();
+  const funcMap = useMemo(()=>{
+    return convertToFunctionDetailMap(moduleDetail?.functions)
+  }, [moduleDetail])
 
-  const funcMap = convertToFunctionDetailMap(moduleDetail.functions)
-  const [currentFunc, setCurrentFunc] = useState();
 
   return  <div className="container mx-auto flex">
     <div>
       {
-        moduleDetail.functions.map(item=>{
-          return <div onClick={()=>setCurrentFunc(item.name)} className={"px-[15px] cursor-pointer py-10 bg-[#66666610] my-10 rounded text-[16px] hover:bg-[#66666620]"}>{item.name}</div>
+        moduleDetail?.functions.map(item=>{
+          return <div key={item.name} onClick={()=>setCurrentFunc(item.name)} className={"px-[15px] cursor-pointer py-10 bg-[#66666610] my-10 rounded text-[16px] hover:bg-[#66666620]"}>{item.name}</div>
         })
       }
     </div>
-    <div className={"flex ml-[20px]"}>
+    <div className={"flex ml-[20px] p-[20px]"}>
       {
-        currentFunc && <div>
-          {
-            funcMap.get(currentFunc).params.map(item=>{
-              return <div>{
-                item
-              }</div>
-            })
-          }
-        </div>
+        currentFunc && <MethodCall func={funcMap.get(currentFunc)}  moduleDetail={moduleDetail}></MethodCall>
       }
     </div>
   </div>
