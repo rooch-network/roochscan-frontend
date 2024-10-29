@@ -82,8 +82,8 @@ const ModulePage = ({ params }: { params: { id: string } }) =>{
         },
       ]}
     />
-    <div className="mt-[40px]">{id}</div>
-    <Tabs defaultActiveKey="1" className="mt-[40px]" items={items} />
+    <div className="pc:mt-[40px] mt-[20px]">{id}</div>
+    <Tabs defaultActiveKey="1" className="pc:mt-[40px] mt-[20px]" items={items} />
   </div>
 }
 

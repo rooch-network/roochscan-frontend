@@ -93,8 +93,8 @@ export default function BlockServer({ params }: { params: { id: string } }) {
           },
         ]}
       />
-      <div className="mt-[40px]">{params.id}</div>
-      <Tabs defaultActiveKey="1" className="mt-[40px]" items={items} />
+      <div className="pc:mt-[40px] mt-[20px] break-words">{params.id}</div>
+      <Tabs defaultActiveKey="1" className="pc:mt-[40px] mt-[20px]" items={items} />
     </div>
   );
 }

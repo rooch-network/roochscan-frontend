@@ -24,15 +24,21 @@ export default function BlockServer({
           <div className="w-1/4">Status</div>
           {blockDetail?.execution_info.status.type}
         </div>
-        <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+        <div className="flex item-center border-b border-light-gray pt-15 pb-15 ">
           <div className="w-1/4">Sender</div>
+          <div className=" w-3/4 break-words">
           {blockDetail?.transaction.data.sender}
+          </div>
+         
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
           <div className="w-1/4">Smart Contract</div>
+          <div className=" w-3/4 break-words">
           {blockDetail.transaction?.data?.action?.function_call?.function_id.split(
             "::"
           )[0] || ""}
+          </div>
+         
         </div>
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
           <div className="w-1/4">Function</div>
