@@ -11,10 +11,10 @@ import { message } from "antd";
 
 import Copy from "copy-to-clipboard";
 import { useRouter } from "next/navigation";
-export default function DataView() {
+export default function DataView({count}:{count:number}) {
   const { roochNodeUrl } = useStore();
   const router = useRouter();
-  const { data } = useSWR(roochNodeUrl, () => queryBlockList([null, 10]), {
+  const { data } = useSWR(roochNodeUrl, () => queryBlockList([null, count]), {
     refreshInterval: 3500,
   });
   useEffect(() => {

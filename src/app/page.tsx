@@ -7,6 +7,6 @@ import {getObjectById} from "@/api";
 export default function Home() {
     return <main className="mt-[70px]">
         <Search />
-        <DataView />
+        <DataView  count={10} />
     </main>
 }
