@@ -11,11 +11,9 @@ import L2Page from "./l2";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { duotoneLight ,dark} from "react-syntax-highlighter/dist/esm/styles/prism";
 import {useRouter} from "next/navigation"
-import useDarkMode from "@/hooks/useDarkMode";
 
 export default function BlockServer({ params }: { params: { id: string } }) {
     const router = useRouter()
-    const [isDarkMode] = useDarkMode();
     const { roochNodeUrl } = useStore();
   const { data } = useSWR(
     params.id ? [roochNodeUrl, params.id] : null,
