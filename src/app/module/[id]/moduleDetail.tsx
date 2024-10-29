@@ -1,6 +1,7 @@
 import {FunctionDetail, IModule} from "@/types";
 import {useMemo, useState} from "react";
 import {Button, Form, Input} from "antd";
+import MethodCall from "@/app/module/[id]/methodCall";
 
 
 function convertToFunctionDetailMap(functions?: FunctionDetail[]): Map<string, FunctionDetail> {
@@ -33,29 +34,7 @@ const ModuleDetail = ({moduleDetail}:{
     </div>
     <div className={"flex ml-[20px] p-[20px]"}>
       {
-        currentFunc && <Form className={"w-[700px]"}>
-          {
-            funcMap.get(currentFunc)?.params.map(item=>{
-              return (
-                <Form.Item
-                  name={item}
-                  label={item}
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <Input placeholder={item} key={item}></Input>
-                </Form.Item>
-              )
-            })
-          }
-
-          <div className={"flex justify-end"}>
-            <Button type={"primary"}>Submit</Button>
-          </div>
-        </Form>
+        currentFunc && <MethodCall func={funcMap.get(currentFunc)}  moduleDetail={moduleDetail}></MethodCall>
       }
     </div>
   </div>
