@@ -11,10 +11,10 @@ import { message } from "antd";
 
 import Copy from "copy-to-clipboard";
 import { useRouter } from "next/navigation";
-export default function DataView({count}:{count:number}) {
+export default function DataView({ count }: { count: number }) {
   const { roochNodeUrl } = useStore();
   const router = useRouter();
-  const { data } = useSWR(roochNodeUrl, () => queryBlockList([null, count]), {
+  const { data } = useSWR(roochNodeUrl +"count", () => queryBlockList([null, count]), {
     refreshInterval: 3500,
   });
   useEffect(() => {
@@ -54,14 +54,22 @@ export default function DataView({count}:{count:number}) {
         {Array.isArray(data?.result?.data) &&
           data?.result?.data?.map((v) => (
             <div
-              onClick={() => handleRouter(v.execution_info.tx_hash || "")}
+              onClick={() =>
+                v.transaction.data.type == "l1_tx"
+                  ? window.open(
+                      `https://mempool.space/tx/${v?.transaction?.data?.bitcoin_txid}`
+                    )
+                  : handleRouter(v.execution_info?.tx_hash || "")
+              }
               key={v.execution_info?.tx_hash || "1"}
               className=" pc:w-full w-[1400px] flex items-center mb-[10px] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
             >
-               <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
-               {getTokenShortHash(
-                        v.execution_info.tx_hash || ""
-                      )}
+              <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
+                {getTokenShortHash(
+                  v.transaction.data.type == "l1_tx"
+                    ? v?.transaction?.data?.bitcoin_txid
+                    : v.execution_info?.tx_hash || ""
+                )}
               </div>
               <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
                 {v.transaction.sequence_info.tx_order}
@@ -86,33 +94,52 @@ export default function DataView({count}:{count:number}) {
                       )}
                     </span>
                   </Tooltip>
-
-                  <CopyOutlined
-                    className="ml-[5px]"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCopy(v.transaction.data.sender);
-                    }}
-                  />
+                  {v.transaction.data.type !== "l1_tx" ? (
+                    <CopyOutlined
+                      className="ml-[5px]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCopy(v.transaction.data.sender);
+                      }}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </div>
               <div className="w-[20%] text-center flex justify-center items-center">
                 <div className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md">
                   <Tooltip
                     title={
-                      (v.transaction.data.action?.function_call?.function_id)
+                      v.transaction.data.action?.function_call?.function_id
                     }
                   >
                     <span>
-                      {getTokenShortHash(v.transaction?.data?.action?.function_call?.function_id.split("::")[0] || "")}
+                      {getTokenShortHash(
+                        v.transaction?.data?.action?.function_call?.function_id.split(
+                          "::"
+                        )[0] || ""
+                      )}
                     </span>
                   </Tooltip>
 
-                  <CopyOutlined className="ml-[5px]" onClick={(e) => {
-                    e.stopPropagation();
-                    handleCopy(getTokenShortHash(v.transaction?.data?.action?.function_call?.function_id.split("::")[0] || ""));
-                  }} />
-
+                  {v.transaction.data.type !== "l1_tx" ? (
+                    <CopyOutlined
+                      className="ml-[5px]"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCopy(
+                          getTokenShortHash(
+                            v.transaction?.data?.action?.function_call?.function_id.split(
+                              "::"
+                            )[0] || ""
+                          )
+                        );
+                      }}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </div>
               <div className="w-[20%] text-center flex justify-center items-center">
@@ -126,14 +153,14 @@ export default function DataView({count}:{count:number}) {
                   }}
                 >
                   <Tooltip
-                    title={
-                      shotSentTo(v.transaction.data.action?.function_call?.function_id)
-                    }
+                    title={shotSentTo(
+                      v.transaction.data.action?.function_call?.function_id
+                    )}
                   >
                     <span>
-                      {
-                        shotSentTo(v.transaction.data.action?.function_call?.function_id)
-                      }
+                      {shotSentTo(
+                        v.transaction.data.action?.function_call?.function_id
+                      )}
                     </span>
                   </Tooltip>
                 </div>
