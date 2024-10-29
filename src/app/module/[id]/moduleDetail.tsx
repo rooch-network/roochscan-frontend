@@ -34,7 +34,7 @@ const ModuleDetail = ({moduleDetail}:{
     </div>
     <div className={"flex ml-[20px] p-[20px]"}>
       {
-        currentFunc && <MethodCall func={funcMap.get(currentFunc)}  moduleDetail={moduleDetail}></MethodCall>
+        currentFunc && <MethodCall func={funcMap.get(currentFunc)!}  moduleDetail={moduleDetail}></MethodCall>
       }
     </div>
   </div>
