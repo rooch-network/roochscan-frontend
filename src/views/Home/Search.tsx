@@ -1,20 +1,29 @@
 "use client";
-import React, {useState, useCallback} from "react";
+import React, { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import {Card, Col, Input, Popover, Row, Statistic} from "antd";
-import {LoadingOutlined, SearchOutlined} from "@ant-design/icons";
-import {getABIByPKGId, getObjectById, getTransactionsByHash, queryBalance, queryBalances} from "@/api";
+import { Card, Col, Input, Popover, Row, Statistic } from "antd";
+import { LoadingOutlined, SearchOutlined } from "@ant-design/icons";
+import {
+  getABIByPKGId,
+  getObjectById,
+  getTransactionsByHash,
+  queryBalance,
+  queryBalances,
+} from "@/api";
 import debounce from "lodash/debounce";
+import useIsMobile from "@/hooks/useIsMobile";
 
 export default function Home() {
   const [val, setVal] = useState("");
   const router = useRouter();
-  const [addressType, setAddressType] = useState<"assets"  | "tx" | "object" | "module" | "none">("none");
+  const [addressType, setAddressType] = useState<
+    "assets" | "tx" | "object" | "module" | "none"
+  >("none");
   const [notFound, setNotFound] = useState(false);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const isMobile = useIsMobile();
 
-
-  const handleInput = (e:string) => {
+  const handleInput = (e: string) => {
     const value = e;
     setVal(value);
     setAddressType("none");
@@ -22,67 +31,75 @@ export default function Home() {
     debouncedQueryObjectOrTx(value); // 调用防抖函数
   };
 
-
   const queryObjectOrTx = async (id: string) => {
-    if(!id) return;
-    if(loading) return;
+    if (!id) return;
+    if (loading) return;
     setLoading(true);
-    try{
+    try {
       let haveData = false;
-      if(id.startsWith("rooch")){
-        const res = await queryBalances(id)
-        if(res.result.data.length > 0 && res.result.data[0]){
-          setAddressType("assets")
+      if (id.startsWith("rooch")) {
+        const res = await queryBalances(id);
+        if (res.result.data.length > 0 && res.result.data[0]) {
+          setAddressType("assets");
           haveData = true;
         }
-      } else if(id.includes("::")){
+      } else if (id.includes("::")) {
         const [moduleId, moduleName] = id.split("::");
         const res = await getABIByPKGId(moduleId, moduleName);
-        if(res.result){
+        if (res.result) {
           haveData = true;
-          setAddressType("module")
+          setAddressType("module");
         }
       } else {
-        const tx = await getTransactionsByHash(id)
-        if(tx.result && tx.result.length > 0 && tx.result[0]){
-          setAddressType("tx")
+        const tx = await getTransactionsByHash(id);
+        if (tx.result && tx.result.length > 0 && tx.result[0]) {
+          setAddressType("tx");
           haveData = true;
         } else {
           const object = await getObjectById(id);
-          if(object.result.data && object.result.data.length > 0 && object.result.data[0]){
-            setAddressType("object")
+          if (
+            object.result.data &&
+            object.result.data.length > 0 &&
+            object.result.data[0]
+          ) {
+            setAddressType("object");
             haveData = true;
           }
         }
       }
 
-      if(!haveData){
-        setNotFound(true)
+      if (!haveData) {
+        setNotFound(true);
       }
-
-    } catch (e){
-      setNotFound(true)
-      console.log(e, "network error")
+    } catch (e) {
+      setNotFound(true);
+      console.log(e, "network error");
     }
-    setLoading(false)
-
+    setLoading(false);
   };
 
-  const debouncedQueryObjectOrTx = useCallback(debounce(queryObjectOrTx, 300), []);
+  const debouncedQueryObjectOrTx = useCallback(
+    debounce(queryObjectOrTx, 300),
+    []
+  );
 
   const handleEnter = () => {
-    if(loading) return;
-    if(addressType !== "none"){
+    if (loading) return;
+    if (addressType !== "none") {
       router.push(`${addressType}/${val}`);
       return;
     }
   };
 
-
-
   const content = (
     <div className={"w-[700px]"}>
-      <div onClick={handleEnter} className={"cursor-pointer py-10 px-10  rounded hover:bg-[#66666620]"}> {addressType}: {val}</div>
+      <div
+        onClick={handleEnter}
+        className={"cursor-pointer py-10 px-10  rounded hover:bg-[#66666620]"}
+      >
+        {" "}
+        {addressType}: {val}
+      </div>
     </div>
   );
 
@@ -92,33 +109,76 @@ export default function Home() {
         <p className=" text-[30px] font-semibold mt-[40px]  text-black">
           Rooch Explorer
         </p>
+        {isMobile ? (
+          <>
+            <Row gutter={10} className=" mt-[40px]">
+              <Col span={12}>
+                <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
+                  <Statistic title="Blocks" value={107523} precision={2} />
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
+                  <Statistic
+                    title="Transactions"
+                    value={112893}
+                    precision={2}
+                  />
+                </Card>
+              </Col>
+            </Row>
+            <Row gutter={10} className=" mt-[10px]">
+              <Col span={12}>
+                <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
+                  <Statistic title="Addresses" value={10752264} precision={2} />
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
+                  <Statistic
+                    title="Tps"
+                    value={20}
+                    precision={0}
+                    suffix="/sec"
+                  />
+                </Card>
+              </Col>
+            </Row>
+          </>
+        ) : (
+          <Row gutter={16} className=" mt-[40px]">
+            <Col span={6}>
+              <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
+                <Statistic title="Blocks" value={107523} precision={2} />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
+                <Statistic title="Transactions" value={112893} precision={2} />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
+                <Statistic title="Addresses" value={10752264} precision={2} />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
+                <Statistic title="Tps" value={20} precision={0} suffix="/sec" />
+              </Card>
+            </Col>
+          </Row>
+        )}
 
-        <Row gutter={16} className=" mt-[40px]">
-          <Col span={6}>
-            <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
-              <Statistic title="Blocks" value={107523} precision={2} />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
-              <Statistic title="Transactions" value={112893} precision={2} />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
-              <Statistic title="Addresses" value={10752264} precision={2} />
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card bordered={false} style={{ backgroundColor: "#f4f4f5" }}>
-              <Statistic title="Tps" value={20} precision={0} suffix="/sec" />
-            </Card>
-          </Col>
-        </Row>
-        <Popover content={content} open={addressType !== "none"} arrow={false} placement="bottomLeft">
+        <Popover
+          content={content}
+          open={addressType !== "none"}
+          arrow={false}
+          placement="bottomLeft"
+        >
           <Input
-            onPressEnter={(e:React.KeyboardEvent<HTMLInputElement>)=>{
-              queryObjectOrTx(val)
+            onPressEnter={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              queryObjectOrTx(val);
             }}
             onChange={(e) => handleInput(e.target.value.trim())} // 调用防抖输入处理
             value={val}
@@ -129,9 +189,13 @@ export default function Home() {
           />
         </Popover>
         <div>
-          {
-            loading ? <LoadingOutlined></LoadingOutlined> : notFound && val ? <div className={"px-2 text-[#ff0000] text-[14px]"}>Not Found</div> : <div/>
-          }
+          {loading ? (
+            <LoadingOutlined></LoadingOutlined>
+          ) : notFound && val ? (
+            <div className={"px-2 text-[#ff0000] text-[14px]"}>Not Found</div>
+          ) : (
+            <div />
+          )}
         </div>
       </div>
     </section>

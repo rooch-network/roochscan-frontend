@@ -7,10 +7,15 @@ import { Dropdown, Space } from "antd";
 import { getRoochNodeUrl } from "@roochnetwork/rooch-sdk";
 import useStore from "@/store";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
-import { useConnectWallet, useCurrentAddress, useWallets, useWalletStore } from "@roochnetwork/rooch-sdk-kit";
+import {
+  useConnectWallet,
+  useCurrentAddress,
+  useWallets,
+  useWalletStore,
+} from "@roochnetwork/rooch-sdk-kit";
 import WalletConnectModal from "@/components/WalletConnectModal";
 import { shortAddress } from "@/utils/address";
-
+import useIsMobile from "@/hooks/useIsMobile";
 const defaultMainnetUrl = process.env.NEXT_PUBLIC_DEFAULT_NETWORK;
 
 const NetWork: any = {
@@ -63,15 +68,18 @@ export default function Header() {
   const [walletConnectModal, setWalletConnectModal] = useState(false);
   const currentAddress = useCurrentAddress();
   const connectionStatus = useWalletStore((state) => state.connectionStatus);
-  const setWalletDisconnected = useWalletStore((state) => state.setWalletDisconnected);
+  const setWalletDisconnected = useWalletStore(
+    (state) => state.setWalletDisconnected
+  );
 
   const [btnText, setBtnText] = useState("Connect Wallet");
 
+  const isMobile = useIsMobile();
   useEffect(() => {
     if (currentAddress) {
-      setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))
+      setBtnText(shortAddress(currentAddress?.toStr(), 8, 6));
     }
-  }, [currentAddress])
+  }, [currentAddress]);
 
   const handleVisibleChange = (flag: boolean) => {
     setDropdownVisible(flag); // 更新 dropdown 的可见状态
@@ -89,45 +97,57 @@ export default function Header() {
   };
 
   const handleConnect = async () => {
-    if (connectionStatus === 'connected') {
+    if (connectionStatus === "connected") {
       setWalletDisconnected();
       return;
     }
-    setWalletConnectModal(true)
-  }
-
+    setWalletConnectModal(true);
+  };
 
   const renderWalletBtn = () => {
-    if (connectionStatus === 'connected') {
-      return <div
-        onMouseEnter={() => setBtnText("Disconnect")}
-        onMouseLeave={() => setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))}
-        onClick={handleConnect} className={"px-[10px] w-[180px] text-center py-[5px] rounded ml-[30px] transition-all cursor-pointer bg-[#00ADB280] hover:bg-[#ff000060]"}>
-        {
-          btnText
-        }
-      </div>;
+    if (connectionStatus === "connected") {
+      return (
+        <div
+          onMouseEnter={() => setBtnText("Disconnect")}
+          onMouseLeave={() =>
+            setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))
+          }
+          onClick={handleConnect}
+          className={
+            "pc:px-[10px] pc:w-[180px] w-auto px-[5px] text-center py-[5px] rounded pc:ml-[30px] pl-[10px] transition-all cursor-pointer bg-[#00ADB280] hover:bg-[#ff000060]"
+          }
+        >
+          {btnText}
+        </div>
+      );
     }
     return (
-      <div onClick={handleConnect} className={"px-[10px] w-[180px] text-center py-[5px] rounded ml-[30px] cursor-pointer bg-[#00ADB2]"}>
-        {
-          'Connect Wallet'
+      <div
+        onClick={handleConnect}
+        className={
+          "pc:px-[10px] pc:w-[180px] w-auto  text-center py-[5px] rounded  ml-[10px]  pc:ml-[30px] cursor-pointer bg-[#00ADB2]"
         }
+      >
+        {"Connect Wallet"}
       </div>
-    )
-  }
-
+    );
+  };
 
   return (
-    <header className="h-60 w-full flex items-center justify-between  px-[20px] fixed top-[0px] bg-white z-10">
+    <header className="h-60 w-full flex items-center justify-between  pc:px-[20px] px-[5px] fixed top-[0px] bg-white z-10">
       <Link href="/">
-        <Image src="/images/logo.png" width="120" height={60} alt="" />
+        <Image
+          src="/images/logo.png"
+          width={isMobile ? "60" : "120"}
+          height={isMobile ? 30 : 60}
+          alt=""
+        />
       </Link>
       <div className="flex items-center">
-        <div className="w-[140px] cursor-pointer text-[#151918]">
-          <Link href={'/txs'}>Transactions</Link>
+        <div className="pc:w-[140px] w-auto cursor-pointer text-[#151918]">
+          <Link href={"/txs"}>Transactions</Link>
         </div>
-        <div className="w-[140px] cursor-pointer text-[#151918]">Analytics</div>
+
         <Dropdown
           onVisibleChange={handleVisibleChange}
           className="border p-[5px] rounded-lg border-gray-light"
@@ -145,7 +165,7 @@ export default function Header() {
             onClick={(e) => e.preventDefault()}
           >
             <Space>
-              {mapNetName} NetWork
+              {mapNetName}  {isMobile ? "" :"NetWork"}
               {!dropdownVisible ? (
                 <DownOutlined className="text-[14px]" />
               ) : (
@@ -155,14 +175,14 @@ export default function Header() {
           </div>
         </Dropdown>
 
-        {
-          renderWalletBtn()
-        }
-
+        {renderWalletBtn()}
       </div>
-      <WalletConnectModal open={walletConnectModal} onCancel={() => {
-        setWalletConnectModal(false)
-      }}></WalletConnectModal>
+      <WalletConnectModal
+        open={walletConnectModal}
+        onCancel={() => {
+          setWalletConnectModal(false);
+        }}
+      ></WalletConnectModal>
     </header>
   );
 }
