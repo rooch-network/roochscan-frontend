@@ -34,7 +34,7 @@ const MethodCall = ({moduleDetail, func}:{
             ],
             maxInactiveInterval: 60 * 60 * 8,
           })
-        } catch (e){
+        } catch (e:any){
           setLoading(false)
           message.error(e.message)
         }
@@ -49,18 +49,18 @@ const MethodCall = ({moduleDetail, func}:{
       const f = `${moduleDetail.address + "::" + moduleDetail.name}::${func.name}`
       tx.callFunction({
         target: f,
-        args: [...params],
+        args: [...params]as any,
       })
       const client = new RoochClient({url:useStore.getState().roochNodeUrl});
       const result = await client.signAndExecuteTransaction({
         transaction: tx,
-        signer: sessionKey,
+        signer: sessionKey as any,
       })
 
       if(result.execution_info.status.type === 'executed'){
         message.success("Executed")
       }
-    } catch (e){
+    } catch (e:any){
       console.log(e, "Error")
       setLoading(false)
       message.error(e.message)
