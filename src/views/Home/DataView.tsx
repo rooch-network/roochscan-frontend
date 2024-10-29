@@ -40,8 +40,8 @@ export default function DataView() {
           <span className="font-semibold">Last Transactions</span>
         </div>
       </div>
-      <div className="w-full">
-        <div className=" w-full flex items-center mb-[20px]">
+      <div className=" w-full overflow-x-scroll">
+        <div className=" pc:w-full w-[700px] flex items-center mb-[20px]">
           <div className="w-[20%] text-center">Version</div>
           <div className="w-[20%] text-center">Transactions Type</div>
           <div className="w-[20%] text-center">Timestamp</div>
@@ -55,7 +55,7 @@ export default function DataView() {
             <div
               onClick={() => handleRouter(v.execution_info.tx_hash || "")}
               key={v.execution_info?.tx_hash || "1"}
-              className=" w-full flex items-center mb-[10px] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
+              className=" pc:w-full w-[700px] flex items-center mb-[10px] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
             >
               <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
                 {v.transaction.sequence_info.tx_order}

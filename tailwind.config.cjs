@@ -11,7 +11,7 @@ module.exports = {
       [index + 1]: index + 1 + "px",
     })).reduce((result, current) => Object.assign(result, current), {}),
     screens: {
-      pc: "992px",
+      pc: "1200px",
     },
     colors: {
       blue: "#1fb6ff",
