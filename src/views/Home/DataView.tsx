@@ -41,33 +41,35 @@ export default function DataView({count}:{count:number}) {
         </div>
       </div>
       <div className=" w-full overflow-x-scroll">
-        <div className=" pc:w-full w-[1200px] flex items-center mb-[20px]">
+        <div className=" pc:w-full w-[1400px] flex items-center mb-[20px]">
+          <div className="w-[20%] text-center">Transaction Hash</div>
           <div className="w-[20%] text-center">Version</div>
           <div className="w-[20%] text-center">Transactions Type</div>
-          <div className="w-[20%] text-center">Timestamp</div>
           <div className="w-[20%] text-center">Sender</div>
           <div className="w-[20%] text-center">Sent To</div>
           <div className="w-[20%] text-center">Function</div>
           <div className="w-[20%] text-center">Gas</div>
+          <div className="w-[20%] text-center">Timestamp</div>
         </div>
         {Array.isArray(data?.result?.data) &&
           data?.result?.data?.map((v) => (
             <div
               onClick={() => handleRouter(v.execution_info.tx_hash || "")}
               key={v.execution_info?.tx_hash || "1"}
-              className=" pc:w-full w-[1200px] flex items-center mb-[10px] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
+              className=" pc:w-full w-[1400px] flex items-center mb-[10px] bg-[#fafafa] hover:bg-[#f7f7f7] h-[50px] rounded-md cursor-pointer"
             >
+               <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
+               {getTokenShortHash(
+                        v.execution_info.tx_hash || ""
+                      )}
+              </div>
               <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
                 {v.transaction.sequence_info.tx_order}
               </div>
               <div className="w-[20%] text-center text-[#03aeb2] text-[14px]">
                 {v.transaction.data.type}
               </div>
-              <div className="w-[20%] text-center text-[#121615]">
-                {timeFormat(
-                  Number(v.transaction.sequence_info.tx_timestamp) || 0
-                )}
-              </div>
+
               <div className="w-[20%] text-center flex justify-center items-center">
                 <div className="bg-[#c6e7f3] px-[5px] text-[#0faae4] cursor-pointer rounded-md">
                   <Tooltip title={v.transaction.data.sender_bitcoin_address}>
@@ -141,6 +143,12 @@ export default function DataView({count}:{count:number}) {
                 {(Number(v.execution_info?.gas_used) / 1e9 || 0).toFixed(6) ||
                   "0.0"}{" "}
                 RGas
+              </div>
+
+              <div className="w-[20%] text-center text-[#121615]">
+                {timeFormat(
+                  Number(v.transaction.sequence_info.tx_timestamp) || 0
+                )}
               </div>
             </div>
           ))}
