@@ -6,7 +6,12 @@ import type { MenuProps } from "antd";
 import { Dropdown, Space } from "antd";
 import { getRoochNodeUrl } from "@roochnetwork/rooch-sdk";
 import useStore from "@/store";
-import { DownOutlined, UpOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  MoonOutlined,
+  SunOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import {
   useConnectWallet,
   useCurrentAddress,
@@ -58,6 +63,27 @@ const items: MenuProps["items"] = [
       <div>
         <p className="text-[#2f2f2f] font-bold">Localnet</p>
         <p className="text-[#198ffd] text-sm">{NetWork.Localnet}</p>
+      </div>
+    ),
+  },
+];
+
+const DarkItem: MenuProps["items"] = [
+  {
+    key: "Light",
+    label: (
+      <div className="flex items-center gap-4">
+        <SunOutlined />
+        <p className="text-[#2f2f2f] font-bold ">Light</p>
+      </div>
+    ),
+  },
+  {
+    key: "dark",
+    label: (
+      <div className="flex items-center gap-4">
+        <MoonOutlined />
+        <p className="text-[#2f2f2f] font-bold ">Dark</p>
       </div>
     ),
   },
@@ -125,7 +151,7 @@ export default function Header() {
       <div
         onClick={handleConnect}
         className={
-          "pc:px-[10px] pc:w-[180px] w-auto  text-center py-[5px] rounded  ml-[10px]  pc:ml-[30px] cursor-pointer bg-[#00ADB2]"
+          "pc:px-[10px] pc:w-[180px] w-auto  text-center py-[5px] rounded  ml-[10px]  pc:ml-[30px] cursor-pointer bg-[#00ADB2] dark:text-white"
         }
       >
         {"Connect Wallet"}
@@ -133,8 +159,15 @@ export default function Header() {
     );
   };
 
+  const handleToggleDarkModal = (v: any) => {
+    if (v.key == "dark") {
+      document.documentElement.classList.toggle("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
   return (
-    <header className="h-60 w-full flex items-center justify-between  pc:px-[20px] px-[5px] fixed top-[0px] bg-white z-10">
+    <header className="h-60 w-full flex items-center justify-between  pc:px-[20px] px-[5px] fixed top-[0px] bg-white dark:bg-[#0e1729] z-10">
       <Link href="/">
         <Image
           src="/images/logo.png"
@@ -144,13 +177,22 @@ export default function Header() {
         />
       </Link>
       <div className="flex items-center">
-        <div className="pc:w-[140px] w-auto cursor-pointer text-[#151918]">
+        <div className=" w-auto cursor-pointer dark:text-white text-[#151918]">
           <Link href={"/txs"}>Transactions</Link>
         </div>
-
+        <Dropdown
+          menu={{ items: DarkItem, onClick: handleToggleDarkModal }}
+          className="mx-[20px] cursor-pointer"
+        >
+          <a onClick={(e) => e.preventDefault()}>
+            <Space>
+              <MoonOutlined className="dark:text-white" />
+            </Space>
+          </a>
+        </Dropdown>
         <Dropdown
           onVisibleChange={handleVisibleChange}
-          className="border p-[5px] rounded-lg border-gray-light"
+          className="border p-[5px] rounded-lg border-gray-light dark:border-white"
           menu={{
             items,
             onClick: handleDropDownClick,
@@ -161,11 +203,11 @@ export default function Header() {
           placement="bottom"
         >
           <div
-            className=" cursor-pointer text-[15px]"
+            className=" cursor-pointer text-[15px] dark:text-white"
             onClick={(e) => e.preventDefault()}
           >
             <Space>
-              {mapNetName}  {isMobile ? "" :"NetWork"}
+              {mapNetName} {isMobile ? "" : "NetWork"}
               {!dropdownVisible ? (
                 <DownOutlined className="text-[14px]" />
               ) : (

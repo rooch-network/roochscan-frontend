@@ -9,10 +9,13 @@ import { timeFormat } from "@/utils";
 import L1Page from "./l1";
 import L2Page from "./l2";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { duotoneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { duotoneLight ,dark} from "react-syntax-highlighter/dist/esm/styles/prism";
 import {useRouter} from "next/navigation"
+import useDarkMode from "@/hooks/useDarkMode";
+
 export default function BlockServer({ params }: { params: { id: string } }) {
     const router = useRouter()
+    const [isDarkMode] = useDarkMode();
     const { roochNodeUrl } = useStore();
   const { data } = useSWR(
     params.id ? [roochNodeUrl, params.id] : null,
@@ -44,7 +47,7 @@ export default function BlockServer({ params }: { params: { id: string } }) {
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Overview",
+      label: <div className="dark:text-white">Overview</div>,
       children:
         blockDetail?.transaction.data.type === "l2_tx" ? (
           <L2Page blockDetail={blockDetail} />
@@ -54,11 +57,12 @@ export default function BlockServer({ params }: { params: { id: string } }) {
     },
     {
       key: "2",
-      label: "Raw JSON",
+      label: <div className="dark:text-white">Raw JSON</div>,
       children: (
         <SyntaxHighlighter
           language="json"
-          style={duotoneLight}
+          style={ dark }
+
           customStyle={{
             whiteSpace: "pre-wrap",
             width: "100%",
@@ -80,7 +84,7 @@ export default function BlockServer({ params }: { params: { id: string } }) {
   return (
     <div className="container mx-auto mt-[80px]">
       <Breadcrumb
-      className="cursor-pointer"
+      className="cursor-pointer dark:text-white"
         
         items={[
           {
@@ -89,12 +93,12 @@ export default function BlockServer({ params }: { params: { id: string } }) {
           },
 
           {
-            title: "Transaction",
+            title:  <div className="dark:text-white">Transaction</div> ,
           },
         ]}
       />
-      <div className="pc:mt-[40px] mt-[20px] break-words">{params.id}</div>
-      <Tabs defaultActiveKey="1" className="pc:mt-[40px] mt-[20px]" items={items} />
+      <div className="pc:mt-[40px] mt-[20px] break-words dark:text-white">{params.id}</div>
+      <Tabs defaultActiveKey="1" className="pc:mt-[40px] mt-[20px] dark:text-white" items={items} />
     </div>
   );
 }

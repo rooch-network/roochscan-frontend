@@ -15,7 +15,7 @@ export default function BlockServer({
 }) {
   return (
     <div className="container mx-auto ">
-      <div className=" rounded-md mt-20 border border-light-gray shadow-md p-20 bg-white">
+      <div className=" rounded-md mt-20 border border-light-gray shadow-md p-20 bg-white dark:bg-[#0d1728]">
         <div className="flex item-center border-b border-light-gray pt-15 pb-15">
           <div className="w-1/4">Version</div>
           <div>{blockDetail?.transaction.sequence_info.tx_order}</div>
