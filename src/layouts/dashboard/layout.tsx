@@ -119,20 +119,21 @@ export function DashboardLayout({ sx, children, data }: DashboardLayoutProps) {
             }}
           />
         }
-        sidebarSection={
-          <NavVertical
-            data={navDataWithAddress}
-            isNavMini={isNavMini}
-            layoutQuery={layoutQuery}
-            cssVars={navColorVars.section}
-            onToggleNav={() =>
-              settings.onUpdateField(
-                'navLayout',
-                settings.navLayout === 'vertical' ? 'mini' : 'vertical'
-              )
-            }
-          />
-        }
+        // TODO：显示侧边栏
+        // sidebarSection={
+        //   <NavVertical
+        //     data={navDataWithAddress}
+        //     isNavMini={isNavMini}
+        //     layoutQuery={layoutQuery}
+        //     cssVars={navColorVars.section}
+        //     onToggleNav={() =>
+        //       settings.onUpdateField(
+        //         'navLayout',
+        //         settings.navLayout === 'vertical' ? 'mini' : 'vertical'
+        //       )
+        //     }
+        //   />
+        // }
         footerSection={null}
         cssVars={{
           ...navColorVars.layout,

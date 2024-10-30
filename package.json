@@ -1,8 +1,8 @@
 {
-  "name": "rooch-portal-v2",
+  "name": "Rooch Scan",
   "author": "Jason Chan",
   "version": "0.1.0",
-  "description": "Rooch Portal v2",
+  "description": "Rooch Scan",
   "private": true,
   "scripts": {
     "dev": "next dev -p 8083",

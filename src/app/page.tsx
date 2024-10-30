@@ -9,7 +9,7 @@ export default function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push(paths.dashboard.account);
+    router.push(paths.dashboard.search);
   }, [router]);
 
   return null;
