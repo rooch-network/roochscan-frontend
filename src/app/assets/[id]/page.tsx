@@ -44,37 +44,37 @@ export default function BlockServer({ params }: { params: { id: string } }) {
       className="cursor-pointer"
         items={[
           {
-            title: "Home",
+            title: <div className="dark:text-white">Home</div>,
             onClick:handleRouteHome
           },
 
           {
-            title: "Assets",
+            title:  <div className="dark:text-white">Assets</div>,
           },
         ]}
       />
-      <div className=" rounded-md mt-20 border border-light-gray shadow-md p-20 bg-white">
-        <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+      <div className=" rounded-md mt-20 border border-light-gray shadow-md p-20 bg-white dark:bg-[#0d1728]">
+        <div className="flex item-center border-b border-light-gray pt-15 pb-15 dark:text-white">
           <div className="w-1/4">balance</div>
           <div>{data?.result?.balance}</div>
         </div>
-        <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+        <div className="flex item-center border-b border-light-gray pt-15 pb-15 dark:text-white">
           <div className="w-1/4">coin_type</div>
           <div>{data?.result?.coin_type}</div>
         </div>
-        <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+        <div className="flex item-center border-b border-light-gray pt-15 pb-15 dark:text-white ">
           <div className="w-1/4">decimals</div>
           <div>{data?.result?.decimals}</div>
         </div>
-        <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+        <div className="flex item-center border-b border-light-gray pt-15 pb-15 dark:text-white">
           <div className="w-1/4">name</div>
           <div>{data?.result?.name}</div>
         </div>
-        <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+        <div className="flex item-center border-b border-light-gray pt-15 pb-15 dark:text-white">
           <div className="w-1/4">supply</div>
           <div>{data?.result?.supply}</div>
         </div>
-        <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+        <div className="flex item-center border-b border-light-gray pt-15 pb-15 dark:text-white">
           <div className="w-1/4">symbol</div>
           <div>{data?.result?.symbol}</div>
         </div>
@@ -82,24 +82,24 @@ export default function BlockServer({ params }: { params: { id: string } }) {
       {balanceData?.result.data.map((v, index) => (
         <div
           key={index}
-          className=" rounded-md mt-20 border border-light-gray shadow-md p-20 bg-white"
+          className=" rounded-md mt-20 border border-light-gray shadow-md p-20 bg-white dark:bg-[#0d1728]"
         >
-          <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+          <div className="flex item-center border-b border-light-gray pt-15 pb-15 dark:text-white">
             <div className="w-1/4">coin_type</div>
             <div>{v.coin_type}</div>
           </div>
-          <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+          <div className="flex item-center border-b border-light-gray pt-15 pb-15 dark:text-white">
             <div className="w-1/4">balance</div>
             <div>
               {formatUnits(BigInt(v.balance), Number(v.decimals))} {v.symbol}
             </div>
           </div>
 
-          <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+          <div className="flex item-center border-b border-light-gray pt-15 pb-15 dark:text-white">
             <div className="w-1/4">name</div>
             <div>{v.name}</div>
           </div>
-          <div className="flex item-center border-b border-light-gray pt-15 pb-15">
+          <div className="flex item-center border-b border-light-gray pt-15 pb-15 dark:text-white">
             <div className="w-1/4">supply</div>
             <div>{v.supply}</div>
           </div>
