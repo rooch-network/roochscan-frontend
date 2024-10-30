@@ -4,17 +4,19 @@ import {Breadcrumb, Tabs, TabsProps} from "antd";
 import {useRouter} from "next/navigation"
 import ObjectDetail from "@/app/object/[id]/object";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
-import {duotoneLight} from "react-syntax-highlighter/dist/esm/styles/prism";
+import {duotoneLight,dark} from "react-syntax-highlighter/dist/esm/styles/prism";
 import useStore from "@/store";
 import useSWR from "swr";
 import {getABIByPKGId} from "@/api";
 import {IModule} from "@/types";
 import ModuleDetail from "@/app/module/[id]/moduleDetail";
+import useDarkMode from "@/hooks/useDarkMode";
 
 
 const ModulePage = ({ params }: { params: { id: string } }) =>{
   const id = decodeURIComponent(params.id);
   const router = useRouter()
+  const isDarkMode =useDarkMode()
 
   const { roochNodeUrl } = useStore();
   const { data } = useSWR(
@@ -41,16 +43,16 @@ const ModulePage = ({ params }: { params: { id: string } }) =>{
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Overview",
+      label: <div className="dark:text-white">Overview</div>,
       children:<ModuleDetail moduleDetail={moduleDetail}/>,
     },
     {
       key: "2",
-      label: "Raw JSON",
+      label: <div className="dark:text-white"> Raw JSON</div>, 
       children: (
         <SyntaxHighlighter
           language="json"
-          style={duotoneLight}
+          style={ isDarkMode? dark :duotoneLight }
           customStyle={{
             whiteSpace: "pre-wrap",
             width: "100%",
@@ -73,16 +75,16 @@ const ModulePage = ({ params }: { params: { id: string } }) =>{
       className="cursor-pointer"
       items={[
         {
-          title: "Home",
+          title:<div className="dark:text-white">Home</div>,
           onClick:handleRouteHome
         },
 
         {
-          title: "Object",
+          title:  <div className="dark:text-white">Object</div>,
         },
       ]}
     />
-    <div className="pc:mt-[40px] mt-[20px]">{id}</div>
+    <div className="pc:mt-[40px] mt-[20px] dark:text-white">{id}</div>
     <Tabs defaultActiveKey="1" className="pc:mt-[40px] mt-[20px]" items={items} />
   </div>
 }
