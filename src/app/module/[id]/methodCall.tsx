@@ -2,8 +2,63 @@ import {FunctionDetail, IModule} from "@/types";
 import {Button, Form, Input, message} from "antd";
 import {useCreateSessionKey, useCurrentSession} from "@roochnetwork/rooch-sdk-kit";
 import {useState} from "react";
-import {RoochClient, Transaction} from "@roochnetwork/rooch-sdk";
+import {Args, RoochClient, Transaction, normalizeTypeArgsToStr} from "@roochnetwork/rooch-sdk";
 import useStore from "@/store";
+
+
+
+
+const getTypeConvert = (typeName:string, value:string) =>{
+
+  if(typeName.includes("string")){
+    return Args.string(value);
+  }
+
+  if(typeName.includes("object")){
+    return Args.objectId(value)
+  }
+
+  if(typeName.includes("u8")){
+    return Args.u8(Number(value))
+  }
+
+  if(typeName.includes("u16")){
+    return Args.u16(Number(value))
+  }
+
+  if(typeName.includes("u32")){
+    return Args.u32(Number(value))
+  }
+
+  if(typeName.includes("u64")){
+    return Args.u64(BigInt(value))
+  }
+
+  if(typeName.includes("u128")){
+    return Args.u128(BigInt(value))
+  }
+
+  if(typeName.includes("u256")){
+    return Args.u256(BigInt(value))
+  }
+
+  if(typeName.includes("bool")){
+    return Args.bool(Boolean(value))
+  }
+
+  if(typeName.includes("address")){
+    return Args.address(value)
+  }
+
+  if(typeName.includes("struct")){
+    return Args.struct(value)
+  }
+
+  if(typeName.includes("vec")){
+    return Args.vec(getTypeConvert(typeName, value))
+  }
+}
+
 
 
 const MethodCall = ({moduleDetail, func}:{
@@ -31,6 +86,7 @@ const MethodCall = ({moduleDetail, func}:{
             scopes: [
               '0x1::*::*',
               '0x3::*::*',
+              `${moduleDetail.address}::*::*`
             ],
             maxInactiveInterval: 60 * 60 * 8,
           })
@@ -40,25 +96,51 @@ const MethodCall = ({moduleDetail, func}:{
         }
       }
 
-      const params = Object.values(form.getFieldsValue());
+      const params = form.getFieldsValue();
+      const paramsArr = []
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const value = params[key];
+          console.log(key, value)
+          const a = getTypeConvert(key, value)
+          paramsArr.push(a);
+        }
+      }
+
+      console.log(paramsArr, "0x3::gas_coin::RGas")
+
       const typeParams = Object.values(form1.getFieldsValue());
 
-      console.log(params, typeParams)
-
-      const tx = new Transaction();
-      const f = `${moduleDetail.address + "::" + moduleDetail.name}::${func.name}`
-      tx.callFunction({
-        target: f,
-        args: [params, typeParams]as any,
-      })
+      const txn = new Transaction();
+      txn.callFunction({
+        address: moduleDetail.address,
+        module: moduleDetail.name,
+        function: func.name,
+        args: [
+          // con red envelope object
+          // ...params.map(item=>Args.objectId(item))
+          ...paramsArr
+        ],
+        typeArgs: [
+          // ...typeParams,
+          ...typeParams.map(item=>normalizeTypeArgsToStr({
+            target:item,
+          })),
+        ],
+      });
+      console.log("执行交易", sessionKey)
+      console.log("执行交易", txn)
       const client = new RoochClient({url:useStore.getState().roochNodeUrl});
+      console.log("执行交易", client)
       const result = await client.signAndExecuteTransaction({
-        transaction: tx,
+        transaction: txn,
         signer: sessionKey as any,
       })
 
+
       if(result.execution_info.status.type === 'executed'){
-        message.success("Executed")
+        message.success(`Executed:${result.execution_info.tx_hash}`)
+        setLoading(false)
       }
     } catch (e:any){
       console.log(e, "Error")
@@ -71,13 +153,14 @@ const MethodCall = ({moduleDetail, func}:{
     <div className={"flex"}>
       <Form
         form={form}
+        layout="vertical"
         className={"w-[400px]"}>
         <div>
           {
-            func.params.filter(item=>item !== "&signer").map(item =>{
+            func?.params.filter(item=>item !== "&signer").map((item, index) =>{
               return  <Form.Item
                 key={item}
-                name={item}
+                name={`${item}${index}`}
                 label={<div className="dark:text-white">{item}</div>}
                 rules={[
                   {
@@ -93,27 +176,24 @@ const MethodCall = ({moduleDetail, func}:{
       </Form>
       <Form
         form={form1}
-        className={"w-[400px]"}>
-        <div className={"flex justify-end"}>
-          <div>
-            {
-              func.type_params.map((item, index) =>{
-                return  <Form.Item
-                  key={item.constraints[1]}
-                  name={item}
-                  label={<div className="dark:text-white">{`Ty${index}`}</div>}
-                  rules={[
-                    {
-                      required: true,
-                    },
-                  ]}
-                >
-                  <Input placeholder={item.constraints[1]} className="dark:text-white dark:bg-dark-gray"  key={item.constraints[1]}></Input>
-                </Form.Item>
-              })
-            }
-          </div>
-        </div>
+        layout="vertical"
+        className={"w-[400px] ml-20"}>
+        {
+          func?.type_params.map((item, index) =>{
+            return  <Form.Item
+              key={item.constraints[1]}
+              name={index}
+              label={<div className="dark:text-white">{`Ty${index}`}</div>}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input placeholder={item.constraints[1]} className="dark:text-white dark:bg-dark-gray"  key={item.constraints[1]}></Input>
+            </Form.Item>
+          })
+        }
       </Form>
     </div>
     <div className={"flex justify-start"}>
