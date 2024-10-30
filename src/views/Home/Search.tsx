@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card, Col, Input, Popover, Row, Statistic } from "antd";
 import { LoadingOutlined, SearchOutlined } from "@ant-design/icons";
@@ -130,7 +130,7 @@ export default function Home() {
             <Row gutter={10} className=" mt-[10px]">
               <Col span={12}>
                 <Card bordered={false} className="dark:bg-[#1d293a] bg-[#f4f4f5]">
-                  <Statistic title="Addresses" className="dark:text-white" value={10752264} precision={2} />
+                  <Statistic  title="Addresses" className="dark:text-white" value={10752264} precision={2} />
                 </Card>
               </Col>
               <Col span={12}>
