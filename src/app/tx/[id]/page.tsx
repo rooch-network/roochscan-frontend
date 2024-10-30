@@ -11,10 +11,11 @@ import L2Page from "./l2";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { duotoneLight ,dark} from "react-syntax-highlighter/dist/esm/styles/prism";
 import {useRouter} from "next/navigation"
-
+import useDarkMode from "@/hooks/useDarkMode";
 export default function BlockServer({ params }: { params: { id: string } }) {
     const router = useRouter()
     const { roochNodeUrl } = useStore();
+    const isDarkMode =useDarkMode()
   const { data } = useSWR(
     params.id ? [roochNodeUrl, params.id] : null,
     ([key, tx]) => getTransactionsByHash(tx),
@@ -59,7 +60,7 @@ export default function BlockServer({ params }: { params: { id: string } }) {
       children: (
         <SyntaxHighlighter
           language="json"
-          style={ dark }
+          style={ isDarkMode? dark :duotoneLight }
 
           customStyle={{
             whiteSpace: "pre-wrap",
