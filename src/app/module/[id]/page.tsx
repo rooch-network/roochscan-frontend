@@ -13,7 +13,7 @@ import ModuleDetail from "@/app/module/[id]/moduleDetail";
 import useDarkMode from "@/hooks/useDarkMode";
 
 
-const ModulePage = ({ params }: { params: { id: string } }) =>{
+const ModulePage = ({ params, hideHeader }: { params: { id: string }, hideHeader?:boolean }) =>{
   const id = decodeURIComponent(params.id);
   const router = useRouter()
   const isDarkMode =useDarkMode()
@@ -48,7 +48,7 @@ const ModulePage = ({ params }: { params: { id: string } }) =>{
     },
     {
       key: "2",
-      label: <div className="dark:text-white"> Raw JSON</div>, 
+      label: <div className="dark:text-white"> Raw JSON</div>,
       children: (
         <SyntaxHighlighter
           language="json"
@@ -70,21 +70,23 @@ const ModulePage = ({ params }: { params: { id: string } }) =>{
   ];
 
 
-  return <div className="container mx-auto mt-[80px]">
-    <Breadcrumb
-      className="cursor-pointer"
-      items={[
-        {
-          title:<div className="dark:text-white">Home</div>,
-          onClick:handleRouteHome
-        },
+  return <div className={`container mx-auto ${hideHeader ?? "mt-[80px]"}`}>
+    {
+      !hideHeader && <Breadcrumb
+        className="cursor-pointer"
+        items={[
+          {
+            title:<div className="dark:text-white">Home</div>,
+            onClick:handleRouteHome
+          },
 
-        {
-          title:  <div className="dark:text-white">Object</div>,
-        },
-      ]}
-    />
-    <div className="pc:mt-[40px] mt-[20px] dark:text-white">{id}</div>
+          {
+            title:  <div className="dark:text-white">Object</div>,
+          },
+        ]}
+      />
+    }
+    <div className={` ${hideHeader ?? "pc:mt-[40px] mt-[20px]"} dark:text-white`}>{id}</div>
     <Tabs defaultActiveKey="1" className="pc:mt-[40px] mt-[20px]" items={items} />
   </div>
 }
