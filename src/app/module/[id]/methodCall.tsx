@@ -49,7 +49,7 @@ const MethodCall = ({moduleDetail, func}:{
       const f = `${moduleDetail.address + "::" + moduleDetail.name}::${func.name}`
       tx.callFunction({
         target: f,
-        args: [...params]as any,
+        args: [params, typeParams]as any,
       })
       const client = new RoochClient({url:useStore.getState().roochNodeUrl});
       const result = await client.signAndExecuteTransaction({
@@ -97,11 +97,11 @@ const MethodCall = ({moduleDetail, func}:{
         <div className={"flex justify-end"}>
           <div>
             {
-              func.type_params.map(item =>{
+              func.type_params.map((item, index) =>{
                 return  <Form.Item
                   key={item.constraints[1]}
-                  name={item.constraints[1]}
-                  label={<div className="dark:text-white">{item.constraints[1]}</div>}
+                  name={item}
+                  label={<div className="dark:text-white">{`Ty${index}`}</div>}
                   rules={[
                     {
                       required: true,
