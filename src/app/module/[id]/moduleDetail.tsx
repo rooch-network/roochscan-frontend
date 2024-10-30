@@ -28,7 +28,7 @@ const ModuleDetail = ({moduleDetail}:{
     <div>
       {
         moduleDetail?.functions.map(item=>{
-          return <div key={item.name} onClick={()=>setCurrentFunc(item.name)} className={"px-[15px] cursor-pointer py-10 bg-[#66666610] my-10 rounded text-[16px] hover:bg-[#66666620]"}>{item.name}</div>
+          return <div key={item.name} onClick={()=>setCurrentFunc(item.name)} className={"px-[15px]  dark:bg-[#1d293a] dark:text-white cursor-pointer py-10 bg-[#66666610] my-10 rounded text-[16px] hover:bg-[#66666620]"}>{item.name}</div>
         })
       }
     </div>
