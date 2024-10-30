@@ -74,7 +74,7 @@ const MethodCall = ({moduleDetail, func}:{
         className={"w-[400px]"}>
         <div>
           {
-            func.params.map(item =>{
+            func.params.filter(item=>item !== "&signer").map(item =>{
               return  <Form.Item
                 key={item}
                 name={item}
@@ -97,18 +97,18 @@ const MethodCall = ({moduleDetail, func}:{
         <div className={"flex justify-end"}>
           <div>
             {
-              func.type_params[0].constraints.map(item =>{
+              func.type_params.map(item =>{
                 return  <Form.Item
-                  key={item}
-                  name={item}
-                  label={<div className="dark:text-white">{item}</div>}
+                  key={item.constraints[1]}
+                  name={item.constraints[1]}
+                  label={<div className="dark:text-white">{item.constraints[1]}</div>}
                   rules={[
                     {
                       required: true,
                     },
                   ]}
                 >
-                  <Input placeholder={item} className="dark:text-white dark:bg-dark-gray"  key={item}></Input>
+                  <Input placeholder={item.constraints[1]} className="dark:text-white dark:bg-dark-gray"  key={item.constraints[1]}></Input>
                 </Form.Item>
               })
             }
@@ -116,7 +116,7 @@ const MethodCall = ({moduleDetail, func}:{
         </div>
       </Form>
     </div>
-    <div className={"flex justify-center"}>
+    <div className={"flex justify-start"}>
       <Button loading={loading} onClick={handleSubmit} type={"primary"}>Submit</Button>
     </div>
   </div>
