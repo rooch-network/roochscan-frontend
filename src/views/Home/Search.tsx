@@ -114,14 +114,14 @@ export default function Home() {
             <Row gutter={10} className=" mt-[40px]">
               <Col span={12}>
                 <Card bordered={false} className="dark:bg-[#1d293a] bg-[#f4f4f5]" >
-                  <Statistic title="Blocks" value={107523} precision={2} />
+                  <Statistic title={<div className="dark:text-white">Blocks</div>} valueRender={() =><div className="dark:text-white">107523</div>} precision={2} />
                 </Card>
               </Col>
               <Col span={12}>
                 <Card bordered={false} className="dark:bg-[#1d293a] bg-[#f4f4f5]">
                   <Statistic
-                    title="Transactions"
-                    value={112893}
+                  title={<div className="dark:text-white">Transactions</div>}
+                  valueRender={() =><div className="dark:text-white">107523</div>}
                     precision={2}
                   />
                 </Card>
@@ -130,16 +130,15 @@ export default function Home() {
             <Row gutter={10} className=" mt-[10px]">
               <Col span={12}>
                 <Card bordered={false} className="dark:bg-[#1d293a] bg-[#f4f4f5]">
-                  <Statistic  title="Addresses" className="dark:text-white" value={10752264} precision={2} />
+                  <Statistic  title={<div className="dark:text-white">Addresses</div>} valueRender={() =><div className="dark:text-white">107523</div>} precision={2} />
                 </Card>
               </Col>
               <Col span={12}>
                 <Card bordered={false} className="dark:bg-[#1d293a] bg-[#f4f4f5]">
                   <Statistic
-                    title="Tps"
-                    value={20}
+                    title={<div className="dark:text-white">Tps</div>}
+                    valueRender={() =><div className="dark:text-white">20 sec</div>}
                     precision={0}
-                    suffix="/sec"
                   />
                 </Card>
               </Col>
@@ -149,22 +148,22 @@ export default function Home() {
           <Row gutter={16} className=" mt-[40px]">
             <Col span={6}>
               <Card bordered={false} className="dark:bg-[#1d293a] dark:text-white bg-[#f4f4f5]">
-                <Statistic title="Blocks" value={107523} precision={2} />
+                <Statistic   title={<div className="dark:text-white">Blocks</div>} valueRender={() =><div className="dark:text-white">107523</div>} precision={2} />
               </Card>
             </Col>
             <Col span={6}>
               <Card bordered={false} className="dark:bg-[#1d293a] bg-[#f4f4f5]">
-                <Statistic title="Transactions" value={112893} precision={2} />
+                <Statistic title={<div className="dark:text-white">Transactions</div>} valueRender={() =><div className="dark:text-white">107523</div>} precision={2} />
               </Card>
             </Col>
             <Col span={6}>
               <Card bordered={false} className="dark:bg-[#1d293a] bg-[#f4f4f5]">
-                <Statistic title="Addresses" value={10752264} precision={2} />
+                <Statistic title={<div className="dark:text-white">Addresses</div>} valueRender={() =><div className="dark:text-white">107523</div>} precision={2} />
               </Card>
             </Col>
             <Col span={6}>
               <Card bordered={false} className="dark:bg-[#1d293a] bg-[#f4f4f5]">
-                <Statistic title="Tps" value={20} precision={0} suffix="/sec" />
+                <Statistic title={<div className="dark:text-white">Tps</div>} valueRender={() =><div className="dark:text-white">20/sec</div>}precision={0}  />
               </Card>
             </Col>
           </Row>
