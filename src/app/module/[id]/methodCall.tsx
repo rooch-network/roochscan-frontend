@@ -78,14 +78,14 @@ const MethodCall = ({moduleDetail, func}:{
               return  <Form.Item
                 key={item}
                 name={item}
-                label={item}
+                label={<div className="dark:text-white">{item}</div>}
                 rules={[
                   {
                     required: true,
                   },
                 ]}
               >
-                <Input placeholder={item} key={item}></Input>
+                <Input placeholder={item} className="dark:text-white dark:bg-dark-gray" key={item}></Input>
               </Form.Item>
             })
           }
@@ -101,14 +101,14 @@ const MethodCall = ({moduleDetail, func}:{
                 return  <Form.Item
                   key={item}
                   name={item}
-                  label={item}
+                  label={<div className="dark:text-white">{item}</div>}
                   rules={[
                     {
                       required: true,
                     },
                   ]}
                 >
-                  <Input placeholder={item} key={item}></Input>
+                  <Input placeholder={item} className="dark:text-white dark:bg-dark-gray"  key={item}></Input>
                 </Form.Item>
               })
             }
