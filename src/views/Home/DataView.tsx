@@ -129,11 +129,7 @@ export default function DataView({ count }: { count: number }) {
                       onClick={(e) => {
                         e.stopPropagation();
                         handleCopy(
-                          getTokenShortHash(
-                            v.transaction?.data?.action?.function_call?.function_id.split(
-                              "::"
-                            )[0] || ""
-                          )
+                          v.transaction.data.action?.function_call?.function_id
                         );
                       }}
                     />
