@@ -1,6 +1,6 @@
 import {FunctionDetail, IModule} from "@/types";
 import {Button, Form, Input, message} from "antd";
-import {useCreateSessionKey, useCurrentSession} from "@roochnetwork/rooch-sdk-kit";
+import {useCreateSessionKey, useCurrentAddress, useCurrentSession} from "@roochnetwork/rooch-sdk-kit";
 import {useEffect, useState} from "react";
 import {Args, RoochClient, Transaction, normalizeTypeArgsToStr} from "@roochnetwork/rooch-sdk";
 import useStore from "@/store";
@@ -66,6 +66,7 @@ const MethodCall = ({moduleDetail, func}:{
   func:FunctionDetail
 }) =>{
   const sessionKey = useCurrentSession()
+  const address = useCurrentAddress()
   const { mutateAsync: createSessionKey } = useCreateSessionKey();
   const [form] = Form.useForm()
   const [form1] = Form.useForm()
@@ -73,6 +74,7 @@ const MethodCall = ({moduleDetail, func}:{
 
   const handleSubmit = async () =>{
     try{
+      if(!address) return message.info("Please connect wallet!")
       if (loading) {
         return
       }
