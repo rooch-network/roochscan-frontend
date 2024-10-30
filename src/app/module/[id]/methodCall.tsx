@@ -1,7 +1,7 @@
 import {FunctionDetail, IModule} from "@/types";
 import {Button, Form, Input, message} from "antd";
 import {useCreateSessionKey, useCurrentSession} from "@roochnetwork/rooch-sdk-kit";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Args, RoochClient, Transaction, normalizeTypeArgsToStr} from "@roochnetwork/rooch-sdk";
 import useStore from "@/store";
 
@@ -106,9 +106,6 @@ const MethodCall = ({moduleDetail, func}:{
           paramsArr.push(a);
         }
       }
-
-      console.log(paramsArr, "0x3::gas_coin::RGas")
-
       const typeParams = Object.values(form1.getFieldsValue());
 
       const txn = new Transaction();
@@ -148,6 +145,11 @@ const MethodCall = ({moduleDetail, func}:{
       message.error(e.message)
     }
   }
+
+  useEffect(()=>{
+    form.resetFields();
+    form1.resetFields();
+  }, [func])
 
   return <div>
     <div className={"flex"}>
