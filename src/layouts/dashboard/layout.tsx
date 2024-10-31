@@ -10,6 +10,8 @@ import { useCurrentAddress } from '@roochnetwork/rooch-sdk-kit';
 import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 
+import { useRouter } from 'src/routes/hooks';
+
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { varAlpha, stylesMode } from 'src/theme/styles';
@@ -24,6 +26,7 @@ import { NavVertical } from './nav-vertical';
 import { HeaderBase } from '../core/header-base';
 import { LayoutSection } from '../core/layout-section';
 import { navData as dashboardNavData } from '../config-nav-dashboard';
+
 
 export type DashboardLayoutProps = {
   sx?: SxProps<Theme>;
@@ -43,6 +46,8 @@ export function DashboardLayout({ sx, children, data }: DashboardLayoutProps) {
   const settings = useSettingsContext();
 
   const navColorVars = useNavColorVars(theme, settings);
+
+  const router = useRouter()
 
   const layoutQuery: Breakpoint = 'lg';
 
@@ -88,6 +93,7 @@ export function DashboardLayout({ sx, children, data }: DashboardLayoutProps) {
             layoutQuery={layoutQuery}
             disableElevation={isNavVertical}
             onOpenNav={mobileNavOpen.onTrue}
+            onRouteHome ={() =>router.push('/')}
             data={{
               nav: navDataWithAddress,
             }}

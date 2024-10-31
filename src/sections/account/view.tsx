@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { isValidBitcoinAddress } from '@roochnetwork/rooch-sdk';
 import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
 
-import { Box, Card, Chip, Stack, CardHeader, CardContent } from '@mui/material';
+import { Box, Card, Chip, Stack, CardHeader, CardContent, Button } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
@@ -15,9 +15,11 @@ import { BitcoinAddressToRoochAddress } from 'src/utils/address';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 
 import AssetsTableCard from '../assets/components/assets-table-card';
 import TransactionsTableCard from '../transactions/components/transactions-table-card';
+
 
 export function AccountView({ address }: { address: string }) {
   const [viewAddress, setViewAddress] = useState<string>();
@@ -57,6 +59,15 @@ export function AccountView({ address }: { address: string }) {
 
   return (
     <DashboardContent maxWidth="xl">
+       <Button
+        className="w-fit"
+        onClick={() => {
+          router.back();
+        }}
+        startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}
+      >
+        Back
+      </Button>
       <Card>
         <CardHeader title="Account Info" sx={{ mb: 1 }} />
         <CardContent className="!pt-0">
@@ -78,7 +89,7 @@ export function AccountView({ address }: { address: string }) {
                 variant="soft"
                 color="default"
               />
-              <Box className="text-gray-400 text-sm font-medium">(Rooch Address)</Box>
+              <Box className="text-sm font-medium text-gray-400">(Rooch Address)</Box>
             </Stack>
           </Stack>
         </CardContent>

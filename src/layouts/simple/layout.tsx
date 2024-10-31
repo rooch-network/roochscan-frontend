@@ -4,6 +4,8 @@ import type { Theme, SxProps, Breakpoint } from '@mui/material/styles';
 
 import Alert from '@mui/material/Alert';
 
+import { useRouter } from 'src/routes/hooks';
+
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { Main, CompactContent } from './main';
@@ -20,6 +22,7 @@ export type SimpleLayoutProps = {
 
 export function SimpleLayout({ sx, children, content }: SimpleLayoutProps) {
   const mobileNavOpen = useBoolean();
+  const router = useRouter()
 
   const layoutQuery: Breakpoint = 'md';
 
@@ -29,6 +32,7 @@ export function SimpleLayout({ sx, children, content }: SimpleLayoutProps) {
         <HeaderBase
           layoutQuery={layoutQuery}
           onOpenNav={mobileNavOpen.onTrue}
+          onRouteHome={() =>router.push('/')}
           slotsDisplay={{
             account: false,
             menuButton: false,

@@ -20,8 +20,8 @@ export default function SearchView() {
     <DashboardContent maxWidth="xl">
       <Card>
         <CardHeader
-          title="Search Account"
-          subheader="Enter Bitcoin Address to search"
+          title="Search "
+          subheader="Search for transactions, accounts, and modules."
           sx={{ mb: 2 }}
         />
         <CardContent className="!pt-0">

@@ -23,7 +23,7 @@ export function AccountButton() {
           setShowWalletSelectModal(true);
         }}
       >
-        Connect Wallet
+        Connect Wallet  
       </Button>
       {showWalletSelectModal && (
         <WalletSelectModal onSelect={() => setShowWalletSelectModal(false)} />

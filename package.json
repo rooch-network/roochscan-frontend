@@ -68,7 +68,8 @@
     "stylis": "^4.3.2",
     "stylis-plugin-rtl": "^2.1.1",
     "tailwindcss": "^3.4.6",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",

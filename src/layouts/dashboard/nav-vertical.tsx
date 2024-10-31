@@ -45,7 +45,7 @@ export function NavVertical({
             pb: 1,
           }}
         >
-          <img src="/logo/logo-full.svg" width="128px" alt="Rooch logo" />
+          <img src="/logo/logo-full.svg"   width="128px" alt="Rooch logo" />
         </Box>
       )}
 

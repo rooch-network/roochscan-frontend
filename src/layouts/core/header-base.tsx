@@ -1,12 +1,14 @@
 import type { NavSectionProps } from 'src/components/nav-section';
 
 import Box from '@mui/material/Box';
+import { Button } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 
 import { Logo } from 'src/components/logo';
 
 import { HeaderSection } from './header-section';
 import { MenuButton } from '../components/menu-button';
+import {SwitchNetWork} from '../components/switch-netWork';
 import { AccountDrawer } from '../components/account-drawer';
 
 import type { HeaderSectionProps } from './header-section';
@@ -38,6 +40,7 @@ const StyledDivider = styled('span')(({ theme }) => ({
 
 export type HeaderBaseProps = HeaderSectionProps & {
   onOpenNav: () => void;
+  onRouteHome:() => void;
   data?: {
     nav?: NavSectionProps['data'];
   };
@@ -59,6 +62,7 @@ export function HeaderBase({
   slots,
   slotProps,
   onOpenNav,
+  onRouteHome,
   layoutQuery,
   slotsDisplay: { account = true, menuButton = true } = {},
   ...other
@@ -84,7 +88,10 @@ export function HeaderBase({
                 sx={{ mr: 1, ml: -1, [theme.breakpoints.up(layoutQuery)]: { display: 'none' } }}
               />
             )}
-            <img src="/logo/logo-full.svg" width="128px" alt="Rooch logo" />
+            <Button onClick={onRouteHome}>
+            <img src="/logo/logo-full.svg"  width="128px" alt="Rooch logo" />
+            </Button>
+           
             {/* -- Logo -- */}
             <Logo data-slot="logo" />
 
@@ -106,7 +113,7 @@ export function HeaderBase({
                 gap: { xs: 1, sm: 1.5 },
               }}
             >
-              
+              <SwitchNetWork/>
               {/* -- Account drawer -- */}
               {account && <AccountDrawer data-slot="account" />}
 

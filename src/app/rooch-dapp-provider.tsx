@@ -1,21 +1,33 @@
 'use client';
 
-import type { ReactNode } from 'react';
-
+import { useMemo, type ReactNode } from 'react';
+import { getRoochNodeUrl, NetWorkType } from '@roochnetwork/rooch-sdk';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RoochProvider, WalletProvider } from '@roochnetwork/rooch-sdk-kit';
 
 import { networkConfig } from 'src/hooks/use-networks';
 
-import { isMainNetwork } from '../utils/env'
+import useStore from 'src/store';
 
-const queryClient = new QueryClient();
+import { isMainNetwork } from '../utils/env';
+
+const queryClient = new QueryClient({});
 
 export default function RoochDappProvider({ children }: { children: ReactNode }) {
-  const network = isMainNetwork() ? 'mainnet' : 'testnet'
+  const { roochNodeUrl } = useStore();
+  let network = isMainNetwork() ? 'mainnet' : 'testnet';
+  if (roochNodeUrl === getRoochNodeUrl('mainnet')) {
+    network = 'mainnet';
+  } else if (roochNodeUrl === getRoochNodeUrl('testnet')) {
+    network = 'testnet';
+  } else {
+    network = 'localnet';
+  }
+  console.log(network, 'network');
+
   return (
     <QueryClientProvider client={queryClient}>
-      <RoochProvider networks={networkConfig} defaultNetwork={network}>
+      <RoochProvider networks={networkConfig}  defaultNetwork="testnet">
         <WalletProvider chain="bitcoin" autoConnect>
           {children}
         </WalletProvider>
