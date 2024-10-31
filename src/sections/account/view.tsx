@@ -52,7 +52,8 @@ export function AccountView({ address }: { address: string }) {
     },
     { enabled: !!viewAddress }
   );
-
+  console.log(transactionsList,"transactionsList");
+  
   if (!viewAddress) {
     return null;
   }
