@@ -156,6 +156,8 @@ export default function TransactionsTableCard({
           <Button
             variant="text"
             color="primary"
+            component={RouterLink}
+            href="/txs/"
           >
             View All
           </Button>

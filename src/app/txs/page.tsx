@@ -30,7 +30,7 @@ export default function TransactionsView() {
     }),
     [paginationModel]
   );
-  const { fiveMinutesAgoMillis, currentTimeMillis } = useTimeRange(5000); 
+  const { fiveMinutesAgoMillis, currentTimeMillis } = useTimeRange(5000,false); 
 
   const { data: transactionsList, isPending } = useRoochClientQuery('queryTransactions', {
     filter: {
