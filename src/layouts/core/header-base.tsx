@@ -75,7 +75,7 @@ export function HeaderBase({
         leftArea: (
           <>
             {slots?.leftAreaStart}
-
+            
             {/* -- Menu button -- */}
             {menuButton && (
               <MenuButton
@@ -84,7 +84,7 @@ export function HeaderBase({
                 sx={{ mr: 1, ml: -1, [theme.breakpoints.up(layoutQuery)]: { display: 'none' } }}
               />
             )}
-
+            <img src="/logo/logo-full.svg" width="128px" alt="Rooch logo" />
             {/* -- Logo -- */}
             <Logo data-slot="logo" />
 
@@ -97,7 +97,7 @@ export function HeaderBase({
         rightArea: (
           <>
             {slots?.rightAreaStart}
-
+            
             <Box
               data-area="right"
               sx={{
@@ -106,6 +106,7 @@ export function HeaderBase({
                 gap: { xs: 1, sm: 1.5 },
               }}
             >
+              
               {/* -- Account drawer -- */}
               {account && <AccountDrawer data-slot="account" />}
 
