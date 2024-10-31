@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { duotoneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { duotoneLight,duotoneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import {
   Tab,
@@ -21,6 +21,7 @@ import {
   Skeleton,
   CardHeader,
   CardContent,
+  useColorScheme,
 } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';
@@ -50,7 +51,7 @@ const TX_VIEW_TABS = [
 ];
 
 function PropsKeyItem({ itemKey }: { itemKey: string }) {
-  return <Box className="text-sm font-semibold text-gray-600 w-48">{itemKey}</Box>;
+  return <Box className="w-48 text-sm font-semibold text-gray-600">{itemKey}</Box>;
 }
 
 function PropsValueItem({ children, loading }: { children: ReactNode; loading?: boolean }) {
@@ -63,7 +64,7 @@ function PropsValueItem({ children, loading }: { children: ReactNode; loading?: 
 export function TxView({ hash }: { hash: string }) {
   const tabs = useTabs('overview');
   const router = useRouter();
-
+  const { mode } = useColorScheme();
   const { data: transactionDetail, isPending } = useRoochClientQuery('queryTransactions', {
     filter: {
       tx_hashes: [hash],
@@ -169,7 +170,7 @@ export function TxView({ hash }: { hash: string }) {
                     <Box className="text-sm font-semibold">
                       {dayjs(Number(txDetail.transaction.sequence_info.tx_timestamp)).fromNow()}
 
-                      <span className="text-gray-500 ml-2">
+                      <span className="ml-2 text-gray-500">
                         (
                         {dayjs(Number(txDetail.transaction.sequence_info.tx_timestamp)).format(
                           'MMMM DD, YYYY HH:mm:ss   UTC Z'
@@ -225,7 +226,7 @@ export function TxView({ hash }: { hash: string }) {
                               variant="soft"
                               color="default"
                             />
-                            <Box className="text-gray-400 text-sm font-medium">(Rooch Address)</Box>
+                            <Box className="text-sm font-medium text-gray-400">(Rooch Address)</Box>
                           </Stack>
                         </>
                       )}
@@ -280,7 +281,7 @@ export function TxView({ hash }: { hash: string }) {
             <Stack>
               <SyntaxHighlighter
                 language="json"
-                style={duotoneLight}
+                style={  mode ==='light' ? duotoneLight : duotoneDark}
                 customStyle={{
                   whiteSpace: 'pre-wrap',
                   width: '100%',

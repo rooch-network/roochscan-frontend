@@ -9,13 +9,21 @@ import { useRouter } from 'src/routes/hooks';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
-const placeholder = 'tb1pjugffa0n2ts0vra032t3phae7xrehdjfzkg284ymvf260vjh225s5u4z76';
+// const placeholder = 'tb1pjugffa0n2ts0vra032t3phae7xrehdjfzkg284ymvf260vjh225s5u4z76';
+const placeholder = 'Search for transactions, accounts, and modules';
+
 
 export default function SearchView() {
   const [account, setAccount] = useState('');
   const [errorMsg, setErrorMsg] = useState<string>();
   const router = useRouter();
-
+  const handleSearch = () => {
+    if (!account.startsWith('0x') && isValidBitcoinAddress(account)) {
+      router.push(`/account/${account || placeholder}`);
+    } else if (account.startsWith('0x')) {
+      router.push(`/tx/${account}`);
+    }
+  };
   return (
     <DashboardContent maxWidth="xl">
       <Card>
@@ -38,13 +46,14 @@ export default function SearchView() {
               }}
             />
             <Button
-              onClick={() => {
-                if (account && !isValidBitcoinAddress(account)) {
-                  setErrorMsg('Invalid address');
-                  return;
-                }
-                router.push(`/account/${account || placeholder}`);
-              }}
+              onClick={handleSearch}
+              // onClick={() => {
+              //   if (account && !isValidBitcoinAddress(account)) {
+              //     setErrorMsg('Invalid address');
+              //     return;
+              //   }
+              //   router.push(`/account/${account || placeholder}`);
+              // }}
             >
               Search
             </Button>
