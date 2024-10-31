@@ -9,6 +9,7 @@ import { Logo } from 'src/components/logo';
 import { HeaderSection } from './header-section';
 import { MenuButton } from '../components/menu-button';
 import {SwitchNetWork} from '../components/switch-netWork';
+import {SwitchDorkMode} from "../components/switch-darkMode"
 import { AccountDrawer } from '../components/account-drawer';
 
 import type { HeaderSectionProps } from './header-section';
@@ -113,6 +114,7 @@ export function HeaderBase({
                 gap: { xs: 1, sm: 1.5 },
               }}
             >
+              <SwitchDorkMode/>
               <SwitchNetWork/>
               {/* -- Account drawer -- */}
               {account && <AccountDrawer data-slot="account" />}
