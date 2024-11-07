@@ -80,12 +80,12 @@ export function DashboardLayout({ sx, children, data }: DashboardLayoutProps) {
 
   return (
     <>
-      <NavMobile
+      {/* <NavMobile
         data={navDataWithAddress}
         open={mobileNavOpen.value}
         onClose={mobileNavOpen.onFalse}
         cssVars={navColorVars.section}
-      />
+      /> */}
 
       <LayoutSection
         headerSection={

@@ -1,7 +1,7 @@
 import type { NavSectionProps } from 'src/components/nav-section';
 
 import Box from '@mui/material/Box';
-import { Button } from '@mui/material';
+import { useColorScheme ,Button} from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 
 import { Logo } from 'src/components/logo';
@@ -69,6 +69,7 @@ export function HeaderBase({
   ...other
 }: HeaderBaseProps) {
   const theme = useTheme();
+  const { mode } = useColorScheme();
 
   return (
     <HeaderSection
@@ -82,15 +83,15 @@ export function HeaderBase({
             {slots?.leftAreaStart}
             
             {/* -- Menu button -- */}
-            {menuButton && (
+            {/* {menuButton && (
               <MenuButton
                 data-slot="menu-button"
                 onClick={onOpenNav}
                 sx={{ mr: 1, ml: -1, [theme.breakpoints.up(layoutQuery)]: { display: 'none' } }}
               />
-            )}
+            )} */}
             <Button onClick={onRouteHome}>
-            <img src="/logo/logo-full.svg"  width="128px" alt="Rooch logo" />
+            <img src= {mode ==='dark' ? '/logo/logo-full-dark.svg' :'/logo/logo-full.svg' }  width="128px" alt="Rooch logo" />
             </Button>
            
             {/* -- Logo -- */}

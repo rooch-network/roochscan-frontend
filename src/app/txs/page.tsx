@@ -7,13 +7,13 @@ import { Button } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';
 
+import useTimeRange from 'src/hooks/useTimeRange';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
 
 import TransactionsTableHome from "src/sections/transactions/components/transactions-table-home";
-import useTimeRange from 'src/hooks/useTimeRange';
 
 
 export default function TransactionsView() {

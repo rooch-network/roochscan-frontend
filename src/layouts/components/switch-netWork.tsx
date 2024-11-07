@@ -32,9 +32,9 @@ export function SwitchNetWork() {
         displayEmpty
         inputProps={{ 'aria-label': 'Without label' }}
       >
-        <MenuItem value={NetWork.Mainnet}>Mainnet NetWork</MenuItem>
-        <MenuItem value={NetWork.Testnet}>Testnet NetWork</MenuItem>
-        <MenuItem value={NetWork.Localnet}>Localnet NetWork</MenuItem>
+        <MenuItem value={NetWork.Mainnet}>Mainnet Network</MenuItem>
+        <MenuItem value={NetWork.Testnet}>Testnet Network</MenuItem>
+        <MenuItem value={NetWork.Localnet}>Localnet Network</MenuItem>
       </Select>
     </div>
   );

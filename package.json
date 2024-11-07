@@ -35,6 +35,7 @@
     "@fontsource/public-sans": "^5.0.18",
     "@hookform/resolvers": "^3.6.0",
     "@iconify/react": "^5.0.1",
+    "@mui/icons-material": "^6.1.6",
     "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.15.20",
     "@mui/material-nextjs": "^5.15.11",
