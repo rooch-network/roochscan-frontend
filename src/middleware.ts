@@ -14,8 +14,10 @@ const faucetDomains = [FAUCET_MAINNET, FAUCET_TESTNET];
 const apiDomains = [
   getRoochNodeUrl('mainnet'),
   getRoochNodeUrl('testnet'),
+  getRoochNodeUrl('localnet'),
   'https://test-faucet.rooch.network',
   'https://main-faucet.rooch.network',
+  
 ];
 const isProduction = process.env.NODE_ENV === 'production';
 
