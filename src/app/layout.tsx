@@ -47,7 +47,6 @@ export default async function RootLayout({ children }: Props) {
               <MotionLazy>
                 <Snackbar />
                 <ProgressBar />
-                <SettingsDrawer />
                 <DashboardLayout>{children}</DashboardLayout>
               </MotionLazy>
             </ThemeProvider>
