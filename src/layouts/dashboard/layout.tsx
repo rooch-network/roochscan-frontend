@@ -20,9 +20,7 @@ import { bulletColor } from 'src/components/nav-section';
 import { useSettingsContext } from 'src/components/settings';
 
 import { Main } from './main';
-import { NavMobile } from './nav-mobile';
 import { layoutClasses } from '../classes';
-import { NavVertical } from './nav-vertical';
 import { HeaderBase } from '../core/header-base';
 import { LayoutSection } from '../core/layout-section';
 import { navData as dashboardNavData } from '../config-nav-dashboard';
@@ -93,7 +91,7 @@ export function DashboardLayout({ sx, children, data }: DashboardLayoutProps) {
             layoutQuery={layoutQuery}
             disableElevation={isNavVertical}
             onOpenNav={mobileNavOpen.onTrue}
-            onRouteHome ={() =>router.push('/')}
+            onRouteHome={() => router.push('/')}
             data={{
               nav: navDataWithAddress,
             }}
@@ -117,7 +115,7 @@ export function DashboardLayout({ sx, children, data }: DashboardLayoutProps) {
                 },
               },
               container: {
-                maxWidth: false,
+                maxWidth: "xl",
                 sx: {
                   ...(isNavVertical && { px: { [layoutQuery]: 5 } }),
                 },

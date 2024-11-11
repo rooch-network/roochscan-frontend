@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { isValidBitcoinAddress } from '@roochnetwork/rooch-sdk';
 import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
 
@@ -22,7 +22,7 @@ export default function SearchView() {
   const [errorMsg, setErrorMsg] = useState<string>();
   const router = useRouter();
 
-  const { fiveMinutesAgoMillis, currentTimeMillis } = useTimeRange(5000); 
+  const { fiveMinutesAgoMillis, currentTimeMillis } = useTimeRange(5000);
 
   const handleSearch = () => {
     if (!account.startsWith('0x') && isValidBitcoinAddress(account)) {
@@ -62,7 +62,6 @@ export default function SearchView() {
       <Card>
         <CardHeader
           title="Search "
-          subheader="Search for transactions, accounts, and modules."
           sx={{ mb: 2 }}
         />
         <CardContent className="!pt-0">
