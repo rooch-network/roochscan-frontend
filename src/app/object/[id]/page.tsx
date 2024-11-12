@@ -44,7 +44,6 @@ export default function Object ({ params }: { params: { id: string } }) {
 
 
   const objectDetail = useMemo(() => {
-    console.log(data, "datadatadatadata")
     return data?.data
   }, [data]);
 

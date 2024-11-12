@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { isValidBitcoinAddress } from '@roochnetwork/rooch-sdk';
-import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
+import {useRoochClient, useRoochClientQuery} from '@roochnetwork/rooch-sdk-kit';
 
 import { Card, Stack, Button, TextField, CardHeader, CardContent } from '@mui/material';
 
@@ -22,12 +22,29 @@ export default function SearchView() {
   const [errorMsg, setErrorMsg] = useState<string>();
   const router = useRouter();
 
+  const client = useRoochClient()
+
   const { fiveMinutesAgoMillis, currentTimeMillis } = useTimeRange(5000);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!account.startsWith('0x') && isValidBitcoinAddress(account)) {
       router.push(`/account/${account || placeholder}`);
     } else if (account.startsWith('0x')) {
+
+     const {data} = await client.queryObjectStates({
+        filter:{
+          object_id: account,
+        }
+      })
+
+
+      console.log(data, "0x0000000000000000000000000000000000000000000000000000000000000003")
+
+      if(data?.length > 0){
+        router.push(`/object/${account}`)
+        return;
+      }
+
       router.push(`/tx/${account}`);
     }
   };
