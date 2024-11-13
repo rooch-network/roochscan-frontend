@@ -36,10 +36,6 @@ export default function SearchView() {
           object_id: account,
         }
       })
-
-
-      console.log(data, "0x0000000000000000000000000000000000000000000000000000000000000003")
-
       if(data?.length > 0){
         router.push(`/object/${account}`)
         return;
