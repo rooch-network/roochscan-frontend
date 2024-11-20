@@ -23,3 +23,10 @@ export function shortAddress(address: string | null | undefined, start = 6, end 
 export function BitcoinAddressToRoochAddress(bitcoinAddress: string) {
   return new BitcoinAddress(bitcoinAddress).genRoochAddress();
 }
+
+// show function call name
+export const shotSentTo = (val:string) =>{
+  if(!val) return ""
+  const valList = val.split("::")
+  return `${valList[1]  }::${ valList[valList.length -1]}`
+}
