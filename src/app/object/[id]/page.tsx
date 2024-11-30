@@ -1,83 +1,112 @@
 "use client";
-import React, {useMemo} from "react";
-import {Breadcrumb, Tabs, TabsProps} from "antd";
+import React, {ReactNode, useMemo} from "react";
 import {useRouter} from "next/navigation"
+import {useRoochClientQuery} from "@roochnetwork/rooch-sdk-kit";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
-import {duotoneLight} from "react-syntax-highlighter/dist/esm/styles/prism";
-import useSWR from "swr";
-import {getObjectById, getTransactionsByHash} from "@/api";
-import useStore from "@/store";
-import ObjectDetail from "@/app/object/[id]/object";
+import {duotoneDark, duotoneLight} from "react-syntax-highlighter/dist/esm/styles/prism";
 
+import {
+  Box,
+  Tab,
+  Card,
+  Chip,
+  Tabs,
+  Stack,
+  Button,
+  Divider,
+  CardHeader,
+  CardContent,
+  useColorScheme, Skeleton
+} from "@mui/material";
 
+import {varAlpha} from "../../../theme/styles";
+import {useTabs} from "../../../hooks/use-tabs";
+import {Iconify} from "../../../components/iconify";
+import {DashboardContent} from "../../../layouts/dashboard";
+import ObjectDetail from "./object";
+
+const TX_VIEW_TABS = [
+  { label: 'Overview', value: 'overview' },
+  { label: 'Raw JSON', value: 'raw' },
+];
 export default function Object ({ params }: { params: { id: string } }) {
+  const tabs = useTabs('overview');
+  const { mode } = useColorScheme();
   const router = useRouter()
-  const handleRouteHome = () =>{
-    router.push("/")
-  }
-  const { roochNodeUrl } = useStore();
-  const { data } = useSWR(
-    params.id ? [roochNodeUrl, params.id] : null,
-    ([key, tx]) => getObjectById(tx),
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      refreshInterval: 0,
-    }
-  );
+
+  const { data, isPending } = useRoochClientQuery('queryObjectStates' as any, {
+    filter: {
+      object_id: params.id,
+    },
+  } as any);
+
+
+
   const objectDetail = useMemo(() => {
-    return data?.result.data;
+    return data?.data
   }, [data]);
-  const items: TabsProps["items"] = [
-    {
-      key: "1",
-      label: "Overview",
-      children:<div>
-        {
-          objectDetail?.map(item=>{
-            return <ObjectDetail key={item.id} object={item}></ObjectDetail>
-          })
-        }
-      </div>,
-    },
-    {
-      key: "2",
-      label: "Raw JSON",
-      children: (
-        <SyntaxHighlighter
-          language="json"
-          style={duotoneLight}
-          customStyle={{
-            whiteSpace: "pre-wrap",
-            width: "100%",
-            borderRadius: "8px",
-            wordBreak: "break-all",
-            overflowWrap: "break-word",
-          }}
-          wrapLines
-          wrapLongLines
-        >
-           { JSON.stringify(objectDetail, null, 2)}
-        </SyntaxHighlighter>
-      ),
-    },
-  ];
 
-  return <div className="container mx-auto mt-[80px]">
-    <Breadcrumb
-      className="cursor-pointer"
-      items={[
-        {
-          title: "Home",
-          onClick:handleRouteHome
-        },
 
-        {
-          title: "Object",
-        },
-      ]}
-    />
-    <div className="mt-[40px]">{params.id}</div>
-    <Tabs defaultActiveKey="1" className="mt-[40px]" items={items} />
-  </div>
+  const renderTabs = (
+    <Tabs value={tabs.value} onChange={tabs.onChange} sx={{ mb: { xs: 2, md: 2 } }}>
+      {TX_VIEW_TABS.map((tab) => (
+        <Tab key={tab.value} value={tab.value} label={tab.label} />
+      ))}
+    </Tabs>
+  );
+
+  return <DashboardContent maxWidth="xl">
+    <Button
+      className="w-fit"
+      onClick={() => {
+        router.back();
+      }}
+      startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}
+    >
+      Back
+    </Button>
+    <Card className="mt-4">
+      <CardHeader title="Object" subheader={params.id} sx={{ mb: 3 }} />
+
+      <Divider />
+
+      <CardContent className="!pt-0">
+        {renderTabs}
+        {tabs.value === 'overview' && (
+          objectDetail?.map(item=> <ObjectDetail object={item}/>)
+        )}
+        {tabs.value === 'raw' && (
+          <Stack>
+            <SyntaxHighlighter
+              language="json"
+              style={  mode ==='light' ? duotoneLight : duotoneDark}
+              customStyle={{
+                whiteSpace: 'pre-wrap',
+                width: '100%',
+                borderRadius: '8px',
+                wordBreak: 'break-all',
+                overflowWrap: 'break-word',
+              }}
+              wrapLines
+              wrapLongLines
+            >
+              {JSON.stringify(objectDetail, null, 2)}
+            </SyntaxHighlighter>
+          </Stack>
+        )}
+      </CardContent>
+    </Card>
+  </DashboardContent>
+}
+
+
+function PropsKeyItem({ itemKey }: { itemKey: string }) {
+  return <Box className="w-48 text-sm font-semibold text-gray-600">{itemKey}</Box>;
+}
+
+function PropsValueItem({ children, loading }: { children: ReactNode; loading?: boolean }) {
+  if (loading) {
+    return <Skeleton width="160px" height="16px" />;
+  }
+  return children;
 }

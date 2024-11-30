@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { isValidBitcoinAddress } from '@roochnetwork/rooch-sdk';
-import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
+import {useRoochClient, useRoochClientQuery} from '@roochnetwork/rooch-sdk-kit';
 
 import { Card, Stack, Button, TextField, CardHeader, CardContent } from '@mui/material';
 
@@ -22,12 +22,25 @@ export default function SearchView() {
   const [errorMsg, setErrorMsg] = useState<string>();
   const router = useRouter();
 
-  const { fiveMinutesAgoMillis, currentTimeMillis } = useTimeRange(5000); 
+  const client = useRoochClient()
 
-  const handleSearch = () => {
+  const { fiveMinutesAgoMillis, currentTimeMillis } = useTimeRange(5000);
+
+  const handleSearch = async () => {
     if (!account.startsWith('0x') && isValidBitcoinAddress(account)) {
       router.push(`/account/${account || placeholder}`);
     } else if (account.startsWith('0x')) {
+
+     const {data} = await client.queryObjectStates({
+        filter:{
+          object_id: account,
+        }
+      })
+      if(data?.length > 0){
+        router.push(`/object/${account}`)
+        return;
+      }
+
       router.push(`/tx/${account}`);
     }
   };
@@ -62,7 +75,6 @@ export default function SearchView() {
       <Card>
         <CardHeader
           title="Search "
-          subheader="Search for transactions, accounts, and modules."
           sx={{ mb: 2 }}
         />
         <CardContent className="!pt-0">

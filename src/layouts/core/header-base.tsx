@@ -1,16 +1,17 @@
 import type { NavSectionProps } from 'src/components/nav-section';
 
+import { useMemo } from 'react';
+
 import Box from '@mui/material/Box';
-import { useColorScheme ,Button} from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
+import { Button, useColorScheme } from '@mui/material';
 
 import { Logo } from 'src/components/logo';
 
 import { HeaderSection } from './header-section';
-import { MenuButton } from '../components/menu-button';
-import {SwitchNetWork} from '../components/switch-netWork';
-import {SwitchDorkMode} from "../components/switch-darkMode"
+import { SwitchNetWork } from '../components/switch-netWork';
 import { AccountDrawer } from '../components/account-drawer';
+import { SwitchDorkMode } from "../components/switch-darkMode"
 
 import type { HeaderSectionProps } from './header-section';
 
@@ -41,7 +42,7 @@ const StyledDivider = styled('span')(({ theme }) => ({
 
 export type HeaderBaseProps = HeaderSectionProps & {
   onOpenNav: () => void;
-  onRouteHome:() => void;
+  onRouteHome: () => void;
   data?: {
     nav?: NavSectionProps['data'];
   };
@@ -68,8 +69,9 @@ export function HeaderBase({
   slotsDisplay: { account = true, menuButton = true } = {},
   ...other
 }: HeaderBaseProps) {
-  const theme = useTheme();
   const { mode } = useColorScheme();
+
+  const logo = useMemo(() => <img src={mode === 'dark' ? '/logo/logo-full-dark.svg' : '/logo/logo-full.svg'} width="128px" alt="Rooch logo" />, [mode]);
 
   return (
     <HeaderSection
@@ -81,7 +83,7 @@ export function HeaderBase({
         leftArea: (
           <>
             {slots?.leftAreaStart}
-            
+
             {/* -- Menu button -- */}
             {/* {menuButton && (
               <MenuButton
@@ -91,11 +93,12 @@ export function HeaderBase({
               />
             )} */}
             <Button onClick={onRouteHome}>
-            <img src= {mode ==='dark' ? '/logo/logo-full-dark.svg' :'/logo/logo-full.svg' }  width="128px" alt="Rooch logo" />
+              {logo}
             </Button>
-           
+
             {/* -- Logo -- */}
             <Logo data-slot="logo" />
+
 
             {/* -- Divider -- */}
             <StyledDivider data-slot="divider" />
@@ -106,7 +109,7 @@ export function HeaderBase({
         rightArea: (
           <>
             {slots?.rightAreaStart}
-            
+
             <Box
               data-area="right"
               sx={{
@@ -115,8 +118,8 @@ export function HeaderBase({
                 gap: { xs: 1, sm: 1.5 },
               }}
             >
-              <SwitchDorkMode/>
-              <SwitchNetWork/>
+              <SwitchDorkMode />
+              <SwitchNetWork />
               {/* -- Account drawer -- */}
               {account && <AccountDrawer data-slot="account" />}
 

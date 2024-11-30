@@ -1,95 +1,173 @@
-import {timeFormat} from "@/utils";
-import React from "react";
-import {IObject, ITransactionsByOrderResponse} from "@/types";
+import React, {ReactNode} from "react";
+import {Box, Chip, Skeleton, Stack} from "@mui/material";
+import {varAlpha} from "../../../theme/styles";
 
 
-const ObjectDetail = ({ object }: { object: IObject }) =>{
-
-   return <div className="container mx-auto ">
-    <div className=" rounded-md mt-20 border border-light-gray shadow-md p-20 bg-white">
-      <div className="flex item-center border-b border-light-gray pt-15 pb-15">
-        <div className="w-1/4">
-          Owner
-        </div>
-        <div>
-          {object?.owner}
-        </div>
-      </div>
-      <div className="flex item-center border-b border-light-gray pt-15 pb-15">
-        <div className="w-1/4">
-          Owner Bitcoin address
-        </div>
-        <div className=" w-3/4 break-words">
-          {object?.owner_bitcoin_address}
-        </div>
-      </div>
-      <div className="flex item-center border-b border-light-gray pt-15 pb-15">
-        <div className="w-1/4">
-          Object Type
-        </div>
-        <div>
-          {object?.object_type}
-        </div>
-      </div>
-      <div className="flex item-center border-b border-light-gray pt-15 pb-15">
-        <div className="w-1/4">
-          Size
-        </div>
-        <div>
-          {object?.size}
-        </div>
-      </div>
-      <div className="flex item-center border-b border-light-gray pt-15 pb-15">
-        <div className="w-1/4">
-          State index
-        </div>
-        <div>
-          {object?.state_index}
-        </div>
-      </div>
-
-      <div className="flex item-center border-b border-light-gray pt-15 pb-15">
-        <div className="w-1/4">
-          State root
-        </div>
-        <div>
-          {object?.state_root}
-        </div>
-      </div>
-      <div className="flex item-center border-b border-light-gray pt-15 pb-15">
-        <div className="w-1/4">
-         Tx order
-        </div>
-        <div>
-          {object?.tx_order}
-        </div>
-      </div>
-      <div className="flex item-center border-b border-light-gray pt-15 pb-15">
-        <div className="w-1/4">
-          Created Time
-        </div>
-        <div>
-          {timeFormat(Number(object?.created_at))}
-        </div>
-      </div>
-      <div className="flex item-center border-b border-light-gray pt-15 pb-15">
-        <div className="w-1/4">
-          Updated time
-        </div>
-        <div>
-          {object?.updated_at}
-        </div>
-      </div>
-      <div className="flex item-center border-b border-light-gray pt-15 pb-15">
-        <div className="w-1/4">
-          Value
-        </div>
-        <div>
-          {object?.value}
-        </div>
-      </div>
-    </div>
-  </div>
+function PropsKeyItem({ itemKey }: { itemKey: string }) {
+  return <Box className="w-48 text-sm font-semibold text-gray-600">{itemKey}</Box>;
 }
+
+function PropsValueItem({ children, loading }: { children: ReactNode; loading?: boolean }) {
+  if (loading) {
+    return <Skeleton width="160px" height="16px" />;
+  }
+  return children;
+}
+
+const ObjectDetail = ({ object }: { object: any }) => <Stack
+    spacing={2}
+    className="p-4"
+    sx={{
+      borderRadius: 2,
+      bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+      border: (theme) => `dashed 1px ${theme.vars.palette.divider}`,
+    }}
+  >
+    <Stack direction="row" alignItems="center">
+      <PropsKeyItem itemKey="Owner" />
+      <PropsValueItem loading={!object}>
+        {object?.owner && (
+          <Box>
+            <Chip
+              label={object?.owner}
+              size="small"
+              variant="outlined"
+              color="default"
+            />
+          </Box>
+        )}
+      </PropsValueItem>
+    </Stack>
+    <Stack direction="row" alignItems="center">
+      <PropsKeyItem itemKey="Owner Bitcoin address" />
+      <PropsValueItem loading={!object}>
+        {
+          object?.owner_bitcoin_address &&
+          <Box>
+            <Chip
+              label={object?.owner_bitcoin_address}
+              size="small"
+              variant="outlined"
+              color="default"
+            />
+          </Box>
+        }
+      </PropsValueItem>
+    </Stack>
+    <Stack direction="row" alignItems="center">
+      <PropsKeyItem itemKey="Object Type" />
+      <PropsValueItem loading={!object}>
+        {
+          object?.object_type &&
+          <Box>
+            <Chip
+              label={object?.object_type}
+              size="small"
+              variant="outlined"
+              color="default"
+            />
+          </Box>
+        }
+      </PropsValueItem>
+    </Stack>
+    <Stack direction="row" alignItems="center">
+      <PropsKeyItem itemKey="Size" />
+      <PropsValueItem loading={!object}>
+        {
+          object?.size &&
+          <Box>
+            <Chip
+              label={object?.size}
+              size="small"
+              variant="outlined"
+              color="default"
+            />
+          </Box>
+        }
+      </PropsValueItem>
+    </Stack>
+    <Stack direction="row" alignItems="center">
+      <PropsKeyItem itemKey="State index" />
+      <PropsValueItem loading={!object}>
+        {
+          object?.state_index &&
+          <Box>
+            <Chip
+              label={object?.state_index}
+              size="small"
+              variant="outlined"
+              color="default"
+            />
+          </Box>
+        }
+      </PropsValueItem>
+    </Stack>
+    <Stack direction="row" alignItems="center">
+      <PropsKeyItem itemKey="State root" />
+      <PropsValueItem loading={!object}>
+        {
+          object?.state_root &&
+          <Box>
+            <Chip
+              label={object?.state_root}
+              size="small"
+              variant="outlined"
+              color="default"
+            />
+          </Box>
+        }
+      </PropsValueItem>
+    </Stack>
+    <Stack direction="row" alignItems="center">
+      <PropsKeyItem itemKey="Tx order" />
+      <PropsValueItem loading={!object}>
+        {
+          object?.tx_order &&
+          <Box>
+            <Chip
+              label={object?.tx_order}
+              size="small"
+              variant="outlined"
+              color="default"
+            />
+          </Box>
+        }
+      </PropsValueItem>
+    </Stack>
+    <Stack direction="row" alignItems="center">
+      <PropsKeyItem itemKey="Create Time" />
+      <PropsValueItem loading={!object}>
+        {
+          object?.created_at &&
+          <Box>
+            <Chip
+              label={new Date(Number(object?.created_at)).toLocaleString()}
+              size="small"
+              variant="outlined"
+              color="default"
+            />
+          </Box>
+        }
+      </PropsValueItem>
+    </Stack>
+    <Stack direction="row" alignItems="center">
+      <PropsKeyItem itemKey="Value" />
+      <PropsValueItem loading={!object}>
+        {
+          object?.value &&
+          <Box>
+            <Chip
+              label={object?.value}
+              size="small"
+              variant="outlined"
+              color="default"
+            />
+          </Box>
+        }
+      </PropsValueItem>
+    </Stack>
+
+
+  </Stack>
 
 export default ObjectDetail;
