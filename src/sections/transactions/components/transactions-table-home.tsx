@@ -20,7 +20,7 @@ import {
 
 import { RouterLink } from 'src/routes/components';
 
-import { shortAddress } from 'src/utils/address';
+import { shortAddress, shotSentTo } from 'src/utils/address';
 import { formatCoin } from 'src/utils/format-number';
 import { getUTCOffset } from 'src/utils/format-time';
 
@@ -49,6 +49,7 @@ export default function TransactionsTableCard({
   paginate?: (index: number) => void;
   dense?: boolean;
 }) {
+  console.log(transactionsList,"transactionsList");
   return (
     <Card className="mt-4">
       <CardHeader
@@ -59,6 +60,9 @@ export default function TransactionsTableCard({
         <Table sx={{ minWidth: 720 }} size={dense ? 'small' : 'medium'}>
           <TableHeadCustom
             headLabel={[
+              {
+                id:"order",label: 'Order',
+              },
               { id: 'coin', label: 'Transaction Hash' },
               {
                 id: 'timestamp',
@@ -68,6 +72,9 @@ export default function TransactionsTableCard({
                   </Box>
                 ),
               },
+              {
+                id:"functio",label: 'Function',
+              },
               { id: 'status', label: 'Status' },
               { id: 'type', label: 'Type' },
               { id: 'gas', label: 'Gas' },
@@ -76,11 +83,15 @@ export default function TransactionsTableCard({
           />
           <TableBody>
             {isPending ? (
-              <TableSkeleton col={6} row={dense ? 5 : 10} rowHeight="69px" />
+              <TableSkeleton col={8} row={dense ? 5 : 10} rowHeight="69px" />
             ) : (
               <>
                 {transactionsList?.data.map((item) => (
+                  
                   <TableRow key={item.execution_info?.tx_hash}>
+                       <TableCell>
+                    {item.transaction.sequence_info.tx_order}
+                    </TableCell>
                     <TableCell width="256px">
                       <Typography className="!font-mono !font-medium">
                         <Tooltip title={item.execution_info?.tx_hash} arrow>
@@ -91,6 +102,12 @@ export default function TransactionsTableCard({
                     <TableCell>
                       {dayjs(Number(item.transaction.sequence_info.tx_timestamp)).format(
                         'MMMM DD, YYYY HH:mm:ss'
+                      )}
+                    </TableCell>
+                 
+                    <TableCell>
+                    {shotSentTo(
+                        item.transaction.data.action?.function_call?.function_id
                       )}
                     </TableCell>
                     {item.execution_info && (
