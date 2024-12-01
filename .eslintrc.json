@@ -1,3 +1,42 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": [
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint",
+    "perfectionist",
+    "import",
+    "unused-imports"
+  ],
+  "rules": {
+    "react-hooks/exhaustive-deps": "off",
+    "no-useless-return": "off",
+    "react/jsx-curly-brace-presence": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "react/self-closing-comp": "off",
+    "lines-around-directive": "off",
+    "import/newline-after-import": "off",
+    "spaced-comment": "off",
+    "eqeqeq": "off",
+    "@typescript-eslint/consistent-type-imports": "warn",
+    "@typescript-eslint/no-redeclare": "warn",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "unused-imports/no-unused-imports": "warn",
+    "perfectionist/sort-imports": ["warn", {
+      "type": "natural",
+      "order": "asc",
+      "groups": [
+        "react",
+        "next",
+        ["builtin", "external"],
+        ["parent", "sibling"],
+        "internal",
+        ["index", "object", "unknown"]
+      ]
+    }],
+    "perfectionist/sort-named-imports": "warn"
+  }
 }
