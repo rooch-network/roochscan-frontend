@@ -12,11 +12,21 @@ import {IModule} from "@/types";
 import ModuleDetail from "@/app/module/[id]/moduleDetail";
 import useDarkMode from "@/hooks/useDarkMode";
 
+interface PageProps {
+  params: {
+    id: string;
+  };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
 
-const ModulePage = ({ params, hideHeader }: { params: { id: string }, hideHeader?:boolean }) =>{
+interface ModulePageProps extends PageProps {
+  hideHeader?: boolean;
+}
+
+const ModulePage: React.FC<ModulePageProps> = ({ params, hideHeader }) => {
   const id = decodeURIComponent(params.id);
   const router = useRouter()
-  const isDarkMode =useDarkMode()
+  const isDarkMode = useDarkMode()
 
   const { roochNodeUrl } = useStore();
   const { data } = useSWR(
