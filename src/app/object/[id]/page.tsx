@@ -73,7 +73,7 @@ export default function Object ({ params }: { params: { id: string } }) {
       <CardContent className="!pt-0">
         {renderTabs}
         {tabs.value === 'overview' && (
-          objectDetail?.map(item=> <ObjectDetail object={item}/>)
+          objectDetail?.map((item : any)=> <ObjectDetail object={item}/>)
         )}
         {tabs.value === 'raw' && (
           <Stack>

@@ -87,7 +87,7 @@ export default function TransactionsTableCard({
             ) : (
               <>
                 {transactionsList?.data.map((item) => (
-                  
+
                   <TableRow key={item.execution_info?.tx_hash}>
                        <TableCell>
                     {item.transaction.sequence_info.tx_order}
@@ -104,10 +104,10 @@ export default function TransactionsTableCard({
                         'MMMM DD, YYYY HH:mm:ss'
                       )}
                     </TableCell>
-                 
+
                     <TableCell>
                     {shotSentTo(
-                        item.transaction.data.action?.function_call?.function_id
+                      (item.transaction.data as any).action?.function_call?.function_id
                       )}
                     </TableCell>
                     {item.execution_info && (

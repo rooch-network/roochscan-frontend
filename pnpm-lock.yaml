@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@ant-design/icons':
+    specifier: ^5.5.2
+    version: 5.5.2(react-dom@18.3.1)(react@18.3.1)
   '@emotion/cache':
     specifier: ^11.11.0
     version: 11.13.1
@@ -98,6 +101,9 @@ dependencies:
   bignumber.js:
     specifier: ^9.1.2
     version: 9.1.2
+  copy-to-clipboard:
+    specifier: ^3.3.3
+    version: 3.3.3
   dayjs:
     specifier: ^1.11.11
     version: 1.11.13
@@ -107,6 +113,9 @@ dependencies:
   framer-motion:
     specifier: ^11.2.10
     version: 11.11.11(react-dom@18.3.1)(react@18.3.1)
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   next:
     specifier: ^14.2.4
     version: 14.2.17(@babel/core@7.26.0)(react-dom@18.3.1)(react@18.3.1)
@@ -131,6 +140,9 @@ dependencies:
   react-hook-form:
     specifier: ^7.51.5
     version: 7.53.2(react@18.3.1)
+  react-icons:
+    specifier: ^5.3.0
+    version: 5.3.0(react@18.3.1)
   react-syntax-highlighter:
     specifier: ^15.5.0
     version: 15.6.1(react@18.3.1)
@@ -6317,6 +6329,14 @@ packages:
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
+    dependencies:
+      react: 18.3.1
+    dev: false
+
+  /react-icons@5.3.0(react@18.3.1):
+    resolution: {integrity: sha512-DnUk8aFbTyQPSkCfF8dbX6kQjXA9DktMeJqfjrg6cK9vwQVMxmcA3BfP4QoiztVmEHtwlTgLFsPuH2NskKT6eg==}
+    peerDependencies:
+      react: '*'
     dependencies:
       react: 18.3.1
     dev: false
