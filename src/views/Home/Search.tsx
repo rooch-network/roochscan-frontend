@@ -10,7 +10,7 @@ import {
   queryBalance,
   queryBalances,
 } from "@/api";
-import debounce from "lodash/debounce";
+import { debounce } from "lodash";
 import useIsMobile from "@/hooks/useIsMobile";
 
 export default function Home() {
