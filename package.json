@@ -83,6 +83,7 @@
     "@svgr/webpack": "^8.1.0",
     "@types/autosuggest-highlight": "^3.2.3",
     "@types/dompurify": "^3.0.5",
+    "@types/lodash": "^4.17.13",
     "@types/node": "^20.14.2",
     "@types/nprogress": "^0.2.3",
     "@types/numeral": "^2.0.5",

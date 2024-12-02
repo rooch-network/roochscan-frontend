@@ -1,5 +1,5 @@
 "use client"
-import { Transaction } from "@/types";
+import type { Transaction } from "@/types";
 import { timeFormat } from "@/utils";
 import React, { useEffect } from "react";
 
