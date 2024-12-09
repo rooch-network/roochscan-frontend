@@ -27,19 +27,18 @@ import { getUTCOffset } from 'src/utils/format-time';
 import { ROOCH_GAS_COIN_DECIMALS } from 'src/config/constant';
 
 import { Scrollbar } from 'src/components/scrollbar';
-import TableSkeleton from 'src/components/skeleton/table-skeleton';
+// import TableSkeleton from 'src/components/skeleton/table-skeleton';
 import { TableNoData, TableHeadCustom } from 'src/components/table';
 
 import { TRANSACTION_TYPE_MAP, TRANSACTION_STATUS_TYPE_MAP } from '../constant';
 
 export default function TransactionsTableCard({
-  isPending,
+  // isPending,
   transactionsList,
   paginationModel,
   paginate,
   dense,
 }: {
-
   isPending: boolean;
   transactionsList?: PaginatedTransactionWithInfoViews;
   paginationModel?: {
@@ -49,7 +48,9 @@ export default function TransactionsTableCard({
   paginate?: (index: number) => void;
   dense?: boolean;
 }) {
-  console.log(transactionsList,"transactionsList");
+
+  // console.log(transactionsList, "transactionsList");  
+
   return (
     <Card className="mt-4">
       <CardHeader
@@ -61,7 +62,7 @@ export default function TransactionsTableCard({
           <TableHeadCustom
             headLabel={[
               {
-                id:"order",label: 'Order',
+                id: "order", label: 'Order',
               },
               { id: 'coin', label: 'Transaction Hash' },
               {
@@ -73,7 +74,7 @@ export default function TransactionsTableCard({
                 ),
               },
               {
-                id:"functio",label: 'Function',
+                id: "functio", label: 'Function',
               },
               { id: 'status', label: 'Status' },
               { id: 'type', label: 'Type' },
@@ -82,15 +83,15 @@ export default function TransactionsTableCard({
             ]}
           />
           <TableBody>
-            {isPending ? (
+            {/* {isPending ? (
               <TableSkeleton col={8} row={dense ? 5 : 10} rowHeight="69px" />
             ) : (
-              <>
+              <> */}
                 {transactionsList?.data.map((item) => (
 
                   <TableRow key={item.execution_info?.tx_hash}>
-                       <TableCell>
-                    {item.transaction.sequence_info.tx_order}
+                    <TableCell>
+                      {item.transaction.sequence_info.tx_order}
                     </TableCell>
                     <TableCell width="256px">
                       <Typography className="!font-mono !font-medium">
@@ -106,8 +107,8 @@ export default function TransactionsTableCard({
                     </TableCell>
 
                     <TableCell>
-                    {shotSentTo(
-                      (item.transaction.data as any).action?.function_call?.function_id
+                      {shotSentTo(
+                        (item.transaction.data as any).action?.function_call?.function_id
                       )}
                     </TableCell>
                     {item.execution_info && (
@@ -150,8 +151,8 @@ export default function TransactionsTableCard({
                   title="No Transaction Found"
                   notFound={transactionsList?.data.length === 0}
                 />
-              </>
-            )}
+              {/* </>
+            )} */}
           </TableBody>
         </Table>
       </Scrollbar>
