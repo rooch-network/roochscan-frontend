@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { isValidBitcoinAddress } from '@roochnetwork/rooch-sdk';
+import { isValidBitcoinAddress, PaginatedTransactionWithInfoViews } from '@roochnetwork/rooch-sdk';
 import {useRoochClient, useRoochClientQuery} from '@roochnetwork/rooch-sdk-kit';
 
 import { Card, Stack, Button, TextField, CardHeader, CardContent } from '@mui/material';
@@ -20,6 +20,7 @@ const placeholder = 'Search for transactions, accounts, and modules';
 export default function SearchView() {
   const [account, setAccount] = useState('');
   const [errorMsg, setErrorMsg] = useState<string>();
+  const [tempTransactionList, setTempTransactionList] = useState<PaginatedTransactionWithInfoViews>();
   const router = useRouter();
 
   const client = useRoochClient()
@@ -63,12 +64,18 @@ export default function SearchView() {
   useEffect(() => {
     // 定义请求的 interval
     const intervalId = setInterval(() => {
-      refetch();
+      refetch(); 
     }, 1000 * 5);
 
     // 清理 interval
     return () => clearInterval(intervalId);
   }, [refetch]); // 依赖 refetch，以确保在 refetch 改变时重新设置 interval
+
+  useEffect(() => {
+    if(!isTransactionsPending) {
+      setTempTransactionList(transactionsList);
+    }
+  }, [isTransactionsPending])
 
   return (
     <DashboardContent maxWidth="xl">
@@ -97,7 +104,7 @@ export default function SearchView() {
       <TransactionsTableHome
         dense
         isPending={isTransactionsPending}
-        transactionsList={transactionsList}
+        transactionsList={tempTransactionList}
       />
     </DashboardContent>
   );
