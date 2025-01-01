@@ -1,4 +1,4 @@
-import { getRoochNodeUrl } from "@roochnetwork/rooch-sdk";
+import { getRoochNodeUrl, NetWorkType } from '@roochnetwork/rooch-sdk';
 
 export const RED_ENVELOPE = '0x1d6f6657fc996008a1e43b8c13805e969a091560d4cea57b1db9f3ce4450d977';
 
@@ -13,9 +13,16 @@ export const ROOCH_MINT_OPERATING_ADDRESS = [
 export const FAUCET_TESTNET = 'https://test-faucet.rooch.network/faucet';
 export const FAUCET_MAINNET = 'https://main-faucet.rooch.network/faucet';
 
-export const NetWork: any = {
-  main: process.env.NEXT_PUBLIC_DEFAULT_NETWORK,
-  test: getRoochNodeUrl("testnet"),
-  dev: getRoochNodeUrl("devnet"),
-  local: getRoochNodeUrl("localnet"),
+export const NetWorkPath: Record<NetWorkType, string> = {
+  mainnet: 'main',
+  testnet: 'test',
+  devnet: 'dev',
+  localnet: 'local',
+};
+
+export const NetWorkPathReverse: Record<string, NetWorkType> = {
+  main: 'mainnet',
+  test: 'testnet',
+  dev: 'devnet',
+  local: 'localnet',
 };
