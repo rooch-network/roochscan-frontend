@@ -26,13 +26,14 @@ import { formatCoin } from 'src/utils/format-number';
 import { getUTCOffset } from 'src/utils/format-time';
 import { shotSentTo, shortAddress } from 'src/utils/address';
 
-import { NetWork, ROOCH_GAS_COIN_DECIMALS } from 'src/config/constant';
+import { NetWorkPath, ROOCH_GAS_COIN_DECIMALS } from 'src/config/constant';
 
 import { Scrollbar } from 'src/components/scrollbar';
 // import TableSkeleton from 'src/components/skeleton/table-skeleton';
 import { TableNoData, TableHeadCustom } from 'src/components/table';
 
 import { TRANSACTION_TYPE_MAP, TRANSACTION_STATUS_TYPE_MAP } from '../constant';
+import { useNetwork } from '@/context/network-provider';
 
 export default function TransactionsTableCard({
   // isPending,
@@ -51,13 +52,8 @@ export default function TransactionsTableCard({
   dense?: boolean;
 }) {
   // console.log(transactionsList, "transactionsList");
-  const { roochNodeUrl } = useStore();
-  console.log(roochNodeUrl, "roochNodeUrl");
-  const mapNetName = useMemo(
-    () =>
-      Object.keys(NetWork).find((item: any) => NetWork[item] === roochNodeUrl),
-    [roochNodeUrl]
-  );
+  const { network} = useNetwork();
+  // console.log(roochNodeUrl, "roochNodeUrl");
   return (
     <Card className="mt-4">
       <CardHeader title="Last Transactions" sx={{ mb: 3 }} />
@@ -137,7 +133,7 @@ export default function TransactionsTableCard({
                 )}
                 {item.execution_info && (
                   <TableCell align="center">
-                    <Button component={RouterLink} href={`/${mapNetName}/tx/${item.execution_info.tx_hash}`}>
+                    <Button component={RouterLink} href={`/${NetWorkPath[network]}/tx/${item.execution_info.tx_hash}`}>
                       View
                     </Button>
                   </TableCell>

@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { duotoneLight,duotoneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { duotoneDark, duotoneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 import {
   Tab,
@@ -281,7 +281,7 @@ export function TxView({ hash }: { hash: string }) {
             <Stack>
               <SyntaxHighlighter
                 language="json"
-                style={  mode ==='light' ? duotoneLight : duotoneDark}
+                style={mode === 'light' ? duotoneLight : duotoneDark}
                 customStyle={{
                   whiteSpace: 'pre-wrap',
                   width: '100%',
