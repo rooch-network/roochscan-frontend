@@ -136,6 +136,19 @@ export function TxView({ hash }: { hash: string }) {
                         variant="soft"
                         color={TRANSACTION_TYPE_MAP[txDetail.transaction.data.type].color}
                       />
+                      {txDetail.transaction.data.type === 'l1_tx' && (
+                        <Button
+                          component="a"
+                          href={`https://mempool.space/tx/${txDetail.transaction.data.bitcoin_txid}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          startIcon={<Iconify icon="eva:external-link-fill" />}
+                          size="small"
+                          sx={{ ml: 1 }}
+                        >
+                          View in Mempool
+                        </Button>
+                      )}
                     </Box>
                   )}
                 </PropsValueItem>
