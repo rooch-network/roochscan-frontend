@@ -42,6 +42,7 @@ import {
   TRANSACTION_ACTION_TYPE_MAP,
   TRANSACTION_STATUS_TYPE_MAP,
 } from '../transactions/constant';
+import { useNetwork } from '@/context/network-provider';
 
 dayjs.extend(relativeTime);
 
@@ -65,6 +66,7 @@ export function TxView({ hash }: { hash: string }) {
   const tabs = useTabs('overview');
   const router = useRouter();
   const { mode } = useColorScheme();
+  const { network } = useNetwork();
   const { data: transactionDetail, isPending } = useRoochClientQuery('queryTransactions', {
     filter: {
       tx_hashes: [hash],
@@ -139,7 +141,11 @@ export function TxView({ hash }: { hash: string }) {
                       {txDetail.transaction.data.type === 'l1_tx' && (
                         <Button
                           component="a"
-                          href={`https://mempool.space/tx/${txDetail.transaction.data.bitcoin_txid}`}
+                          href={
+                            network === 'mainnet'
+                              ? `https://mempool.space/tx/${txDetail.transaction.data.bitcoin_txid}`
+                              : `https://mempool.space/testnet/tx/${txDetail.transaction.data.bitcoin_txid}`
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
                           startIcon={<Iconify icon="eva:external-link-fill" />}
