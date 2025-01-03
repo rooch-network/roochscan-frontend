@@ -5,7 +5,7 @@ import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
 
 import { Button } from '@mui/material';
 
-import { useRouter } from 'src/routes/hooks';
+import { useRouter, useSearchParams } from 'src/routes/hooks';
 
 import useTimeRange from 'src/hooks/useTimeRange';
 
@@ -15,13 +15,20 @@ import { Iconify } from 'src/components/iconify';
 
 import TransactionsTableHome from "src/sections/transactions/components/transactions-table-home";
 
-
 export default function TransactionsView() {
-  const [paginationModel, setPaginationModel] = useState({ index: 1, limit: 10 });
-  const mapPageToNextCursor = useRef<{ [page: number]: string | null }>({});
+  const searchParams = useSearchParams();
   const router = useRouter();
+  const initialPage = parseInt(searchParams.get('page') || '1', 10);
+  const [paginationModel, setPaginationModel] = useState({ index: initialPage, limit: 10 });
+  const mapPageToNextCursor = useRef<{ [page: number]: string | null }>({});
 
-//   useAddressChanged({ address, path: 'transactions' });
+  // Sync pagination state with URL parameters
+  useEffect(() => {
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    if (page !== paginationModel.index) {
+      setPaginationModel(prev => ({ ...prev, index: page }));
+    }
+  }, [searchParams, paginationModel.index]);
 
   const queryOptions = useMemo(
     () => ({
@@ -35,13 +42,12 @@ export default function TransactionsView() {
   const { data: transactionsList, isPending } = useRoochClientQuery('queryTransactions', {
     filter: {
         time_range: {
-            start_time: fiveMinutesAgoMillis.toString(), // 5 分钟前的时间
-            end_time: currentTimeMillis.toString(), // 固定的当前时间
+            start_time: fiveMinutesAgoMillis.toString(),
+            end_time: currentTimeMillis.toString(),
           },
     },
     cursor: queryOptions.cursor,
     limit: queryOptions.limit,
-
   });
 
   useEffect(() => {
@@ -54,7 +60,6 @@ export default function TransactionsView() {
   }, [paginationModel, transactionsList]);
 
   const paginate = (index: number): void => {
-    console.log(index);
     if (index < 0) {
       return;
     }
@@ -62,6 +67,11 @@ export default function TransactionsView() {
       ...paginationModel,
       index,
     });
+    
+    // Update URL with new page number
+    const params = new URLSearchParams(window.location.search);
+    params.set('page', index.toString());
+    router.push(`/txs?${params.toString()}`);
   };
 
   return (
@@ -69,7 +79,7 @@ export default function TransactionsView() {
        <Button
         className="w-fit"
         onClick={() => {
-          router.back();
+          router.push('/');
         }}
         startIcon={<Iconify icon="eva:arrow-ios-back-fill" width={16} />}
       >

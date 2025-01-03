@@ -164,7 +164,7 @@ export default function TransactionsTableCard({
       )}
       {dense && (transactionsList?.data.length || 0) > 0 && (
         <Stack alignItems="center" className="my-2">
-          <Button variant="text" color="primary" component={RouterLink} href="/txs/">
+          <Button variant="text" color="primary" component={RouterLink} href="/txs/?page=1">
             View All
           </Button>
         </Stack>
