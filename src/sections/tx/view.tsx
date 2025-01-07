@@ -49,7 +49,7 @@ dayjs.extend(relativeTime);
 
 const TX_VIEW_TABS = [
   { label: 'Overview', value: 'overview' },
-  { label: 'Transaction Call', value: 'call' },
+  { label: 'Action Call', value: 'call' },
   { label: 'Raw JSON', value: 'raw' },
 ];
 
