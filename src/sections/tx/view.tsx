@@ -54,7 +54,7 @@ const TX_VIEW_TABS = [
 ];
 
 function PropsKeyItem({ itemKey }: { itemKey: string }) {
-  return <Box className="w-48 text-sm font-semibold text-gray-600">{itemKey}</Box>;
+  return <Box className="w-24 flex-shrink-0 text-sm font-semibold text-gray-600">{itemKey}</Box>;
 }
 
 function PropsValueItem({ children, loading }: { children: ReactNode; loading?: boolean }) {
@@ -376,7 +376,7 @@ export function TxView({ hash }: { hash: string }) {
                   <Stack direction="row" alignItems="flex-start">
                     <PropsKeyItem itemKey="Parameters" />
                     <PropsValueItem loading={isDecodingArgs}>
-                      <Stack spacing={2} className="w-full">
+                      <Stack spacing={2}>
                         {decodedArgs.map((arg, index) => (
                           <Card
                             key={index}
