@@ -24,7 +24,7 @@ export function SwitchNetWork() {
   const param = useParams()
   const router = useRouter();
   const pathname = usePathname();
-  console.log('param', param, pathname)
+  // console.log('param', param, pathname)
 
   const handleChange = (event: SelectChangeEvent) => {
     const networkValue = event.target.value as NetWorkType;
