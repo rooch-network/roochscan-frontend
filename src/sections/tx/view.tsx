@@ -3,8 +3,9 @@
 import type { ReactNode } from 'react';
 
 import dayjs from 'dayjs';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { useNetwork } from '@/context/network-provider';
 import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { duotoneDark, duotoneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -28,6 +29,7 @@ import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { useTabs } from 'src/hooks/use-tabs';
+import { useDecodeArgs } from 'src/hooks/use-decode-args';
 
 import { formatCoin } from 'src/utils/format-number';
 
@@ -42,12 +44,12 @@ import {
   TRANSACTION_ACTION_TYPE_MAP,
   TRANSACTION_STATUS_TYPE_MAP,
 } from '../transactions/constant';
-import { useNetwork } from '@/context/network-provider';
 
 dayjs.extend(relativeTime);
 
 const TX_VIEW_TABS = [
   { label: 'Overview', value: 'overview' },
+  { label: 'Transaction Call', value: 'call' },
   { label: 'Raw JSON', value: 'raw' },
 ];
 
@@ -67,6 +69,7 @@ export function TxView({ hash }: { hash: string }) {
   const router = useRouter();
   const { mode } = useColorScheme();
   const { network } = useNetwork();
+
   const { data: transactionDetail, isPending } = useRoochClientQuery('queryTransactions', {
     filter: {
       tx_hashes: [hash],
@@ -74,6 +77,53 @@ export function TxView({ hash }: { hash: string }) {
   });
 
   const txDetail = useMemo(() => transactionDetail?.data[0], [transactionDetail]);
+
+  const [moduleAddress, setModuleAddress] = useState<string>();
+  const [moduleName, setModuleName] = useState<string>();
+
+  useEffect(() => {
+    if (
+      txDetail?.transaction.data.type === 'l2_tx' &&
+      txDetail?.transaction.data.action?.function_call?.function_id
+    ) {
+      const [address, modName] =
+        txDetail.transaction.data.action.function_call.function_id.split('::');
+      setModuleAddress(address);
+      setModuleName(modName);
+    }
+  }, [txDetail]);
+
+  const { data: moduleABI } = useRoochClientQuery(
+    'getModuleAbi',
+    {
+      moduleAddr: moduleAddress || '',
+      moduleName: moduleName || '',
+    },
+    {
+      enabled: !!moduleAddress && !!moduleName,
+    }
+  );
+
+  const { decodedArgs, isDecodingArgs } = useDecodeArgs({
+    moduleABI,
+    functionId:
+      (txDetail?.transaction.data.type === 'l2_tx' &&
+        txDetail?.transaction.data.action?.function_call?.function_id) ||
+      '',
+    args:
+      (txDetail?.transaction.data.type === 'l2_tx' &&
+        txDetail?.transaction.data.action?.function_call?.args) ||
+      [],
+  });
+
+  const formatDecodedValue = (value: string) => {
+    try {
+      const parsed = JSON.parse(value);
+      return JSON.stringify(parsed, null, 2);
+    } catch {
+      return value;
+    }
+  };
 
   const renderTabs = (
     <Tabs value={tabs.value} onChange={tabs.onChange} sx={{ mb: { xs: 2, md: 2 } }}>
@@ -294,6 +344,126 @@ export function TxView({ hash }: { hash: string }) {
               <PropsKeyItem itemKey="Action Call args" />
               <Box>5959155</Box>
             </Stack> */}
+            </Stack>
+          )}
+          {tabs.value === 'call' && txDetail?.transaction.data.type === 'l2_tx' && (
+            <Stack
+              spacing={2}
+              className="p-4"
+              sx={{
+                borderRadius: 2,
+                bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                border: (theme) => `dashed 1px ${theme.vars.palette.divider}`,
+              }}
+            >
+              {txDetail.transaction.data.action?.function_call ? (
+                <>
+                  <Stack direction="row" alignItems="flex-start">
+                    <PropsKeyItem itemKey="Function" />
+                    <PropsValueItem loading={isPending}>
+                      <Box>
+                        <Chip
+                          label={txDetail.transaction.data.action.function_call.function_id}
+                          size="small"
+                          variant="soft"
+                          color="primary"
+                          sx={{ fontSize: '0.85rem' }}
+                        />
+                      </Box>
+                    </PropsValueItem>
+                  </Stack>
+
+                  <Stack direction="row" alignItems="flex-start">
+                    <PropsKeyItem itemKey="Parameters" />
+                    <PropsValueItem loading={isDecodingArgs}>
+                      <Stack spacing={2} className="w-full">
+                        {decodedArgs.map((arg, index) => (
+                          <Card
+                            key={index}
+                            variant="outlined"
+                            className="w-full"
+                            sx={{
+                              '&:hover': {
+                                borderColor: 'primary.main',
+                                bgcolor: (theme) => varAlpha(theme.vars.palette.primary.main, 0.02),
+                              },
+                              transition: 'all 0.2s ease-in-out',
+                            }}
+                          >
+                            <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+                              <Stack spacing={2}>
+                                <Stack
+                                  direction="row"
+                                  alignItems="center"
+                                  spacing={1}
+                                  sx={{
+                                    pb: 1,
+                                    borderBottom: (theme) =>
+                                      `1px dashed ${theme.vars.palette.divider}`,
+                                  }}
+                                >
+                                  <Chip
+                                    label={`Parameter #${index + 1}`}
+                                    size="small"
+                                    color="default"
+                                    sx={{ fontWeight: 600 }}
+                                  />
+                                  <Chip
+                                    label={arg.type}
+                                    size="small"
+                                    variant="soft"
+                                    color="primary"
+                                  />
+                                </Stack>
+
+                                {arg.decoded && (
+                                  <Box>
+                                    <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                                      Value
+                                    </Box>
+                                    <Box className="text-sm break-all p-2 rounded"
+                                      sx={{
+                                        bgcolor: (theme) =>
+                                          varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                        fontSize: '0.85rem',
+                                      }}>
+                                      {formatDecodedValue(arg.decoded)}
+                                    </Box>
+                                  </Box>
+                                )}
+                                {arg.raw && (
+                                  <Box>
+                                    <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                                      Raw Data
+                                    </Box>
+                                    <Box
+                                      className="text-sm break-all p-2 rounded"
+                                      sx={{
+                                        bgcolor: (theme) =>
+                                          varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                        fontSize: '0.85rem',
+                                      }}
+                                    >
+                                      {arg.raw}
+                                    </Box>
+                                  </Box>
+                                )}
+                              </Stack>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </Stack>
+                    </PropsValueItem>
+                  </Stack>
+                </>
+              ) : (
+                <Box className="text-sm text-center py-8" sx={{ color: 'text.secondary' }}>
+                  <Stack spacing={1} alignItems="center">
+                    <Iconify icon="mdi:function-variant" width={40} sx={{ opacity: 0.4 }} />
+                    <Box>No function call data available for this transaction</Box>
+                  </Stack>
+                </Box>
+              )}
             </Stack>
           )}
           {tabs.value === 'raw' && (
