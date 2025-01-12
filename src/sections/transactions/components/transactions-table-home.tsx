@@ -3,6 +3,7 @@ import type { PaginatedTransactionWithInfoViews } from '@roochnetwork/rooch-sdk'
 import dayjs from 'dayjs';
 import useStore from '@/store';
 import { useMemo } from 'react';
+import { useNetwork } from '@/context/network-provider';
 
 import {
   Box,
@@ -18,6 +19,8 @@ import {
   CardHeader,
   Typography,
   Pagination,
+  Skeleton,
+  LinearProgress,
 } from '@mui/material';
 
 import { RouterLink } from 'src/routes/components';
@@ -29,20 +32,18 @@ import { shotSentTo, shortAddress } from 'src/utils/address';
 import { NetWorkPath, ROOCH_GAS_COIN_DECIMALS } from 'src/config/constant';
 
 import { Scrollbar } from 'src/components/scrollbar';
-// import TableSkeleton from 'src/components/skeleton/table-skeleton';
 import { TableNoData, TableHeadCustom } from 'src/components/table';
 
 import { TRANSACTION_TYPE_MAP, TRANSACTION_STATUS_TYPE_MAP } from '../constant';
-import { useNetwork } from '@/context/network-provider';
 
 export default function TransactionsTableCard({
-  // isPending,
   transactionsList,
   paginationModel,
   paginate,
   dense,
+  filterButton,
+  isPending,
 }: {
-  isPending: boolean;
   transactionsList?: PaginatedTransactionWithInfoViews;
   paginationModel?: {
     index: number;
@@ -50,13 +51,40 @@ export default function TransactionsTableCard({
   };
   paginate?: (index: number) => void;
   dense?: boolean;
+  filterButton?: React.ReactNode;
+  isPending?: boolean;
 }) {
-  // console.log(transactionsList, "transactionsList");
   const { network} = useNetwork();
-  // console.log(roochNodeUrl, "roochNodeUrl");
+
+  const renderSkeleton = () => (
+    <>
+      {[...Array(5)].map((_, index) => (
+        <TableRow key={index}>
+          <TableCell><Skeleton animation="wave" width={60} /></TableCell>
+          <TableCell width="256px"><Skeleton animation="wave" width={200} /></TableCell>
+          <TableCell><Skeleton animation="wave" width={180} /></TableCell>
+          <TableCell><Skeleton animation="wave" width={120} /></TableCell>
+          <TableCell><Skeleton animation="wave" width={80} /></TableCell>
+          <TableCell><Skeleton animation="wave" width={80} /></TableCell>
+          <TableCell><Skeleton animation="wave" width={60} /></TableCell>
+          <TableCell align="center"><Skeleton animation="wave" width={60} /></TableCell>
+        </TableRow>
+      ))}
+    </>
+  );
+  
   return (
     <Card className="mt-4">
-      <CardHeader title="Last Transactions" sx={{ mb: 3 }} />
+      <CardHeader 
+        title={
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Typography variant="h6">Last Transactions</Typography>
+            {filterButton}
+          </Stack>
+        } 
+        sx={{ mb: 3 }} 
+      />
+      {isPending && <LinearProgress />}
       <Scrollbar sx={{ minHeight: dense ? undefined : 462 }}>
         <Table sx={{ minWidth: 720 }} size={dense ? 'small' : 'medium'}>
           <TableHeadCustom
@@ -85,67 +113,67 @@ export default function TransactionsTableCard({
             ]}
           />
           <TableBody>
-            {/* {isPending ? (
-              <TableSkeleton col={8} row={dense ? 5 : 10} rowHeight="69px" />
+            {isPending ? (
+              renderSkeleton()
             ) : (
-              <> */}
-            {transactionsList?.data.map((item) => (
-              <TableRow key={item.execution_info?.tx_hash}>
-                <TableCell>{item.transaction.sequence_info.tx_order}</TableCell>
-                <TableCell width="256px">
-                  <Typography className="!font-mono !font-medium">
-                    <Tooltip title={item.execution_info?.tx_hash} arrow>
-                      <span>{shortAddress(item.execution_info?.tx_hash, 8, 6)}</span>
-                    </Tooltip>
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  {dayjs(Number(item.transaction.sequence_info.tx_timestamp)).format(
-                    'MMMM DD, YYYY HH:mm:ss'
-                  )}
-                </TableCell>
+              <>
+                {transactionsList?.data.map((item) => (
+                  <TableRow key={item.execution_info?.tx_hash}>
+                    <TableCell>{item.transaction.sequence_info.tx_order}</TableCell>
+                    <TableCell width="256px">
+                      <Typography className="!font-mono !font-medium">
+                        <Tooltip title={item.execution_info?.tx_hash} arrow>
+                          <span>{shortAddress(item.execution_info?.tx_hash, 8, 6)}</span>
+                        </Tooltip>
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      {dayjs(Number(item.transaction.sequence_info.tx_timestamp)).format(
+                        'MMMM DD, YYYY HH:mm:ss'
+                      )}
+                    </TableCell>
 
-                <TableCell>
-                  {shotSentTo((item.transaction.data as any).action?.function_call?.function_id)}
-                </TableCell>
-                {item.execution_info && (
-                  <TableCell>
-                    <Chip
-                      label={TRANSACTION_STATUS_TYPE_MAP[item.execution_info.status.type].text}
-                      size="small"
-                      variant="soft"
-                      color={TRANSACTION_STATUS_TYPE_MAP[item.execution_info.status.type].color}
-                    />
-                  </TableCell>
-                )}
-                <TableCell>
-                  <Chip
-                    label={TRANSACTION_TYPE_MAP[item.transaction.data.type].text}
-                    size="small"
-                    variant="soft"
-                    color={TRANSACTION_TYPE_MAP[item.transaction.data.type].color}
-                  />
-                </TableCell>
-                {item.execution_info && (
-                  <TableCell className="!text-xs">
-                    {formatCoin(Number(item.execution_info.gas_used), ROOCH_GAS_COIN_DECIMALS, 6)}
-                  </TableCell>
-                )}
-                {item.execution_info && (
-                  <TableCell align="center">
-                    <Button component={RouterLink} href={`/${NetWorkPath[network]}/tx/${item.execution_info.tx_hash}`}>
-                      View
-                    </Button>
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
-            <TableNoData
-              title="No Transaction Found"
-              notFound={transactionsList?.data.length === 0}
-            />
-            {/* </>
-            )} */}
+                    <TableCell>
+                      {shotSentTo((item.transaction.data as any).action?.function_call?.function_id)}
+                    </TableCell>
+                    {item.execution_info && (
+                      <TableCell>
+                        <Chip
+                          label={TRANSACTION_STATUS_TYPE_MAP[item.execution_info.status.type].text}
+                          size="small"
+                          variant="soft"
+                          color={TRANSACTION_STATUS_TYPE_MAP[item.execution_info.status.type].color}
+                        />
+                      </TableCell>
+                    )}
+                    <TableCell>
+                      <Chip
+                        label={TRANSACTION_TYPE_MAP[item.transaction.data.type].text}
+                        size="small"
+                        variant="soft"
+                        color={TRANSACTION_TYPE_MAP[item.transaction.data.type].color}
+                      />
+                    </TableCell>
+                    {item.execution_info && (
+                      <TableCell className="!text-xs">
+                        {formatCoin(Number(item.execution_info.gas_used), ROOCH_GAS_COIN_DECIMALS, 6)}
+                      </TableCell>
+                    )}
+                    {item.execution_info && (
+                      <TableCell align="center">
+                        <Button component={RouterLink} href={`/${NetWorkPath[network]}/tx/${item.execution_info.tx_hash}`}>
+                          View
+                        </Button>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+                <TableNoData
+                  title="No Transaction Found"
+                  notFound={!isPending && (!transactionsList?.data.length || transactionsList.data.length === 0)}
+                />
+              </>
+            )}
           </TableBody>
         </Table>
       </Scrollbar>
