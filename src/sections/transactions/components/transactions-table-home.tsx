@@ -14,12 +14,12 @@ import {
   Button,
   Tooltip,
   TableRow,
+  Skeleton,
   TableBody,
   TableCell,
   CardHeader,
   Typography,
   Pagination,
-  Skeleton,
   LinearProgress,
 } from '@mui/material';
 
@@ -43,6 +43,7 @@ export default function TransactionsTableCard({
   dense,
   filterButton,
   isPending,
+  noSkeleton,
 }: {
   transactionsList?: PaginatedTransactionWithInfoViews;
   paginationModel?: {
@@ -53,12 +54,13 @@ export default function TransactionsTableCard({
   dense?: boolean;
   filterButton?: React.ReactNode;
   isPending?: boolean;
+  noSkeleton?: boolean;
 }) {
   const { network} = useNetwork();
 
   const renderSkeleton = () => (
     <>
-      {[...Array(5)].map((_, index) => (
+      {[...Array(10)].map((_, index) => (
         <TableRow key={index}>
           <TableCell><Skeleton animation="wave" width={60} /></TableCell>
           <TableCell width="256px"><Skeleton animation="wave" width={200} /></TableCell>
@@ -113,7 +115,7 @@ export default function TransactionsTableCard({
             ]}
           />
           <TableBody>
-            {isPending ? (
+            {isPending && !noSkeleton ? (
               renderSkeleton()
             ) : (
               <>

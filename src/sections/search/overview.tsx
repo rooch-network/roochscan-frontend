@@ -105,6 +105,7 @@ export default function SearchView() {
         dense
         isPending={isTransactionsPending}
         transactionsList={tempTransactionList}
+        noSkeleton
       />
     </DashboardContent>
   );
