@@ -1,7 +1,9 @@
 'use client';
 
+import type { PaginatedTransactionWithInfoViews } from '@roochnetwork/rooch-sdk';
+
 import { useState, useEffect } from 'react';
-import { isValidBitcoinAddress, PaginatedTransactionWithInfoViews } from '@roochnetwork/rooch-sdk';
+import { isValidBitcoinAddress } from '@roochnetwork/rooch-sdk';
 import {useRoochClient, useRoochClientQuery} from '@roochnetwork/rooch-sdk-kit';
 
 import { Card, Stack, Button, TextField, CardHeader, CardContent } from '@mui/material';

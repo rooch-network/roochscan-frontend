@@ -1,9 +1,8 @@
 import type { PaginatedTransactionWithInfoViews } from '@roochnetwork/rooch-sdk';
 
 import dayjs from 'dayjs';
-import useStore from '@/store';
-import { useMemo } from 'react';
 import { useNetwork } from '@/context/network-provider';
+import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
 import {
   Box,
@@ -35,7 +34,6 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { TableNoData, TableHeadCustom } from 'src/components/table';
 
 import { TRANSACTION_TYPE_MAP, TRANSACTION_STATUS_TYPE_MAP } from '../constant';
-import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
 export default function TransactionsTableCard({
   transactionsList,
@@ -152,7 +150,7 @@ export default function TransactionsTableCard({
                         exit="exit"
                         custom={index}
                         variants={tableRowVariants}
-                        component={TableRow}
+                        // component={TableRow}
                       >
                         <TableCell>{item.transaction.sequence_info.tx_order}</TableCell>
                         <TableCell width="256px">
