@@ -1,6 +1,7 @@
 import type { PaginatedTransactionWithInfoViews } from '@roochnetwork/rooch-sdk';
 
 import dayjs from 'dayjs';
+import { useState, useEffect } from 'react';
 import { useNetwork } from '@/context/network-provider';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
@@ -59,6 +60,14 @@ export default function TransactionsTableCard({
 }) {
   const { network} = useNetwork();
 
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+  useEffect(() => {
+    if (!isPending && transactionsList) {
+      setIsFirstLoad(false);
+    }
+  }, [isPending, transactionsList]);
+
   const renderSkeleton = () => (
     <>
       {[...Array(10)].map((_, index) => (
@@ -107,7 +116,7 @@ export default function TransactionsTableCard({
         } 
         sx={{ mb: 3 }} 
       />
-      {isPending && !isHome && <LinearProgress />}
+      {isPending && (!isHome || isFirstLoad) && <LinearProgress />}
       <Scrollbar sx={{ minHeight: dense ? undefined : 462 }}>
         <LazyMotion features={domAnimation}>
           <Table sx={{ minWidth: 720 }} size={dense ? 'small' : 'medium'}>
