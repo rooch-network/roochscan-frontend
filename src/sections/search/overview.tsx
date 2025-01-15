@@ -47,35 +47,45 @@ export default function SearchView() {
   };
 
 
-  const { data: transactionsList, isPending: isTransactionsPending, refetch } = useRoochClientQuery(
+  const { data: transactionsList, isPending: isTransactionsPending } = useRoochClientQuery(
     'queryTransactions',
     {
       filter: {
         time_range: {
-          start_time: fiveMinutesAgoMillis.toString(), // 5 分钟前的时间
-          end_time: currentTimeMillis.toString(), // 固定的当前时间
+          start_time: fiveMinutesAgoMillis.toString(),
+          end_time: currentTimeMillis.toString(),
         },
       },
       limit: '10',
     },
-    { enabled: !!currentTimeMillis }
+    { 
+      enabled: !!currentTimeMillis,
+      refetchInterval: 5000,
+      refetchIntervalInBackground: true,
+      staleTime: 0,
+    }
   );
 
   useEffect(() => {
-    // 定义请求的 interval
-    const intervalId = setInterval(() => {
-      refetch(); 
-    }, 1000 * 5);
-
-    // 清理 interval
-    return () => clearInterval(intervalId);
-  }, [refetch]); // 依赖 refetch，以确保在 refetch 改变时重新设置 interval
-
-  useEffect(() => {
-    if(!isTransactionsPending) {
-      setTempTransactionList(transactionsList);
+    if (!isTransactionsPending && transactionsList) {
+      setTempTransactionList(prev => {
+        if (!prev) return transactionsList;
+        
+        const newData = transactionsList.data.filter(newTx => 
+          !prev.data.some(oldTx => oldTx.execution_info?.tx_hash === newTx.execution_info?.tx_hash)
+        );
+        
+        if (newData.length > 0) {
+          return {
+            ...transactionsList,
+            data: [...newData, ...prev.data].slice(0, 10)
+          };
+        }
+        
+        return prev;
+      });
     }
-  }, [isTransactionsPending])
+  }, [isTransactionsPending, transactionsList]);
 
   return (
     <DashboardContent maxWidth="xl">
@@ -103,9 +113,10 @@ export default function SearchView() {
       </Card>
       <TransactionsTableHome
         dense
-        isPending={isTransactionsPending}
+        isPending={isTransactionsPending || !tempTransactionList}
         transactionsList={tempTransactionList}
         noSkeleton
+        isHome={true}
       />
     </DashboardContent>
   );

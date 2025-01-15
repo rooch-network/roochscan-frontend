@@ -35,6 +35,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 import { TableNoData, TableHeadCustom } from 'src/components/table';
 
 import { TRANSACTION_TYPE_MAP, TRANSACTION_STATUS_TYPE_MAP } from '../constant';
+import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 
 export default function TransactionsTableCard({
   transactionsList,
@@ -44,6 +45,7 @@ export default function TransactionsTableCard({
   filterButton,
   isPending,
   noSkeleton,
+  isHome,
 }: {
   transactionsList?: PaginatedTransactionWithInfoViews;
   paginationModel?: {
@@ -55,6 +57,7 @@ export default function TransactionsTableCard({
   filterButton?: React.ReactNode;
   isPending?: boolean;
   noSkeleton?: boolean;
+  isHome?: boolean;
 }) {
   const { network} = useNetwork();
 
@@ -75,6 +78,26 @@ export default function TransactionsTableCard({
     </>
   );
   
+  const tableRowVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: (index: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: index * 0.05,
+        duration: 0.3,
+        ease: 'easeOut'
+      },
+    }),
+    exit: {
+      opacity: 0,
+      y: 20,
+      transition: {
+        duration: 0.2
+      }
+    }
+  };
+
   return (
     <Card className="mt-4">
       <CardHeader 
@@ -86,98 +109,111 @@ export default function TransactionsTableCard({
         } 
         sx={{ mb: 3 }} 
       />
-      {isPending && <LinearProgress />}
+      {isPending && !isHome && <LinearProgress />}
       <Scrollbar sx={{ minHeight: dense ? undefined : 462 }}>
-        <Table sx={{ minWidth: 720 }} size={dense ? 'small' : 'medium'}>
-          <TableHeadCustom
-            headLabel={[
-              {
-                id: 'order',
-                label: 'Order',
-              },
-              { id: 'coin', label: 'Transaction Hash' },
-              {
-                id: 'timestamp',
-                label: (
-                  <Box>
-                    Timestamp <span className="ml-1 text-xs">({getUTCOffset()})</span>
-                  </Box>
-                ),
-              },
-              {
-                id: 'functio',
-                label: 'Function',
-              },
-              { id: 'status', label: 'Status' },
-              { id: 'type', label: 'Type' },
-              { id: 'gas', label: 'Gas' },
-              { id: 'action', label: 'Action', align: 'center' },
-            ]}
-          />
-          <TableBody>
-            {isPending && !noSkeleton ? (
-              renderSkeleton()
-            ) : (
-              <>
-                {transactionsList?.data.map((item) => (
-                  <TableRow key={item.execution_info?.tx_hash}>
-                    <TableCell>{item.transaction.sequence_info.tx_order}</TableCell>
-                    <TableCell width="256px">
-                      <Typography className="!font-mono !font-medium">
-                        <Tooltip title={item.execution_info?.tx_hash} arrow>
-                          <span>{shortAddress(item.execution_info?.tx_hash, 8, 6)}</span>
-                        </Tooltip>
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      {dayjs(Number(item.transaction.sequence_info.tx_timestamp)).format(
-                        'MMMM DD, YYYY HH:mm:ss'
-                      )}
-                    </TableCell>
+        <LazyMotion features={domAnimation}>
+          <Table sx={{ minWidth: 720 }} size={dense ? 'small' : 'medium'}>
+            <TableHeadCustom
+              headLabel={[
+                {
+                  id: 'order',
+                  label: 'Order',
+                },
+                { id: 'coin', label: 'Transaction Hash' },
+                {
+                  id: 'timestamp',
+                  label: (
+                    <Box>
+                      Timestamp <span className="ml-1 text-xs">({getUTCOffset()})</span>
+                    </Box>
+                  ),
+                },
+                {
+                  id: 'functio',
+                  label: 'Function',
+                },
+                { id: 'status', label: 'Status' },
+                { id: 'type', label: 'Type' },
+                { id: 'gas', label: 'Gas' },
+                { id: 'action', label: 'Action', align: 'center' },
+              ]}
+            />
+            <TableBody>
+              {isPending && !noSkeleton ? (
+                renderSkeleton()
+              ) : (
+                <>
+                  <AnimatePresence mode="popLayout">
+                    {transactionsList?.data.map((item, index) => (
+                      <m.tr
+                        key={item.execution_info?.tx_hash}
+                        initial={isHome ? "hidden" : false}
+                        animate={isHome ? "visible" : false}
+                        exit="exit"
+                        custom={index}
+                        variants={tableRowVariants}
+                        component={TableRow}
+                      >
+                        <TableCell>{item.transaction.sequence_info.tx_order}</TableCell>
+                        <TableCell width="256px">
+                          <Typography className="!font-mono !font-medium">
+                            <Tooltip title={item.execution_info?.tx_hash} arrow>
+                              <span>{shortAddress(item.execution_info?.tx_hash, 8, 6)}</span>
+                            </Tooltip>
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          {dayjs(Number(item.transaction.sequence_info.tx_timestamp)).format(
+                            'MMMM DD, YYYY HH:mm:ss'
+                          )}
+                        </TableCell>
 
-                    <TableCell>
-                      {shotSentTo((item.transaction.data as any).action?.function_call?.function_id)}
-                    </TableCell>
-                    {item.execution_info && (
-                      <TableCell>
-                        <Chip
-                          label={TRANSACTION_STATUS_TYPE_MAP[item.execution_info.status.type].text}
-                          size="small"
-                          variant="soft"
-                          color={TRANSACTION_STATUS_TYPE_MAP[item.execution_info.status.type].color}
-                        />
-                      </TableCell>
-                    )}
-                    <TableCell>
-                      <Chip
-                        label={TRANSACTION_TYPE_MAP[item.transaction.data.type].text}
-                        size="small"
-                        variant="soft"
-                        color={TRANSACTION_TYPE_MAP[item.transaction.data.type].color}
-                      />
-                    </TableCell>
-                    {item.execution_info && (
-                      <TableCell className="!text-xs">
-                        {formatCoin(Number(item.execution_info.gas_used), ROOCH_GAS_COIN_DECIMALS, 6)}
-                      </TableCell>
-                    )}
-                    {item.execution_info && (
-                      <TableCell align="center">
-                        <Button component={RouterLink} href={`/${NetWorkPath[network]}/tx/${item.execution_info.tx_hash}`}>
-                          View
-                        </Button>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))}
-                <TableNoData
-                  title="No Transaction Found"
-                  notFound={!isPending && (!transactionsList?.data.length || transactionsList.data.length === 0)}
-                />
-              </>
-            )}
-          </TableBody>
-        </Table>
+                        <TableCell>
+                          {shotSentTo((item.transaction.data as any).action?.function_call?.function_id)}
+                        </TableCell>
+                        {item.execution_info && (
+                          <TableCell>
+                            <Chip
+                              label={TRANSACTION_STATUS_TYPE_MAP[item.execution_info.status.type].text}
+                              size="small"
+                              variant="soft"
+                              color={TRANSACTION_STATUS_TYPE_MAP[item.execution_info.status.type].color}
+                            />
+                          </TableCell>
+                        )}
+                        <TableCell>
+                          <Chip
+                            label={TRANSACTION_TYPE_MAP[item.transaction.data.type].text}
+                            size="small"
+                            variant="soft"
+                            color={TRANSACTION_TYPE_MAP[item.transaction.data.type].color}
+                          />
+                        </TableCell>
+                        {item.execution_info && (
+                          <TableCell className="!text-xs">
+                            {formatCoin(Number(item.execution_info.gas_used), ROOCH_GAS_COIN_DECIMALS, 6)}
+                          </TableCell>
+                        )}
+                        {item.execution_info && (
+                          <TableCell align="center">
+                            <Button component={RouterLink} href={`/${NetWorkPath[network]}/tx/${item.execution_info.tx_hash}`}>
+                              View
+                            </Button>
+                          </TableCell>
+                        )}
+                      </m.tr>
+                    ))}
+                  </AnimatePresence>
+                  <TableNoData
+                    title="No Transaction Found"
+                    notFound={!isPending && (!transactionsList?.data.length || transactionsList.data.length === 0)}
+                    sx={{ display: isPending ? 'none' : 'table-row' }}
+                  />
+                </>
+              )}
+            </TableBody>
+          </Table>
+        </LazyMotion>
       </Scrollbar>
       {!dense && paginationModel && paginate && (
         <Stack className="w-full mt-4 mb-4" alignItems="flex-end">
