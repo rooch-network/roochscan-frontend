@@ -20,7 +20,7 @@ const headerLabel = [
   { id: 'action', label: 'Action', align: 'right' },
 ];
 
-export default function AssetsTableCard({ address, dense }: { address: string; dense?: boolean }) {
+export default function AssetsTableCard({ bitcoinAddress, roochAddress, dense }: { bitcoinAddress?: string; roochAddress?: string; dense?: boolean }) {
   const currentAddress = useCurrentAddress();
 
   const {
@@ -30,15 +30,15 @@ export default function AssetsTableCard({ address, dense }: { address: string; d
   } = useRoochClientQuery(
     'getBalances',
     {
-      owner: BitcoinAddressToRoochAddress(address).toHexAddress(),
+      owner: bitcoinAddress ? BitcoinAddressToRoochAddress(bitcoinAddress).toHexAddress() : roochAddress as string, 
     },
-    { refetchInterval: 5000 }
+    { enabled: !!bitcoinAddress || !!roochAddress, refetchInterval: 5000 }
   );
   console.log('🚀 ~ file: assets-table-card.tsx:31 ~ AssetsTableCard ~ assetsList:', assetsList);
 
   const isWalletOwner = useMemo(
-    () => Boolean(currentAddress) && currentAddress?.toStr() === address,
-    [currentAddress, address]
+    () => !!bitcoinAddress && Boolean(currentAddress) && currentAddress?.toStr() === bitcoinAddress,
+    [currentAddress, bitcoinAddress]
   );
 
   const filteredHeaderLabel = useMemo(

@@ -54,7 +54,11 @@ export default function TransactionsTableCard({
     <Card className="mt-4">
       <CardHeader
         title="Transactions"
-        subheader={dense ? undefined : `${shortAddress(address, 6, 6)} Activity History`}
+        subheader={
+          dense
+            ? undefined
+            : `${shortAddress(address, 6, 6)} Activity History`
+        }
         sx={{ mb: 3 }}
       />
       <Scrollbar sx={{ minHeight: dense ? undefined : 462 }}>

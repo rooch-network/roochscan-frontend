@@ -1,4 +1,4 @@
-import { BitcoinAddress } from '@roochnetwork/rooch-sdk';
+import { RoochAddress, BitcoinAddress } from '@roochnetwork/rooch-sdk';
 // Copyright (c) RoochNetwork
 // SPDX-License-Identifier: Apache-2.0
 // Author: Jason Jo
@@ -29,4 +29,8 @@ export const shotSentTo = (val:string) =>{
   if(!val) return ""
   const valList = val.split("::")
   return `${valList[1]  }::${ valList[valList.length -1]}`
+}
+
+export function RoochHexAddressToRoochBech32Address(roochHexAddress: string) {
+  return new RoochAddress(roochHexAddress).toBech32Address();
 }

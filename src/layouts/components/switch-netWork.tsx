@@ -28,7 +28,7 @@ export function SwitchNetWork() {
   const handleChange = (event: SelectChangeEvent) => {
     const networkValue = event.target.value as NetWorkType;
     const networkPattern = new RegExp(
-      `^/(${Object.keys(NetWorkPathReverse).join('|')})/(tx|account)/[^/]+$`
+      `^/(${Object.keys(NetWorkPathReverse).join('|')})/(tx|account|transactions)/[^/]+$`
     );
     if (networkPattern.test(pathname)) {
       if (param.network && param.network !== networkValue) {
