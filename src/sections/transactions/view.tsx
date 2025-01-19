@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useMemo, useState, useEffect } from 'react';
+import { isValidBitcoinAddress, isValidRoochAddress, RoochAddress } from '@roochnetwork/rooch-sdk';
 import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
 
 import { Button } from '@mui/material';
@@ -12,17 +13,43 @@ import { BitcoinAddressToRoochAddress } from 'src/utils/address';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 
 import TransactionsTableCard from './components/transactions-table-card';
-
 
 export function TransactionsView({ address }: { address: string }) {
   const [paginationModel, setPaginationModel] = useState({ index: 1, limit: 10 });
   const mapPageToNextCursor = useRef<{ [page: number]: string | null }>({});
   const router = useRouter();
-
-  useAddressChanged({ address, path: 'transactions' });
+  const [bitcoinAddress, setBitcoinAddress] = useState<string>();
+  const [roochAddress, setRoochAddress] = useState<string>();
+  const [roochBech32Address, setRoochBech32Address] = useState<string>();
+  useEffect(() => {
+    if (isValidRoochAddress(address)) {
+      const roochAddress = new RoochAddress(address);
+      const roochHexAddress = roochAddress.toHexAddress();
+      setRoochAddress(roochHexAddress);
+      setRoochBech32Address(roochAddress.toBech32Address());
+    } else if (isValidBitcoinAddress(address)) {
+      setBitcoinAddress(address);
+      try {
+        const roochAddress = BitcoinAddressToRoochAddress(address!);
+        setRoochAddress(roochAddress.toHexAddress());
+        setRoochBech32Address(roochAddress.toBech32Address());
+      } catch (error) {
+        toast.error('Invalid query address');
+        router.push('/search');
+      }
+    } else {
+      toast.error('Invalid query address');
+      router.push('/search');
+    }
+  }, [address, router]);
+  useAddressChanged({
+    address: bitcoinAddress,
+    path: 'transactions',
+  });
 
   const queryOptions = useMemo(
     () => ({
@@ -32,13 +59,17 @@ export function TransactionsView({ address }: { address: string }) {
     [paginationModel]
   );
 
-  const { data: transactionsList, isPending } = useRoochClientQuery('queryTransactions', {
-    filter: {
-      sender: BitcoinAddressToRoochAddress(address).toHexAddress(),
+  const { data: transactionsList, isPending } = useRoochClientQuery(
+    'queryTransactions',
+    {
+      filter: {
+        sender: roochBech32Address as string,
+      },
+      cursor: queryOptions.cursor,
+      limit: queryOptions.limit,
     },
-    cursor: queryOptions.cursor,
-    limit: queryOptions.limit,
-  });
+    { enabled: !!roochBech32Address }
+  );
 
   useEffect(() => {
     if (!transactionsList) {
@@ -62,7 +93,7 @@ export function TransactionsView({ address }: { address: string }) {
 
   return (
     <DashboardContent maxWidth="xl">
-       <Button
+      <Button
         className="w-fit"
         onClick={() => {
           router.back();

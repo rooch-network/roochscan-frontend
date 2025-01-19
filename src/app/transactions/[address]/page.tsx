@@ -1,7 +1,12 @@
-import { TransactionsView } from 'src/sections/transactions/view';
+'use client';
 
-export const metadata = { title: `Transactions` };
+import { redirect } from 'next/navigation';
+import { NetWorkPath } from '@/config/constant';
+import { useNetwork } from '@/context/network-provider';
+
 
 export default function Page({ params }: { params: { address: string } }) {
-  return <TransactionsView address={params.address} />;
+  const { network } = useNetwork();
+  redirect(`/${NetWorkPath[network]}/transactions/${params.address}`);
+
 }

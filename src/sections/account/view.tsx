@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { isValidBitcoinAddress } from '@roochnetwork/rooch-sdk';
+import { isValidBitcoinAddress, isValidRoochAddress, RoochAddress } from '@roochnetwork/rooch-sdk';
 import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
 
-import { Box, Card, Chip, Stack, CardHeader, CardContent, Button } from '@mui/material';
+import { Box, Card, Chip, Stack, Button, CardHeader, CardContent } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
@@ -20,18 +20,26 @@ import { Iconify } from 'src/components/iconify';
 import AssetsTableCard from '../assets/components/assets-table-card';
 import TransactionsTableCard from '../transactions/components/transactions-table-card';
 
-
 export function AccountView({ address }: { address: string }) {
-  const [viewAddress, setViewAddress] = useState<string>();
+  const [viewBitcoinAddress, setViewBitcoinAddress] = useState<string>();
   const [viewRoochAddress, setViewRoochAddress] = useState<string>();
+  const [viewRoochBech32Address, setViewRoochBech32Address] = useState<string>();
+
   const router = useRouter();
   useAddressChanged({ address, path: 'account' });
 
   useEffect(() => {
-    if (isValidBitcoinAddress(address)) {
-      setViewAddress(address);
+    if (isValidRoochAddress(address)) {
+      const roochAddress = new RoochAddress(address);
+      const roochHexAddress = roochAddress.toHexAddress();
+      setViewRoochAddress(roochHexAddress);
+      setViewRoochBech32Address(roochAddress.toBech32Address());
+    } else if (isValidBitcoinAddress(address)) {
+      setViewBitcoinAddress(address);
       try {
-        setViewRoochAddress(BitcoinAddressToRoochAddress(address!).toHexAddress());
+        const roochAddress = BitcoinAddressToRoochAddress(address!);
+        setViewRoochAddress(roochAddress.toHexAddress());
+        setViewRoochBech32Address(roochAddress.toBech32Address());
       } catch (error) {
         toast.error('Invalid query address');
         router.push('/search');
@@ -50,17 +58,17 @@ export function AccountView({ address }: { address: string }) {
       },
       limit: '5',
     },
-    { enabled: !!viewAddress }
+    { enabled: !!viewBitcoinAddress || !!viewRoochAddress }
   );
-  console.log(transactionsList,"transactionsList");
-  
-  if (!viewAddress) {
+  // console.log(transactionsList, 'transactionsList');
+
+  if (!viewBitcoinAddress && !viewRoochAddress) {
     return null;
   }
 
   return (
     <DashboardContent maxWidth="xl">
-       <Button
+      <Button
         className="w-fit"
         onClick={() => {
           router.back();
@@ -73,20 +81,22 @@ export function AccountView({ address }: { address: string }) {
         <CardHeader title="Account Info" sx={{ mb: 1 }} />
         <CardContent className="!pt-0">
           <Stack spacing={2}>
-            <Stack direction="row" alignItems="center">
-              <Chip
-                className="w-fit !cursor-pointer"
-                label={viewAddress}
-                variant="soft"
-                color="secondary"
-                component={RouterLink}
-                href={`/account/${viewAddress}`}
-              />
-            </Stack>
+            {viewBitcoinAddress && (
+              <Stack direction="row" alignItems="center">
+                <Chip
+                  className="w-fit !cursor-pointer"
+                  label={viewBitcoinAddress}
+                  variant="soft"
+                  color="secondary"
+                  component={RouterLink}
+                  href={`/account/${viewBitcoinAddress}`}
+                />
+              </Stack>
+            )}
             <Stack direction="row" alignItems="center" spacing={0.5}>
               <Chip
                 className="w-fit"
-                label={BitcoinAddressToRoochAddress(viewAddress).toStr()}
+                label={viewRoochBech32Address}
                 variant="soft"
                 color="default"
               />
@@ -96,10 +106,14 @@ export function AccountView({ address }: { address: string }) {
         </CardContent>
       </Card>
 
-      <AssetsTableCard dense address={viewAddress} />
+      <AssetsTableCard
+        dense
+        bitcoinAddress={viewBitcoinAddress}
+        roochAddress={viewRoochBech32Address}
+      />
       <TransactionsTableCard
         dense
-        address={viewAddress}
+        address={address}
         isPending={isTransactionsPending}
         transactionsList={transactionsList}
       />
