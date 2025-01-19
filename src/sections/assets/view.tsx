@@ -46,7 +46,7 @@ export function AssetsView({ address }: { address: string }) {
 
       {renderTabs}
 
-      {tabs.value === 'coin' && <AssetsTableCard address={address} />}
+      {tabs.value === 'coin' && <AssetsTableCard bitcoinAddress={address} />}
 
       {tabs.value === 'nft' && <NFTList address={address} />}
 
