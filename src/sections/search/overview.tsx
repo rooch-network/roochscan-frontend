@@ -3,8 +3,12 @@
 import type { PaginatedTransactionWithInfoViews } from '@roochnetwork/rooch-sdk';
 
 import { useState, useEffect } from 'react';
-import { isValidBitcoinAddress } from '@roochnetwork/rooch-sdk';
-import {useRoochClient, useRoochClientQuery} from '@roochnetwork/rooch-sdk-kit';
+import { useRoochClient, useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
+import {
+  isValidRoochAddress,
+  ROOCH_BECH32_PREFIX,
+  isValidBitcoinAddress,
+} from '@roochnetwork/rooch-sdk';
 
 import { Card, Stack, Button, TextField, CardHeader, CardContent } from '@mui/material';
 
@@ -22,32 +26,35 @@ const placeholder = 'Search for transactions, accounts, and modules';
 export default function SearchView() {
   const [account, setAccount] = useState('');
   const [errorMsg, setErrorMsg] = useState<string>();
-  const [tempTransactionList, setTempTransactionList] = useState<PaginatedTransactionWithInfoViews>();
+  const [tempTransactionList, setTempTransactionList] =
+    useState<PaginatedTransactionWithInfoViews>();
   const router = useRouter();
 
-  const client = useRoochClient()
+  const client = useRoochClient();
 
   const { fiveMinutesAgoMillis, currentTimeMillis } = useTimeRange(5000);
 
   const handleSearch = async () => {
     if (!account.startsWith('0x') && isValidBitcoinAddress(account)) {
       router.push(`/account/${account || placeholder}`);
-    } else if (account.startsWith('0x')) {
-
-     const {data} = await client.queryObjectStates({
-        filter:{
+    } 
+    else if (account.startsWith('0x')) {
+      const { data } = await client.queryObjectStates({
+        filter: {
           object_id: account,
-        }
-      })
-      if(data?.length > 0){
-        router.push(`/object/${account}`)
+        },
+      });
+      if (data?.length > 0) {
+        router.push(`/object/${account}`);
         return;
       }
 
       router.push(`/tx/${account}`);
-    }
+    } 
+    else if (account.startsWith(ROOCH_BECH32_PREFIX)) {
+      router.push(`/account/${account}`);
+    } 
   };
-
 
   const { data: transactionsList, isPending: isTransactionsPending } = useRoochClientQuery(
     'queryTransactions',
@@ -60,7 +67,7 @@ export default function SearchView() {
       },
       limit: '10',
     },
-    { 
+    {
       enabled: !!currentTimeMillis,
       refetchInterval: 5000,
       refetchIntervalInBackground: true,
@@ -70,20 +77,23 @@ export default function SearchView() {
 
   useEffect(() => {
     if (!isTransactionsPending && transactionsList) {
-      setTempTransactionList(prev => {
+      setTempTransactionList((prev) => {
         if (!prev) return transactionsList;
-        
-        const newData = transactionsList.data.filter(newTx => 
-          !prev.data.some(oldTx => oldTx.execution_info?.tx_hash === newTx.execution_info?.tx_hash)
+
+        const newData = transactionsList.data.filter(
+          (newTx) =>
+            !prev.data.some(
+              (oldTx) => oldTx.execution_info?.tx_hash === newTx.execution_info?.tx_hash
+            )
         );
-        
+
         if (newData.length > 0) {
           return {
             ...transactionsList,
-            data: [...newData, ...prev.data].slice(0, 10)
+            data: [...newData, ...prev.data].slice(0, 10),
           };
         }
-        
+
         return prev;
       });
     }
@@ -92,10 +102,7 @@ export default function SearchView() {
   return (
     <DashboardContent maxWidth="xl">
       <Card>
-        <CardHeader
-          title="Search "
-          sx={{ mb: 2 }}
-        />
+        <CardHeader title="Search " sx={{ mb: 2 }} />
         <CardContent className="!pt-0">
           <Stack direction="row" alignItems="flex-start" className="w-full" spacing={2}>
             <TextField
@@ -118,7 +125,7 @@ export default function SearchView() {
         isPending={isTransactionsPending || !tempTransactionList}
         transactionsList={tempTransactionList}
         noSkeleton
-        isHome={true}
+        isHome
       />
     </DashboardContent>
   );
