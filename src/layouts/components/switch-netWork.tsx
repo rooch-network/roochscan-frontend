@@ -28,12 +28,14 @@ export function SwitchNetWork() {
   const handleChange = (event: SelectChangeEvent) => {
     const networkValue = event.target.value as NetWorkType;
     const networkPattern = new RegExp(
-      `^/(${Object.keys(NetWorkPathReverse).join('|')})/(tx|account|transactions)/[^/]+$`
+      `^/(${Object.keys(NetWorkPathReverse).join('|')})/(tx|account|transactions|object)/[^/]+$`
     );
     if (networkPattern.test(pathname)) {
       if (param.network && param.network !== networkValue) {
         const pathType = pathname.split('/')[2];
-        const identifier = pathType === 'tx' ? param.hash : param.address;
+        const identifier =
+          pathType === 'tx' ? param.hash : pathType === 'object' ? param.id : param.address;
+
         router.push(`/${NetWorkPath[networkValue]}/${pathType}/${identifier}`);
         return;
       }

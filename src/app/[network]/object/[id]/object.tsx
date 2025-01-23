@@ -1,6 +1,9 @@
-import React, {ReactNode} from "react";
-import {Box, Chip, Skeleton, Stack} from "@mui/material";
-import {varAlpha} from "../../../theme/styles";
+import type {ReactNode} from "react";
+
+import React from "react";
+import {varAlpha} from "@/theme/styles";
+
+import {Box, Chip, Stack, Skeleton} from "@mui/material";
 
 
 function PropsKeyItem({ itemKey }: { itemKey: string }) {
