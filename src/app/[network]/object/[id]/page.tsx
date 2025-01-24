@@ -112,6 +112,7 @@ export default function Object({ params }: { params: { id: string } }) {
                     onChange={(e) => setInputModuleName(e.target.value)}
                     style={{
                       maxWidth: 300,
+                      height: 40,
                       background: isDark ? '#1a1f2e' : '#fff',
                       color: isDark ? '#e5e7eb' : 'inherit',
                       borderColor: isDark ? '#2d3949' : undefined,
@@ -125,8 +126,8 @@ export default function Object({ params }: { params: { id: string } }) {
                     onClick={handleSubmitModuleName}
                     disabled={!inputModuleName || isLoading}
                     sx={{
+                      height: 40,
                       px: 3,
-                      py: 1,
                       minWidth: 0,
                       boxShadow: 'none',
                       bgcolor: 'transparent',
