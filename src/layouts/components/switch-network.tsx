@@ -35,7 +35,6 @@ export function SwitchNetWork() {
         const pathType = pathname.split('/')[2];
         const identifier =
           pathType === 'tx' ? param.hash : pathType === 'object' ? param.id : param.address;
-
         router.push(`/${NetWorkPath[networkValue]}/${pathType}/${identifier}`);
         return;
       }
