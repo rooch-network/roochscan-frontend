@@ -9,7 +9,7 @@ import { Button, useColorScheme } from '@mui/material';
 import { Logo } from 'src/components/logo';
 
 import { HeaderSection } from './header-section';
-import { SwitchNetWork } from '../components/switch-netWork';
+import { SwitchNetWork } from '../components/switch-network';
 import { AccountDrawer } from '../components/account-drawer';
 import { SwitchDorkMode } from "../components/switch-darkMode"
 

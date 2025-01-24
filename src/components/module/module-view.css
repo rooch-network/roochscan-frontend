@@ -1,0 +1,14 @@
+.dark-mode-input::placeholder {
+  color: #6b7280 !important;
+  opacity: 0.6;
+}
+
+.dark-mode-input:hover,
+.dark-mode-input:focus {
+  border-color: #3b4252 !important;
+  box-shadow: none !important;
+}
+
+.dark-mode-input {
+  transition: all 0.2s ease-in-out;
+} 
