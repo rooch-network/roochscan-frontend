@@ -1,32 +1,33 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+
 import type { MenuProps } from "antd";
-import { Dropdown, Space } from "antd";
-import { getRoochNodeUrl } from "@roochnetwork/rooch-sdk";
+
+import Link from "next/link";
+import Image from "next/image";
 import useStore from "@/store";
+import { Space, Dropdown } from "antd";
+import useIsMobile from "@/hooks/useIsMobile";
+import React, { useMemo, useState } from "react";
+// import { shortAddress } from "@/utils/address";
+import { getRoochNodeUrl } from "@roochnetwork/rooch-sdk";
+import { useCurrentAddress } from "@roochnetwork/rooch-sdk-kit";
+// import WalletConnectModal from "@/components/WalletConnectModal";
 import {
+  UpOutlined,
+  SunOutlined,
   DownOutlined,
   MoonOutlined,
-  SunOutlined,
-  UpOutlined,
 } from "@ant-design/icons";
-import {
-  useConnectWallet,
-  useCurrentAddress,
-  useWallets,
-  useWalletStore,
-} from "@roochnetwork/rooch-sdk-kit";
-import WalletConnectModal from "@/components/WalletConnectModal";
-import { shortAddress } from "@/utils/address";
-import useIsMobile from "@/hooks/useIsMobile";
+
 const defaultMainnetUrl = process.env.NEXT_PUBLIC_DEFAULT_NETWORK;
 
 const NetWork: any = {
   Mainnet: defaultMainnetUrl,
   Testnet: getRoochNodeUrl("testnet"),
-  //Devnet: getRoochNodeUrl("devnet"),
+  // Devnet: getRoochNodeUrl("devnet"),
   Localnet: getRoochNodeUrl("localnet"),
 };
 const items: MenuProps["items"] = [
@@ -91,21 +92,21 @@ const DarkItem: MenuProps["items"] = [
 
 export default function Header() {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [walletConnectModal, setWalletConnectModal] = useState(false);
-  const currentAddress = useCurrentAddress();
-  const connectionStatus = useWalletStore((state) => state.connectionStatus);
-  const setWalletDisconnected = useWalletStore(
-    (state) => state.setWalletDisconnected
-  );
+  // const [walletConnectModal, setWalletConnectModal] = useState(false);
+  // const currentAddress = useCurrentAddress();
+  // const { status } = useCurrentWallet();
+  // const setWalletDisconnected = useWalletStore(
+  //   (state) => state.setWalletDisconnected
+  // );
 
-  const [btnText, setBtnText] = useState("Connect Wallet");
+  // const [btnText, setBtnText] = useState("Connect Wallet");
 
   const isMobile = useIsMobile();
-  useEffect(() => {
-    if (currentAddress) {
-      setBtnText(shortAddress(currentAddress?.toStr(), 8, 6));
-    }
-  }, [currentAddress]);
+  // useEffect(() => {
+  //   if (currentAddress) {
+  //     setBtnText(shortAddress(currentAddress?.toStr(), 8, 6));
+  //   }
+  // }, [currentAddress]);
 
   const handleVisibleChange = (flag: boolean) => {
     setDropdownVisible(flag); // 更新 dropdown 的可见状态
@@ -122,45 +123,45 @@ export default function Header() {
     setDropdownVisible(false);
   };
 
-  const handleConnect = async () => {
-    if (connectionStatus === "connected") {
-      setWalletDisconnected();
-      return;
-    }
-    setWalletConnectModal(true);
-  };
+  // const handleConnect = async () => {
+  //   if (status === "connected") {
+  //     setWalletDisconnected();
+  //     return;
+  //   }
+  //   setWalletConnectModal(true);
+  // };
 
-  const renderWalletBtn = () => {
-    if (connectionStatus === "connected") {
-      return (
-        <div
-          onMouseEnter={() => setBtnText("Disconnect")}
-          onMouseLeave={() =>
-            setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))
-          }
-          onClick={handleConnect}
-          className={
-            "pc:px-[10px] pc:w-[180px] w-auto px-[5px] text-center py-[5px] rounded pc:ml-[30px] pl-[10px] transition-all cursor-pointer bg-[#00ADB280] hover:bg-[#ff000060]"
-          }
-        >
-          {btnText}
-        </div>
-      );
-    }
-    return (
-      <div
-        onClick={handleConnect}
-        className={
-          "pc:px-[10px] pc:w-[180px] w-auto  text-center py-[5px] rounded  ml-[10px]  pc:ml-[30px] cursor-pointer bg-[#00ADB2] dark:text-white"
-        }
-      >
-        {"Connect Wallet"}
-      </div>
-    );
-  };
+  // const renderWalletBtn = () => {
+  //   if (status === "connected") {
+  //     return (
+  //       <div
+  //         onMouseEnter={() => setBtnText("Disconnect")}
+  //         onMouseLeave={() =>
+  //           setBtnText(shortAddress(currentAddress?.toStr(), 8, 6))
+  //         }
+  //         onClick={handleConnect}
+  //         className={
+  //           "pc:px-[10px] pc:w-[180px] w-auto px-[5px] text-center py-[5px] rounded pc:ml-[30px] pl-[10px] transition-all cursor-pointer bg-[#00ADB280] hover:bg-[#ff000060]"
+  //         }
+  //       >
+  //         {btnText}
+  //       </div>
+  //     );
+  //   }
+  //   return (
+  //     <div
+  //       onClick={handleConnect}
+  //       className={
+  //         "pc:px-[10px] pc:w-[180px] w-auto  text-center py-[5px] rounded  ml-[10px]  pc:ml-[30px] cursor-pointer bg-[#00ADB2] dark:text-white"
+  //       }
+  //     >
+  //       {"Connect Wallet"}
+  //     </div>
+  //   );
+  // };
 
   const handleToggleDarkModal = (v: any) => {
-    if (v.key == "dark") {
+    if (v.key === "dark") {
       document.documentElement.classList.toggle("dark");
     } else {
       document.documentElement.classList.remove("dark");
@@ -178,7 +179,7 @@ export default function Header() {
       </Link>
       <div className="flex items-center">
         <div className=" w-auto cursor-pointer dark:text-white text-[#151918]">
-          <Link href={"/txs"}>Transactions</Link>
+          <Link href="/txs">Transactions</Link>
         </div>
         <Dropdown
           menu={{ items: DarkItem, onClick: handleToggleDarkModal }}
@@ -217,14 +218,14 @@ export default function Header() {
           </div>
         </Dropdown>
 
-        {renderWalletBtn()}
+        {/* {renderWalletBtn()} */}
       </div>
-      <WalletConnectModal
+      {/* <WalletConnectModal
         open={walletConnectModal}
         onCancel={() => {
           setWalletConnectModal(false);
         }}
-      ></WalletConnectModal>
+      ></WalletConnectModal> */}
     </header>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
-import type { NetWorkType } from '@roochnetwork/rooch-sdk';
+
+import type { NetworkType } from '@roochnetwork/rooch-sdk';
 import type { SelectChangeEvent } from '@mui/material/Select';
 
 import * as React from 'react';
@@ -12,7 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 
 import { useNetwork } from 'src/context/network-provider';
 
-const NETWORKS: { label: string; value: NetWorkType }[] = [
+const NETWORKS: { label: string; value: NetworkType }[] = [
   { label: 'Mainnet Network', value: 'mainnet' },
   { label: 'Testnet Network', value: 'testnet' },
   { label: 'Localnet Network', value: 'localnet' },
@@ -26,7 +27,7 @@ export function SwitchNetWork() {
   // console.log('param', param, pathname)
 
   const handleChange = (event: SelectChangeEvent) => {
-    const networkValue = event.target.value as NetWorkType;
+    const networkValue = event.target.value as NetworkType;
     const networkPattern = new RegExp(
       `^/(${Object.keys(NetWorkPathReverse).join('|')})/(tx|account|transactions|object)/[^/]+$`
     );

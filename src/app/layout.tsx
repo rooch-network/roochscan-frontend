@@ -1,7 +1,7 @@
 import 'src/global.css';
 import '@fontsource-variable/raleway/wght.css';
 import '@fontsource-variable/plus-jakarta-sans/wght.css';
-
+import '@roochnetwork/rooch-sdk-kit/dist/index.css';
 import type { Viewport } from 'next';
 
 import { headers } from 'next/headers';
