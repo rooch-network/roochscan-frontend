@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { NetWorkType } from '@roochnetwork/rooch-sdk';
+import type { NetworkType } from '@roochnetwork/rooch-sdk';
 
 import { getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
 import { useMemo, useContext, useCallback, createContext } from 'react';
@@ -7,9 +7,9 @@ import { useMemo, useContext, useCallback, createContext } from 'react';
 import useStore from 'src/store';
 
 type NetworkContextType = {
-  network: NetWorkType;
+  network: NetworkType;
   roochNodeUrl: string;
-  setNetwork: (network: NetWorkType) => void;
+  setNetwork: (network: NetworkType) => void;
 };
 
 const NetworkContext = createContext<NetworkContextType | undefined>(undefined);
@@ -21,7 +21,7 @@ type NetworkProviderProps = {
 export function NetworkProvider({ children }: NetworkProviderProps) {
   const { roochNodeUrl, setRoochNodeUrl } = useStore();
 
-  const network = useMemo<NetWorkType>(() => {
+  const network = useMemo<NetworkType>(() => {
     if (roochNodeUrl === getRoochNodeUrl('mainnet')) {
       return 'mainnet';
     }
@@ -32,7 +32,7 @@ export function NetworkProvider({ children }: NetworkProviderProps) {
   }, [roochNodeUrl]);
 
   const setNetwork = useCallback(
-    (newNetwork: NetWorkType) => {
+    (newNetwork: NetworkType) => {
       setRoochNodeUrl(getRoochNodeUrl(newNetwork));
     },
     [setRoochNodeUrl]
@@ -50,6 +50,7 @@ export function NetworkProvider({ children }: NetworkProviderProps) {
   return <NetworkContext.Provider value={value}>{children}</NetworkContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useNetwork() {
   const context = useContext(NetworkContext);
   if (!context) {

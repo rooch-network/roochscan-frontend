@@ -1,6 +1,8 @@
 import type { NavSectionProps } from 'src/components/nav-section';
 
 import { useMemo } from 'react';
+// import { ConnectButton } from '@roochnetwork/rooch-sdk-kit';
+import { ConnectButtonWrapper } from '@/components/ConnectButtonWrapper'
 
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
@@ -10,7 +12,7 @@ import { Logo } from 'src/components/logo';
 
 import { HeaderSection } from './header-section';
 import { SwitchNetWork } from '../components/switch-network';
-import { AccountDrawer } from '../components/account-drawer';
+// import { AccountDrawer } from '../components/account-drawer';
 import { SwitchDorkMode } from "../components/switch-darkMode"
 
 import type { HeaderSectionProps } from './header-section';
@@ -121,7 +123,9 @@ export function HeaderBase({
               <SwitchDorkMode />
               <SwitchNetWork />
               {/* -- Account drawer -- */}
-              {account && <AccountDrawer data-slot="account" />}
+              {/* {account && <AccountDrawer data-slot="account" />} */}
+              {account && <ConnectButtonWrapper />}
+
 
               {/* -- Purchase button -- */}
               {/* {purchase && (

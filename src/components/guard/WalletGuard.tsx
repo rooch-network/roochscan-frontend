@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 
-import { useWalletStore } from '@roochnetwork/rooch-sdk-kit';
+import { useCurrentWallet } from '@roochnetwork/rooch-sdk-kit';
 
 import { Box, Card, Stack, CardHeader, CardContent } from '@mui/material';
 
@@ -12,9 +12,9 @@ import { AccountDrawer } from 'src/layouts/components/account-drawer';
 import { Iconify } from '../iconify';
 
 export default function WalletGuard({ children }: { children: ReactNode }) {
-  const connectionStatus = useWalletStore((state) => state.connectionStatus);
+  const { status } = useCurrentWallet();
 
-  if (connectionStatus === 'connected') {
+  if (status === 'connected') {
     return children;
   }
 
