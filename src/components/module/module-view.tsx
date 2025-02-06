@@ -1,7 +1,8 @@
+import './module-view.css';
+
 import type { FunctionDetail } from '@/types';
 import type { ModuleABIView } from '@roochnetwork/rooch-sdk/src/client/types';
 
-import './module-view.css';
 import useStore from '@/store';
 import { Form, Input, message } from 'antd';
 import { Iconify } from '@/components/iconify';
@@ -16,12 +17,12 @@ import {
   useRoochClientQuery,
 } from '@roochnetwork/rooch-sdk-kit';
 
+import { useTheme } from '@mui/material/styles';
 import {
   Stack,
   Button,
   useColorScheme,
 } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 
 export const ModuleView = ({ 
   moduleId, 

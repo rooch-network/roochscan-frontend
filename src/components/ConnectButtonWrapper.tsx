@@ -6,7 +6,7 @@ import { useMediaQuery } from '@mui/material';
 
 
 export const ConnectButtonWrapper = () => {
-  const isMobile = useMediaQuery('(max-width:600px)');  // 根据需要调整断点
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   if (isMobile) return null;
   
