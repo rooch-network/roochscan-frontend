@@ -1,15 +1,14 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useTabs } from '@/hooks/use-tabs';
+import { useRouter } from 'next/navigation';
 import { Iconify } from '@/components/iconify';
+import React, { useMemo, useState } from 'react';
 import { DashboardContent } from '@/layouts/dashboard';
+import { ModuleView } from '@/components/module/module-view';
 import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { duotoneDark, duotoneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { ModuleView } from '@/components/module/module-view';
-import { Form, Input, message } from 'antd';
 
 import {
   Tab,
@@ -18,9 +17,12 @@ import {
   Stack,
   Button,
   Divider,
+  MenuItem,
   CardHeader,
   CardContent,
+  FormControl,
   useColorScheme,
+  Select as MuiSelect,
 } from '@mui/material';
 
 import ObjectDetail from './object';
@@ -35,44 +37,39 @@ export default function Object({ params }: { params: { id: string } }) {
   const tabs = useTabs('overview');
   const { mode } = useColorScheme();
   const router = useRouter();
-  const [moduleName, setModuleName] = useState<string>();
-  const [inputModuleName, setInputModuleName] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedModule, setSelectedModule] = useState<string>();
   const isDark = mode === 'dark';
 
-  const { data, isPending } = useRoochClientQuery(
-    'queryObjectStates' as any,
-    {
-      filter: {
-        object_id: params.id,
-      },
-    } as any
-  );
-
-  const { data: moduleData, refetch: fetchModule } = useRoochClientQuery('getModuleAbi', {
-    moduleAddr: params.id,
-    moduleName: inputModuleName,
-  }, {
-    enabled: false,
+  const { data, isPending } = useRoochClientQuery('queryObjectStates', {
+    filter: {
+      object_id: params.id,
+    },
   });
 
-  const objectDetail = useMemo(() => data?.data, [data]);
+  const { data: moduleList, isPending: isModuleListPending } = useRoochClientQuery(
+    'getAllModules',
+    {
+      package_address: params.id,
+    },
+  );
 
-  const handleSubmitModuleName = async () => {
-    setIsLoading(true);
-    try {
-      const result = await fetchModule();
-      if (result) {
-        setModuleName(inputModuleName);
-      } else {
-        message.error('Module not found');
-      }
-    } catch (error) {
-      message.error('Failed to fetch module');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const moduleNames = useMemo(() => {
+    if (!moduleList) return [];
+    return Array.from(moduleList.keys());
+  }, [moduleList]);
+
+  // const { data: moduleData, refetch: fetchModule } = useRoochClientQuery(
+  //   'getModuleAbi',
+  //   {
+  //     moduleAddr: params.id,
+  //     moduleName: selectedModule,
+  //   },
+  //   {
+  //     enabled: !!selectedModule
+  //   }
+  // );
+
+  const objectDetail = useMemo(() => data?.data, [data]);
 
   const renderTabs = (
     <Tabs value={tabs.value} onChange={tabs.onChange} sx={{ mb: { xs: 2, md: 2 } }}>
@@ -101,91 +98,70 @@ export default function Object({ params }: { params: { id: string } }) {
         <CardContent className="!pt-0">
           {renderTabs}
           {tabs.value === 'overview' &&
-            objectDetail?.map((item: any) => <ObjectDetail object={item} />)}
+            objectDetail?.map((item: any, index: number) => (
+              <ObjectDetail key={item.id || index} object={item} />
+            ))}
           {tabs.value === 'module' && (
             <>
-              {!moduleName && (
-                <div className="flex gap-4 items-center mb-6">
-                  <Input
-                    placeholder="Enter Module Name"
-                    value={inputModuleName}
-                    onChange={(e) => setInputModuleName(e.target.value)}
-                    style={{
-                      maxWidth: 300,
-                      height: 40,
-                      background: isDark ? '#1a1f2e' : '#fff',
-                      color: isDark ? '#e5e7eb' : 'inherit',
-                      borderColor: isDark ? '#2d3949' : undefined,
-                    }}
-                    className={isDark ? 'dark-mode-input' : ''}
-                    onPressEnter={handleSubmitModuleName}
-                    disabled={isLoading}
-                  />
-                  <Button
-                    variant="text"
-                    onClick={handleSubmitModuleName}
-                    disabled={!inputModuleName || isLoading}
-                    sx={{
-                      height: 40,
-                      px: 3,
-                      minWidth: 0,
-                      boxShadow: 'none',
-                      bgcolor: 'transparent',
-                      border: '1px solid',
-                      borderColor: isDark ? '#2d3949' : '#e5e7eb',
-                      color: !inputModuleName || isLoading
-                        ? isDark
-                          ? '#9ca3af'
-                          : '#6b7280'
-                        : isDark
-                          ? '#e5e7eb'
-                          : '#111827',
-                      '&:hover': {
-                        bgcolor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-                        boxShadow: 'none',
-                      },
-                    }}
-                  >
-                    {isLoading ? 'Loading...' : 'Submit'}
-                  </Button>
-                </div>
-              )}
-              {moduleName && (
-                <div className="flex justify-start items-center mt-4 mb-6">
-                  <div style={{
-                    fontSize: '1rem',
-                    color: isDark ? 'white' : 'primary',
-                    fontWeight: 600,
-                  }}>
-                    Current Module: <span style={{ color: isDark ? '#e5e7eb' : '#111827' }}>{moduleName}</span>
+              {moduleNames.length > 0 && (
+                <div className="flex flex-col gap-4 mb-6">
+                  <div className="flex items-center gap-4">
+                    <FormControl
+                      sx={{
+                        minWidth: 300,
+                      }}
+                    >
+                      <MuiSelect
+                        value={selectedModule || ''}
+                        onChange={(event) => setSelectedModule(event.target.value)}
+                        displayEmpty
+                        sx={{
+                          height: 40,
+                          background: isDark ? '#1a1f2e' : '#fff',
+                          '& .MuiSelect-select': {
+                            paddingY: '8px',
+                          },
+                        }}
+                      >
+                        <MenuItem value="" disabled>
+                          Select a module
+                        </MenuItem>
+                        {moduleNames.map((name) => (
+                          <MenuItem key={name} value={name}>
+                            {name}
+                          </MenuItem>
+                        ))}
+                      </MuiSelect>
+                    </FormControl>
+                    {selectedModule && (
+                      <Button
+                        variant="text"
+                        onClick={() => setSelectedModule(undefined)}
+                        sx={{
+                          px: 3,
+                          py: 1,
+                          minWidth: 0,
+                          boxShadow: 'none',
+                          bgcolor: 'transparent',
+                          border: '1px solid',
+                          borderColor: isDark ? '#2d3949' : '#e5e7eb',
+                          color: isDark ? '#e5e7eb' : '#111827',
+                          '&:hover': {
+                            bgcolor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
+                            boxShadow: 'none',
+                          },
+                        }}
+                      >
+                        Clear Selection
+                      </Button>
+                    )}
                   </div>
-                  <Button
-                    variant="text"
-                    onClick={() => {
-                      setModuleName(undefined);
-                      setInputModuleName('');
-                    }}
-                    sx={{
-                      ml: 2,
-                      px: 3,
-                      py: 1,
-                      minWidth: 0,
-                      boxShadow: 'none',
-                      bgcolor: 'transparent',
-                      border: '1px solid',
-                      borderColor: isDark ? '#2d3949' : '#e5e7eb',
-                      color: isDark ? '#e5e7eb' : '#111827',
-                      '&:hover': {
-                        bgcolor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-                        boxShadow: 'none',
-                      },
-                    }}
-                  >
-                    Change Module
-                  </Button>
+                  {isModuleListPending && (
+                    <div className="text-gray-500">Loading modules...</div>
+                  )}
                 </div>
               )}
-              <ModuleView moduleId={params.id} moduleName={moduleName} />
+              <ModuleView moduleId={params.id} moduleName={selectedModule} />
             </>
           )}
           {tabs.value === 'raw' && (
@@ -223,3 +199,4 @@ export default function Object({ params }: { params: { id: string } }) {
 //   }
 //   return children;
 // }
+
