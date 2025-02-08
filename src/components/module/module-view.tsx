@@ -3,21 +3,19 @@ import './module-view.css';
 import type { FunctionDetail } from '@/types';
 import type { ModuleABIView } from '@roochnetwork/rooch-sdk/src/client/types';
 
-import useStore from '@/store';
 import { Form, Input, message } from 'antd';
-import { Iconify } from '@/components/iconify';
 import React, { useMemo, useState, useEffect } from 'react';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { duotoneDark, duotoneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Args, RoochClient, Transaction, normalizeTypeArgsToStr } from '@roochnetwork/rooch-sdk';
+import { Args, Transaction } from '@roochnetwork/rooch-sdk';
 import {
+  useRoochClient,
   useCurrentAddress,
   useCurrentSession,
   useCreateSessionKey,
   useRoochClientQuery,
+  useSignAndExecuteTransaction,
 } from '@roochnetwork/rooch-sdk-kit';
 
-import { useTheme } from '@mui/material/styles';
+// import { useTheme } from '@mui/material/styles';
 import {
   Stack,
   Button,
@@ -32,9 +30,8 @@ export const ModuleView = ({
   moduleName?: string;
 }) => {
   const { mode } = useColorScheme();
-  const theme = useTheme();
+  // const theme = useTheme();
   const isDark = mode === 'dark';
-
   const { data: module } = useRoochClientQuery('getModuleAbi', {
     moduleAddr: moduleId,
     moduleName: moduleName || '',
@@ -145,7 +142,9 @@ const MethodCall = ({
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
   const [loading, setLoading] = useState(false);
-
+  const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction()
+  const client = useRoochClient()
+  // eslint-disable-next-line consistent-return
   const handleSubmit = async () => {
     try {
       if (!address) return await message.info('Please connect wallet!');
@@ -174,36 +173,139 @@ const MethodCall = ({
       });
       const typeParams = Object.values(form1.getFieldsValue()) as any[];
 
-      const txn = new Transaction();
-      txn.callFunction({
-        address: moduleDetail.address,
-        module: moduleDetail.name,
-        function: func.name,
-        args: [...paramsArr],
-        typeArgs: [
-          ...typeParams.map((item) =>
-            normalizeTypeArgsToStr({
-              target: item,
-            })
-          ),
-        ],
-      });
-      const client = new RoochClient({ url: useStore.getState().roochNodeUrl });
-      const result = await client.signAndExecuteTransaction({
-        transaction: txn,
-        signer: sessionKey as any,
-      });
+      // 检查函数定义中是否包含 &signer
+      const hasSigner = func.params.includes('&signer');
+      
+      // 检查是否是 entry 函数
+      const isEntry = func.is_entry;
+      
+      // 检查是否有返回值
+      const hasReturnValue = func.return && func.return.length > 0;
 
-      if (result.execution_info.status.type === 'executed') {
-        message.success(`Executed:${result.execution_info.tx_hash}`);
-        setLoading(false);
+      if (hasSigner || isEntry) {
+        // 需要签名的交易
+        const txn = new Transaction();
+        txn.callFunction({
+          address: moduleDetail.address,
+          module: moduleDetail.name,
+          function: func.name,
+          args: [...paramsArr],
+          typeArgs: [...typeParams],
+        });
+        
+        const result = await signAndExecuteTransaction({
+          transaction: txn,
+        });
+        
+        // 错误处理
+        if (result.execution_info.status.type === 'executed') {
+          message.success(`Transaction executed: ${result.execution_info.tx_hash}`);
+        } else if (result.execution_info.status.type === 'moveabort') {
+          // 处理 Move abort 错误
+          const errorCode = result.execution_info.status.abort_code;
+          message.error(`Transaction failed with code: ${errorCode}`);
+        } else {
+          message.error(`Transaction failed: ${result.execution_info.status.type}`);
+        }
+        
+      } else {
+        // 查询操作
+        const result = await client.executeViewFunction({
+          target: `${moduleDetail.address}::${moduleDetail.name}::${func.name}`,
+          args: [...paramsArr],
+          typeArgs: [...typeParams],
+        });
+        
+        // 错误处理和返回值解析
+        console.log('Return values:', result);
+        if (result.vm_status === 'Executed') {
+          if (result.return_values && result.return_values.length > 0) {
+            const formattedValues = result.return_values.map(item => {
+              if (item.decoded_value !== undefined && item.decoded_value !== null) {
+                return item.decoded_value;
+              }
+              return formatReturnValue(item.value.value, item.value.type_tag);
+            });
+
+            const displayValue = formattedValues.length === 1 
+              ? formattedValues[0] 
+              : formattedValues;
+
+            message.success({
+              content: (
+                <div>
+                  <div style={{ fontWeight: 500 }}>
+                    Operation executed successfully
+                  </div>
+                  <div style={{ 
+                    color: '#666',
+                    fontSize: '0.9em',
+                    wordBreak: 'break-all',
+                    textAlign: 'left',
+                  }}>
+                    Return Data: {String(displayValue)}
+                  </div>
+                </div>
+              ),
+              duration: 4, // 显示时间加长
+            });
+          } else {
+            message.success({
+              content: 'Operation executed successfully',
+            });
+          }
+        } else if (typeof result.vm_status === 'object') {
+          if('MoveAbort' in result.vm_status) {
+            const errorCode = result.vm_status.MoveAbort.abort_code;
+            message.error(`Operation failed with code: ${errorCode}`);
+          } else if('Error' in result.vm_status) {
+            const errorCode = result.vm_status.Error
+            message.error(`Operation failed with code: ${errorCode}`);
+          } else {
+            message.error('Operation failed');
+          }
+        } else {
+          message.error('Operation failed');
+        }
       }
-      return undefined;
-    } catch (e: any) {
-      console.log(e, 'Error');
+      
+    } catch (error: any) {
+      const errorMessage = error.message || 'Unknown error occurred';
+      message.error(errorMessage);
+    } finally {
       setLoading(false);
-      message.error(e.message);
-      return undefined;
+    }
+  };
+
+  // 格式化返回值显示
+  const formatReturnValue = (value: any, type: string) => {
+    try {
+      if (value === null || value === undefined) {
+        return 'null';
+      }
+
+      switch (type) {
+        case 'u8':
+        case 'u16':
+        case 'u32':
+        case 'u64':
+        case 'u128':
+        case 'u256':
+          return Number(value).toString();
+        case 'bool':
+          return value ? 'true' : 'false';
+        case 'address':
+          return value.toString();
+        case 'vector<u8>':
+          return `0x${Buffer.from(value).toString('hex')}`;
+        case 'string':
+          return value.toString();
+        default:
+          return JSON.stringify(value);
+      }
+    } catch (error) {
+      console.error('Error formatting return value:', error);
+      return String(value);
     }
   };
 
