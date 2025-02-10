@@ -1,6 +1,7 @@
 import './module-view.css';
 
 import type { FunctionDetail } from '@/types';
+import type { ArgType} from '@roochnetwork/rooch-sdk';
 import type { ModuleABIView } from '@roochnetwork/rooch-sdk/src/client/types';
 
 import { Form, Input, message } from 'antd';
@@ -8,11 +9,10 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Args, Transaction } from '@roochnetwork/rooch-sdk';
 import {
   useRoochClient,
+  useCurrentWallet,
   useCurrentAddress,
-  useCurrentSession,
-  useCreateSessionKey,
   useRoochClientQuery,
-  useSignAndExecuteTransaction,
+  // useSignAndExecuteTransaction,
 } from '@roochnetwork/rooch-sdk-kit';
 
 // import { useTheme } from '@mui/material/styles';
@@ -136,41 +136,96 @@ const MethodCall = ({
   func: FunctionDetail;
   isDark: boolean;
 }) => {
-  const sessionKey = useCurrentSession();
+  // const sessionKey = useCurrentSession();
   const address = useCurrentAddress();
-  const { mutateAsync: createSessionKey } = useCreateSessionKey();
+  // const { mutateAsync: createSessionKey } = useCreateSessionKey();
   const [form] = Form.useForm();
   const [form1] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction()
+  // const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction()
   const client = useRoochClient()
+  const { wallet } = useCurrentWallet()
   // eslint-disable-next-line consistent-return
   const handleSubmit = async () => {
     try {
-      if (!address) return await message.info('Please connect wallet!');
       if (loading) return undefined;
       
       setLoading(true);
 
-      if (!sessionKey) {
-        try {
-          await createSessionKey({
-            appName: 'rooch',
-            appUrl: window.location.href,
-            scopes: ['0x1::*::*', '0x3::*::*', `${moduleDetail.address}::*::*`],
-            maxInactiveInterval: 60 * 60 * 8,
-          });
-        } catch (e: any) {
-          setLoading(false);
-          return await message.error(e.message || 'Failed to create session key');
-        }
-      }
-
       const params = form.getFieldsValue();
       const paramsArr = Object.keys(params).map(key => {
         const value = params[key];
-        return getTypeConvert(key, value);
+        const paramType = key.replace(/\d+$/, '');
+        
+        // 如果值为空，对于数组类型返回空数组，其他类型返回默认值
+        if (!value && value !== false && value !== 0) {
+          if (paramType.includes('vector')) {
+            return getTypeConvert(paramType, []);
+          }
+          // 对于其他类型，返回对应的默认值
+          if (paramType.includes('u8')) return getTypeConvert(paramType, '0');
+          if (paramType.includes('u16')) return getTypeConvert(paramType, '0');
+          if (paramType.includes('u32')) return getTypeConvert(paramType, '0');
+          if (paramType.includes('u64')) return getTypeConvert(paramType, '0');
+          if (paramType.includes('u128')) return getTypeConvert(paramType, '0');
+          if (paramType.includes('u256')) return getTypeConvert(paramType, '0');
+          if (paramType.includes('bool')) return getTypeConvert(paramType, 'false');
+          if (paramType.includes('string')) return getTypeConvert(paramType, '');
+          if (paramType.includes('address')) return getTypeConvert(paramType, '0x0');
+        }
+
+        // 预处理输入值
+        let processedValue = value;
+        
+        // 根据类型处理输入值
+        if (paramType.includes('vector')) {
+          // 处理数组输入
+          processedValue = value
+            .trim()
+            // 尝试解析 JSON 字符串
+            .replace(/^\s*\[\s*|\s*\]\s*$/g, '')  // 先移除外层的方括号
+            .split(/\s*,\s*/)                      // 按逗号分割
+            .map((v: string) => 
+               v.trim().replace(/^["']|["']$/g, '')
+            )
+          
+          // 对数组中的每个元素根据内部类型进行转换
+          const innerType = paramType.match(/vector<(.+)>/)?.[1];
+          if (innerType) {
+            processedValue = processedValue.map((v: string) => {
+              if (innerType.includes('u8') || innerType.includes('u16') || innerType.includes('u32') || innerType.includes('u64') || innerType.includes('u128') || innerType.includes('u256')) return Number(v);
+              if (innerType.includes('bool')) return v.toLowerCase() === 'true';
+              return v;
+            });
+          }
+        } else {
+          // 处理非数组类型
+          if (typeof processedValue === 'string') {
+            processedValue = processedValue.trim();
+          }
+          
+          // 根据类型转换值
+          if (paramType.includes('u8') || 
+              paramType.includes('u16') || 
+              paramType.includes('u32') ||
+              paramType.includes('u64') || 
+              paramType.includes('u128') || 
+                     paramType.includes('u256')) {
+            processedValue = Number(processedValue);
+          } else if (paramType.includes('bool')) {
+            processedValue = processedValue.toLowerCase() === 'true';
+          } else if (paramType.includes('struct')) {
+            try {
+              processedValue = JSON.parse(processedValue);
+            } catch {
+              // 如果解析失败，保持原始值
+            }
+          }
+        }
+        
+        return getTypeConvert(paramType, processedValue);
       });
+
       const typeParams = Object.values(form1.getFieldsValue()) as any[];
 
       // 检查函数定义中是否包含 &signer
@@ -180,9 +235,13 @@ const MethodCall = ({
       const isEntry = func.is_entry;
       
       // 检查是否有返回值
-      const hasReturnValue = func.return && func.return.length > 0;
+      // const hasReturnValue = func.return && func.return.length > 0;
 
       if (hasSigner || isEntry) {
+        if (!address) {
+          setLoading(false);
+          return await message.info('Please connect wallet!');
+        }
         // 需要签名的交易
         const txn = new Transaction();
         txn.callFunction({
@@ -193,9 +252,11 @@ const MethodCall = ({
           typeArgs: [...typeParams],
         });
         
-        const result = await signAndExecuteTransaction({
+        const result = await client.signAndExecuteTransaction({
           transaction: txn,
+          signer: wallet!,
         });
+        
         
         // 错误处理
         if (result.execution_info.status.type === 'executed') {
@@ -222,7 +283,7 @@ const MethodCall = ({
           if (result.return_values && result.return_values.length > 0) {
             const formattedValues = result.return_values.map(item => {
               if (item.decoded_value !== undefined && item.decoded_value !== null) {
-                return item.decoded_value;
+                return typeof item.decoded_value === 'object' ? JSON.stringify(item.decoded_value) : item.decoded_value;
               }
               return formatReturnValue(item.value.value, item.value.type_tag);
             });
@@ -247,7 +308,7 @@ const MethodCall = ({
                   </div>
                 </div>
               ),
-              duration: 4, // 显示时间加长
+              duration: 4,
             });
           } else {
             message.success({
@@ -270,6 +331,7 @@ const MethodCall = ({
       }
       
     } catch (error: any) {
+      console.log('error', error);
       const errorMessage = error.message || 'Unknown error occurred';
       message.error(errorMessage);
     } finally {
@@ -344,7 +406,7 @@ const MethodCall = ({
               .filter((item) => item !== '&signer')
               .map((item, index) => (
                 <Form.Item
-                  key={item}
+                  key={`param-${index}`}
                   name={`${item}${index}`}
                   label={<div style={{ color: isDark ? '#d1d5db' : 'inherit', fontWeight: 500 }}>{item}</div>}
                   rules={[{ required: true }]}
@@ -367,7 +429,7 @@ const MethodCall = ({
           <div className="space-y-4">
             {func?.type_params.map((item, index) => (
               <Form.Item
-                key={item.constraints[1]}
+                key={`type-param-${index}`}
                 name={index}
                 label={<div style={{ color: isDark ? '#d1d5db' : 'inherit', fontWeight: 500 }}>{`Type Argument ${index + 1}`}</div>}
                 rules={[{ required: true }]}
@@ -428,38 +490,67 @@ function convertToFunctionDetailMap(functions?: FunctionDetail[]): Map<string, F
 }
 
 const getTypeConvert = (typeName: string, value: any) => {
-  if (typeName.includes('string')) {
+  // 清理类型名称，移除引用标记
+  const cleanTypeName = typeName.replace(/&mut\s*/g, '').replace(/&\s*/g, '');
+
+  // 处理向量类型
+  if (cleanTypeName.includes('vector')) {
+    if (cleanTypeName.includes('u8')) {
+      return Args.vec('u8', value.map((v: string) => Number(v)));
+    }
+    if (cleanTypeName.includes('string')) {
+      return Args.vec('string', value);
+    }
+    if (cleanTypeName.includes('bool')) {
+      return Args.vec('bool', value.map((v: string) => v.toLowerCase() === 'true'));
+    }
+    if (cleanTypeName.includes('address')) {
+      return Args.vec('address', value);
+    }
+    return Args.vec(cleanTypeName as ArgType, value);
+  }
+
+  // 处理基本类型
+  if (cleanTypeName.includes('string')) {
     return Args.string(value);
   }
-  if (typeName.includes('object')) {
+  if (cleanTypeName.includes('object')) {
     return Args.objectId(value);
   }
-  if (typeName.includes('u8')) {
+  // 数字类型处理
+  if (cleanTypeName.includes('u8')) {
     return Args.u8(Number(value));
   }
-  if (typeName.includes('u16')) {
+  if (cleanTypeName.includes('u16')) {
     return Args.u16(Number(value));
   }
-  if (typeName.includes('u32')) {
+  if (cleanTypeName.includes('u32')) {
     return Args.u32(Number(value));
   }
-  if (typeName.includes('u64')) {
+  if (cleanTypeName.includes('u64')) {
     return Args.u64(BigInt(value));
   }
-  if (typeName.includes('u128')) {
+  if (cleanTypeName.includes('u128')) {
     return Args.u128(BigInt(value));
   }
-  if (typeName.includes('u256')) {
+  if (cleanTypeName.includes('u256')) {
     return Args.u256(BigInt(value));
   }
-  if (typeName.includes('bool')) {
-    return Args.bool(Boolean(value));
+  if (cleanTypeName.includes('bool')) {
+    return Args.bool(value.toLowerCase() === 'true');
   }
-  if (typeName.includes('address')) {
+  if (cleanTypeName.includes('address')) {
     return Args.address(value);
   }
-  if (typeName.includes('struct')) {
-    return Args.struct(value);
+  if (cleanTypeName.includes('struct')) {
+    try {
+      // 尝试解析JSON字符串
+      const parsed = JSON.parse(value);
+      return Args.struct(parsed);
+    } catch {
+      return Args.struct(value);
+    }
   }
+  
   return Args.address(value);
 }; 
