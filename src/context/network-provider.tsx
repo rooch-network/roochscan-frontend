@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import type { NetworkType } from '@roochnetwork/rooch-sdk';
 
 import { getRoochNodeUrl } from '@roochnetwork/rooch-sdk';
-import { useMemo, useContext, useCallback, createContext } from 'react';
+import { useMemo, useContext, useCallback, createContext, useEffect } from 'react';
 
 import useStore from 'src/store';
 
@@ -30,6 +30,17 @@ export function NetworkProvider({ children }: NetworkProviderProps) {
     }
     return 'localnet';
   }, [roochNodeUrl]);
+
+  useEffect(() => {
+    const {hostname} = window.location;
+    if (hostname === 'roochscan.io') {
+      setRoochNodeUrl(getRoochNodeUrl('mainnet'));
+    } else if (hostname === 'test.roochscan.io') {
+      setRoochNodeUrl(getRoochNodeUrl('testnet'));
+    } else {
+      setRoochNodeUrl(getRoochNodeUrl('mainnet'));
+    }
+  }, [setRoochNodeUrl]);
 
   const setNetwork = useCallback(
     (newNetwork: NetworkType) => {

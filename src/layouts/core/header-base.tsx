@@ -121,7 +121,7 @@ export function HeaderBase({
               }}
             >
               <SwitchDorkMode />
-              <SwitchNetWork />
+              {/* <SwitchNetWork /> */}
               {/* -- Account drawer -- */}
               {/* {account && <AccountDrawer data-slot="account" />} */}
               {account && <ConnectButtonWrapper />}

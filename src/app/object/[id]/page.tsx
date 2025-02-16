@@ -1,12 +1,8 @@
 'use client';
 
-import { redirect } from 'next/navigation';
-import { NetWorkPath } from '@/config/constant';
-import { useNetwork } from '@/context/network-provider';
-
+import Object from 'src/app/[network]/object/[id]/page';
 
 export default function Page({ params }: { params: { id: string } }) {
-  const { network } = useNetwork();
-  redirect(`/${NetWorkPath[network]}/object/${params.id}`);
+  return <Object params={params} />;
 }
   
