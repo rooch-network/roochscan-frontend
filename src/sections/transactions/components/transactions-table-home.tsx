@@ -203,7 +203,7 @@ export default function TransactionsTableCard({
                         )}
                         {item.execution_info && (
                           <TableCell align="center">
-                            <Button component={RouterLink} href={`/${NetWorkPath[network]}/tx/${item.execution_info.tx_hash}`}>
+                            <Button component={RouterLink} href={`/tx/${item.execution_info.tx_hash}`}>
                               View
                             </Button>
                           </TableCell>

@@ -1,11 +1,7 @@
 'use client';
 
-import { redirect } from 'next/navigation';
-import { NetWorkPath } from '@/config/constant';
-import { useNetwork } from '@/context/network-provider';
-
+import { AccountView } from 'src/sections/account/view';
 
 export default function Page({ params }: { params: { address: string } }) {
-  const { network } = useNetwork();
-  redirect(`/${NetWorkPath[network]}/account/${params.address}`);
+  return <AccountView address={params.address} />;
 }
