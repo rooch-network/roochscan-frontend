@@ -1,12 +1,11 @@
 import './module-view.css';
 
 import type { FunctionDetail } from '@/types';
-import type { ArgType} from '@roochnetwork/rooch-sdk';
 import type { ModuleABIView } from '@roochnetwork/rooch-sdk/src/client/types';
 
 import { Form, Input, message } from 'antd';
+import {  Transaction } from '@roochnetwork/rooch-sdk';
 import React, { useMemo, useState, useEffect } from 'react';
-import { Args, Transaction } from '@roochnetwork/rooch-sdk';
 import {
   useRoochClient,
   useCurrentWallet,
@@ -21,6 +20,8 @@ import {
   Button,
   useColorScheme,
 } from '@mui/material';
+
+import { processValue, parseParamType } from './utils/param-parser';
 
 export const ModuleView = ({ 
   moduleId, 
@@ -140,7 +141,7 @@ const MethodCall = ({
   const address = useCurrentAddress();
   // const { mutateAsync: createSessionKey } = useCreateSessionKey();
   const [form] = Form.useForm();
-  const [form1] = Form.useForm();
+  const [formInput] = Form.useForm();
   const [loading, setLoading] = useState(false);
   // const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction()
   const client = useRoochClient()
@@ -155,78 +156,11 @@ const MethodCall = ({
       const params = form.getFieldsValue();
       const paramsArr = Object.keys(params).map(key => {
         const value = params[key];
-        const paramType = key.replace(/\d+$/, '');
-        
-        // 如果值为空，对于数组类型返回空数组，其他类型返回默认值
-        if (!value && value !== false && value !== 0) {
-          if (paramType.includes('vector')) {
-            return getTypeConvert(paramType, []);
-          }
-          // 对于其他类型，返回对应的默认值
-          if (paramType.includes('u8')) return getTypeConvert(paramType, '0');
-          if (paramType.includes('u16')) return getTypeConvert(paramType, '0');
-          if (paramType.includes('u32')) return getTypeConvert(paramType, '0');
-          if (paramType.includes('u64')) return getTypeConvert(paramType, '0');
-          if (paramType.includes('u128')) return getTypeConvert(paramType, '0');
-          if (paramType.includes('u256')) return getTypeConvert(paramType, '0');
-          if (paramType.includes('bool')) return getTypeConvert(paramType, 'false');
-          if (paramType.includes('string')) return getTypeConvert(paramType, '');
-          if (paramType.includes('address')) return getTypeConvert(paramType, '0x0');
-        }
-
-        // 预处理输入值
-        let processedValue = value;
-        
-        // 根据类型处理输入值
-        if (paramType.includes('vector')) {
-          // 处理数组输入
-          processedValue = value
-            .trim()
-            // 尝试解析 JSON 字符串
-            .replace(/^\s*\[\s*|\s*\]\s*$/g, '')  // 先移除外层的方括号
-            .split(/\s*,\s*/)                      // 按逗号分割
-            .map((v: string) => 
-               v.trim().replace(/^["']|["']$/g, '')
-            )
-          
-          // 对数组中的每个元素根据内部类型进行转换
-          const innerType = paramType.match(/vector<(.+)>/)?.[1];
-          if (innerType) {
-            processedValue = processedValue.map((v: string) => {
-              if (innerType.includes('u8') || innerType.includes('u16') || innerType.includes('u32') || innerType.includes('u64') || innerType.includes('u128') || innerType.includes('u256')) return Number(v);
-              if (innerType.includes('bool')) return v.toLowerCase() === 'true';
-              return v;
-            });
-          }
-        } else {
-          // 处理非数组类型
-          if (typeof processedValue === 'string') {
-            processedValue = processedValue.trim();
-          }
-          
-          // 根据类型转换值
-          if (paramType.includes('u8') || 
-              paramType.includes('u16') || 
-              paramType.includes('u32') ||
-              paramType.includes('u64') || 
-              paramType.includes('u128') || 
-                     paramType.includes('u256')) {
-            processedValue = Number(processedValue);
-          } else if (paramType.includes('bool')) {
-            processedValue = processedValue.toLowerCase() === 'true';
-          } else if (paramType.includes('struct')) {
-            try {
-              processedValue = JSON.parse(processedValue);
-            } catch {
-              // 如果解析失败，保持原始值
-            }
-          }
-        }
-        
-        return getTypeConvert(paramType, processedValue);
+        const paramType = parseParamType(key);
+        return processValue(value, paramType);
       });
 
-      const typeParams = Object.values(form1.getFieldsValue()) as any[];
+      const typeParams = Object.values(formInput.getFieldsValue()) as any[];
 
       // 检查函数定义中是否包含 &signer
       const hasSigner = func.params.includes('&signer');
@@ -373,8 +307,8 @@ const MethodCall = ({
 
   useEffect(() => {
     form.resetFields();
-    form1.resetFields();
-  }, [form, form1, func]);
+    formInput.resetFields();
+  }, [form, formInput, func]);
 
   return (
     <div style={{
@@ -425,7 +359,7 @@ const MethodCall = ({
           </div>
         </Form>
 
-        <Form form={form1} layout="vertical" className="w-full lg:w-1/2">
+        <Form form={formInput} layout="vertical" className="w-full lg:w-1/2">
           <div className="space-y-4">
             {func?.type_params.map((item, index) => (
               <Form.Item
@@ -488,69 +422,3 @@ function convertToFunctionDetailMap(functions?: FunctionDetail[]): Map<string, F
   });
   return functionDetailMap;
 }
-
-const getTypeConvert = (typeName: string, value: any) => {
-  // 清理类型名称，移除引用标记
-  const cleanTypeName = typeName.replace(/&mut\s*/g, '').replace(/&\s*/g, '');
-
-  // 处理向量类型
-  if (cleanTypeName.includes('vector')) {
-    if (cleanTypeName.includes('u8')) {
-      return Args.vec('u8', value.map((v: string) => Number(v)));
-    }
-    if (cleanTypeName.includes('string')) {
-      return Args.vec('string', value);
-    }
-    if (cleanTypeName.includes('bool')) {
-      return Args.vec('bool', value.map((v: string) => v.toLowerCase() === 'true'));
-    }
-    if (cleanTypeName.includes('address')) {
-      return Args.vec('address', value);
-    }
-    return Args.vec(cleanTypeName as ArgType, value);
-  }
-
-  // 处理基本类型
-  if (cleanTypeName.includes('string')) {
-    return Args.string(value);
-  }
-  if (cleanTypeName.includes('object')) {
-    return Args.objectId(value);
-  }
-  // 数字类型处理
-  if (cleanTypeName.includes('u8')) {
-    return Args.u8(Number(value));
-  }
-  if (cleanTypeName.includes('u16')) {
-    return Args.u16(Number(value));
-  }
-  if (cleanTypeName.includes('u32')) {
-    return Args.u32(Number(value));
-  }
-  if (cleanTypeName.includes('u64')) {
-    return Args.u64(BigInt(value));
-  }
-  if (cleanTypeName.includes('u128')) {
-    return Args.u128(BigInt(value));
-  }
-  if (cleanTypeName.includes('u256')) {
-    return Args.u256(BigInt(value));
-  }
-  if (cleanTypeName.includes('bool')) {
-    return Args.bool(value.toLowerCase() === 'true');
-  }
-  if (cleanTypeName.includes('address')) {
-    return Args.address(value);
-  }
-  if (cleanTypeName.includes('struct')) {
-    try {
-      // 尝试解析JSON字符串
-      const parsed = JSON.parse(value);
-      return Args.struct(parsed);
-    } catch {
-      return Args.struct(value);
-    }
-  }
-  
-  return Args.address(value);
-}; 
