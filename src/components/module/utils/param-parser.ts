@@ -2,28 +2,29 @@ import type { ArgType } from '@roochnetwork/rooch-sdk';
 
 import { Args } from '@roochnetwork/rooch-sdk';
 
-export const parseParamType = (key: string): string => key.replace(/\d+$/, match => {
-  if (key.length === match.length + 1 && key[0] === 'u') {
-    return match;
-  }
-  return '';
-});
+export const parseParamType = (key: string): string =>
+  key.replace(/\d+$/, (match) => {
+    if (key.length === match.length + 1 && key[0] === 'u') {
+      return match;
+    }
+    return '';
+  });
 
 export const getDefaultValue = (paramType: string) => {
   const typeDefaults: Record<string, any> = {
-    'u8': '0',
-    'u16': '0',
-    'u32': '0',
-    'u64': '0',
-    'u128': '0',
-    'u256': '0',
-    'bool': 'false',
-    'string': '',
-    'address': '0x0',
-    'vector': []
+    u8: '0',
+    u16: '0',
+    u32: '0',
+    u64: '0',
+    u128: '0',
+    u256: '0',
+    bool: 'false',
+    string: '',
+    address: '0x0',
+    vector: [],
   };
 
-  const matchedType = Object.keys(typeDefaults).find(type => paramType.includes(type));
+  const matchedType = Object.keys(typeDefaults).find((type) => paramType.includes(type));
   return matchedType ? typeDefaults[matchedType] : '';
 };
 
@@ -48,13 +49,13 @@ const processVectorValue = (value: string, paramType: string) => {
     .trim()
     .replace(/^\s*\[\s*|\s*\]\s*$/g, '')
     .split(/\s*,\s*/)
-    .map(v => v.trim().replace(/^["']|["']$/g, ''))
+    .map((v) => v.trim().replace(/^["']|["']$/g, ''))
     .filter(Boolean);
 
   const innerType = paramType.match(/vector<(.+)>/)?.[1];
   if (!innerType) return elements;
 
-  return elements.map(element => convertElementByType(element, innerType));
+  return elements.map((element) => convertElementByType(element, innerType));
 };
 
 const convertElementByType = (element: string, type: string) => {
@@ -92,15 +93,33 @@ export const getTypeConvert = (typeName: string, value: any) => {
   const cleanTypeName = typeName.replace(/&mut\s*/g, '').replace(/&\s*/g, '');
 
   if (cleanTypeName.includes('vector')) {
-    if (cleanTypeName.includes('u8')) return Args.vec('u8', value.map((v: string) => Number(v)));
+    if (cleanTypeName.includes('u8'))
+      return Args.vec(
+        'u8',
+        value.map((v: string) => Number(v))
+      );
     if (cleanTypeName.includes('string')) return Args.vec('string', value);
     if (cleanTypeName.includes('bool')) return Args.vec('bool', value);
     if (cleanTypeName.includes('address')) return Args.vec('address', value);
+    if (cleanTypeName.includes('u16'))
+      return Args.vec('u16', value.map((v: string) => Number(v)));
+    if (cleanTypeName.includes('u32'))
+      return Args.vec('u32', value.map((v: string) => Number(v)));
+    if (cleanTypeName.includes('u64'))
+      return Args.vec('u64', value.map((v: string) => BigInt(v)));
+    if (cleanTypeName.includes('u128'))
+      return Args.vec('u128', value.map((v: string) => BigInt(v)));
+    if (cleanTypeName.includes('u256'))
+      return Args.vec('u256', value.map((v: string) => BigInt(v)));
+    if (cleanTypeName.includes('ObjectID')) return Args.vec('objectId', value);
+    if (cleanTypeName.includes('Object')) return Args.vec('object', value);
+
     return Args.vec(cleanTypeName as ArgType, value);
   }
 
   if (cleanTypeName.includes('string')) return Args.string(value);
-  if (cleanTypeName.includes('object')) return Args.objectId(value);
+  if (cleanTypeName.includes('ObjectID')) return Args.objectId(value);
+  if (cleanTypeName.includes('Object')) return Args.object(value);
   if (cleanTypeName.includes('u8')) return Args.u8(Number(value));
   if (cleanTypeName.includes('u16')) return Args.u16(Number(value));
   if (cleanTypeName.includes('u32')) return Args.u32(Number(value));
@@ -116,6 +135,6 @@ export const getTypeConvert = (typeName: string, value: any) => {
       return Args.struct(value);
     }
   }
-  
+
   return Args.address(value);
-}; 
+};

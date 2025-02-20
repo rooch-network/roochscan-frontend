@@ -4,7 +4,7 @@ import type { FunctionDetail } from '@/types';
 import type { ModuleABIView } from '@roochnetwork/rooch-sdk/src/client/types';
 
 import { Form, Input, message } from 'antd';
-import {  Transaction } from '@roochnetwork/rooch-sdk';
+import { Transaction } from '@roochnetwork/rooch-sdk';
 import React, { useMemo, useState, useEffect } from 'react';
 import {
   useRoochClient,
@@ -15,30 +15,24 @@ import {
 } from '@roochnetwork/rooch-sdk-kit';
 
 // import { useTheme } from '@mui/material/styles';
-import {
-  Stack,
-  Button,
-  useColorScheme,
-} from '@mui/material';
+import { Stack, Button, useColorScheme } from '@mui/material';
 
 import { processValue, parseParamType } from './utils/param-parser';
 
-export const ModuleView = ({ 
-  moduleId, 
-  moduleName,
-}: { 
-  moduleId: string;
-  moduleName?: string;
-}) => {
+export const ModuleView = ({ moduleId, moduleName }: { moduleId: string; moduleName?: string }) => {
   const { mode } = useColorScheme();
   // const theme = useTheme();
   const isDark = mode === 'dark';
-  const { data: module } = useRoochClientQuery('getModuleAbi', {
-    moduleAddr: moduleId,
-    moduleName: moduleName || '',
-  }, {
-    enabled: !!moduleName
-  });
+  const { data: module } = useRoochClientQuery(
+    'getModuleAbi',
+    {
+      moduleAddr: moduleId,
+      moduleName: moduleName || '',
+    },
+    {
+      enabled: !!moduleName,
+    }
+  );
 
   const moduleDetail = useMemo(() => module, [module]);
 
@@ -53,7 +47,13 @@ export const ModuleView = ({
   );
 };
 
-const ModuleDetail = ({ moduleDetail, isDark }: { moduleDetail: ModuleABIView; isDark: boolean }) => {
+const ModuleDetail = ({
+  moduleDetail,
+  isDark,
+}: {
+  moduleDetail: ModuleABIView;
+  isDark: boolean;
+}) => {
   const [currentFunc, setCurrentFunc] = useState<string>();
   const funcMap = useMemo(
     () => convertToFunctionDetailMap(moduleDetail?.functions),
@@ -64,12 +64,14 @@ const ModuleDetail = ({ moduleDetail, isDark }: { moduleDetail: ModuleABIView; i
     <div className="container mx-auto flex flex-col md:flex-row gap-6">
       <div className="w-full md:w-1/3 lg:w-1/4">
         <div className="sticky top-4">
-          <div style={{ 
-            fontSize: '1.125rem',
-            fontWeight: 600,
-            marginBottom: '1rem',
-            color: isDark ? '#e5e7eb' : 'inherit'
-          }}>
+          <div
+            style={{
+              fontSize: '1.125rem',
+              fontWeight: 600,
+              marginBottom: '1rem',
+              color: isDark ? '#e5e7eb' : 'inherit',
+            }}
+          >
             Functions
           </div>
           {moduleDetail?.functions.map((item) => (
@@ -86,22 +88,42 @@ const ModuleDetail = ({ moduleDetail, isDark }: { moduleDetail: ModuleABIView; i
                 transition: 'all 0.2s',
                 border: '1px solid',
                 borderColor: isDark ? '#2d3949' : '#e5e7eb',
-                background: currentFunc === item.name 
-                  ? (isDark ? '#2d3949' : '#e5e7eb')
-                  : (isDark ? '#1a1f2e' : '#f9fafb'),
-                color: currentFunc === item.name
-                  ? (isDark ? '#e5e7eb' : '#111827')
-                  : (isDark ? '#d1d5db' : 'inherit'),
+                background:
+                  currentFunc === item.name
+                    ? isDark
+                      ? '#2d3949'
+                      : '#e5e7eb'
+                    : isDark
+                      ? '#1a1f2e'
+                      : '#f9fafb',
+                color:
+                  currentFunc === item.name
+                    ? isDark
+                      ? '#e5e7eb'
+                      : '#111827'
+                    : isDark
+                      ? '#d1d5db'
+                      : 'inherit',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = currentFunc === item.name
-                  ? (isDark ? '#242b3d' : '#d1d5db')
-                  : (isDark ? '#242b3d' : '#f3f4f6');
+                e.currentTarget.style.background =
+                  currentFunc === item.name
+                    ? isDark
+                      ? '#242b3d'
+                      : '#d1d5db'
+                    : isDark
+                      ? '#242b3d'
+                      : '#f3f4f6';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = currentFunc === item.name
-                  ? (isDark ? '#2d3949' : '#e5e7eb')
-                  : (isDark ? '#1a1f2e' : '#f9fafb');
+                e.currentTarget.style.background =
+                  currentFunc === item.name
+                    ? isDark
+                      ? '#2d3949'
+                      : '#e5e7eb'
+                    : isDark
+                      ? '#1a1f2e'
+                      : '#f9fafb';
               }}
             >
               {item.name}
@@ -111,15 +133,21 @@ const ModuleDetail = ({ moduleDetail, isDark }: { moduleDetail: ModuleABIView; i
       </div>
       <div className="w-full md:w-2/3 lg:w-3/4 min-h-[300px]">
         {currentFunc ? (
-          <MethodCall func={funcMap.get(currentFunc)!} moduleDetail={moduleDetail} isDark={isDark} />
+          <MethodCall
+            func={funcMap.get(currentFunc)!}
+            moduleDetail={moduleDetail}
+            isDark={isDark}
+          />
         ) : (
-          <div style={{ 
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            color: isDark ? '#9ca3af' : '#6b7280'
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              color: isDark ? '#9ca3af' : '#6b7280',
+            }}
+          >
             Select a function to view details
           </div>
         )}
@@ -128,12 +156,12 @@ const ModuleDetail = ({ moduleDetail, isDark }: { moduleDetail: ModuleABIView; i
   );
 };
 
-const MethodCall = ({ 
-  moduleDetail, 
+const MethodCall = ({
+  moduleDetail,
   func,
-  isDark 
-}: { 
-  moduleDetail: ModuleABIView; 
+  isDark,
+}: {
+  moduleDetail: ModuleABIView;
   func: FunctionDetail;
   isDark: boolean;
 }) => {
@@ -144,17 +172,17 @@ const MethodCall = ({
   const [formInput] = Form.useForm();
   const [loading, setLoading] = useState(false);
   // const { mutateAsync: signAndExecuteTransaction } = useSignAndExecuteTransaction()
-  const client = useRoochClient()
-  const { wallet } = useCurrentWallet()
+  const client = useRoochClient();
+  const { wallet } = useCurrentWallet();
   // eslint-disable-next-line consistent-return
   const handleSubmit = async () => {
     try {
       if (loading) return undefined;
-      
+
       setLoading(true);
 
       const params = form.getFieldsValue();
-      const paramsArr = Object.keys(params).map(key => {
+      const paramsArr = Object.keys(params).map((key) => {
         const value = params[key];
         const paramType = parseParamType(key);
         return processValue(value, paramType);
@@ -164,10 +192,10 @@ const MethodCall = ({
 
       // 检查函数定义中是否包含 &signer
       const hasSigner = func.params.includes('&signer');
-      
+
       // 检查是否是 entry 函数
       const isEntry = func.is_entry;
-      
+
       // 检查是否有返回值
       // const hasReturnValue = func.return && func.return.length > 0;
 
@@ -185,13 +213,12 @@ const MethodCall = ({
           args: [...paramsArr],
           typeArgs: [...typeParams],
         });
-        
+
         const result = await client.signAndExecuteTransaction({
           transaction: txn,
           signer: wallet!,
         });
-        
-        
+
         // 错误处理
         if (result.execution_info.status.type === 'executed') {
           message.success(`Transaction executed: ${result.execution_info.tx_hash}`);
@@ -202,7 +229,6 @@ const MethodCall = ({
         } else {
           message.error(`Transaction failed: ${result.execution_info.status.type}`);
         }
-        
       } else {
         // 查询操作
         const result = await client.executeViewFunction({
@@ -210,34 +236,35 @@ const MethodCall = ({
           args: [...paramsArr],
           typeArgs: [...typeParams],
         });
-        
+
         // 错误处理和返回值解析
         console.log('Return values:', result);
         if (result.vm_status === 'Executed') {
           if (result.return_values && result.return_values.length > 0) {
-            const formattedValues = result.return_values.map(item => {
+            const formattedValues = result.return_values.map((item) => {
               if (item.decoded_value !== undefined && item.decoded_value !== null) {
-                return typeof item.decoded_value === 'object' ? JSON.stringify(item.decoded_value) : item.decoded_value;
+                return typeof item.decoded_value === 'object'
+                  ? JSON.stringify(item.decoded_value)
+                  : item.decoded_value;
               }
               return formatReturnValue(item.value.value, item.value.type_tag);
             });
 
-            const displayValue = formattedValues.length === 1 
-              ? formattedValues[0] 
-              : formattedValues;
+            const displayValue =
+              formattedValues.length === 1 ? formattedValues[0] : formattedValues;
 
             message.success({
               content: (
                 <div>
-                  <div style={{ fontWeight: 500 }}>
-                    Operation executed successfully
-                  </div>
-                  <div style={{ 
-                    color: '#666',
-                    fontSize: '0.9em',
-                    wordBreak: 'break-all',
-                    textAlign: 'left',
-                  }}>
+                  <div style={{ fontWeight: 500 }}>Operation executed successfully</div>
+                  <div
+                    style={{
+                      color: '#666',
+                      fontSize: '0.9em',
+                      wordBreak: 'break-all',
+                      textAlign: 'left',
+                    }}
+                  >
                     Return Data: {String(displayValue)}
                   </div>
                 </div>
@@ -250,11 +277,11 @@ const MethodCall = ({
             });
           }
         } else if (typeof result.vm_status === 'object') {
-          if('MoveAbort' in result.vm_status) {
+          if ('MoveAbort' in result.vm_status) {
             const errorCode = result.vm_status.MoveAbort.abort_code;
             message.error(`Operation failed with code: ${errorCode}`);
-          } else if('Error' in result.vm_status) {
-            const errorCode = result.vm_status.Error
+          } else if ('Error' in result.vm_status) {
+            const errorCode = result.vm_status.Error;
             message.error(`Operation failed with code: ${errorCode}`);
           } else {
             message.error('Operation failed');
@@ -263,7 +290,6 @@ const MethodCall = ({
           message.error('Operation failed');
         }
       }
-      
     } catch (error: any) {
       console.log('error', error);
       const errorMessage = error.message || 'Unknown error occurred';
@@ -311,24 +337,30 @@ const MethodCall = ({
   }, [form, formInput, func]);
 
   return (
-    <div style={{
-      background: isDark ? '#1a1f2e' : '#ffffff',
-      borderRadius: '0.5rem',
-      padding: '1.5rem',
-    }}>
+    <div
+      style={{
+        background: isDark ? '#1a1f2e' : '#ffffff',
+        borderRadius: '0.5rem',
+        padding: '1.5rem',
+      }}
+    >
       <div style={{ marginBottom: '1.5rem' }}>
-        <h3 style={{
-          fontSize: '1.25rem',
-          fontWeight: 600,
-          marginBottom: '0.5rem',
-          color: isDark ? '#e5e7eb' : 'inherit'
-        }}>
+        <h3
+          style={{
+            fontSize: '1.25rem',
+            fontWeight: 600,
+            marginBottom: '0.5rem',
+            color: isDark ? '#e5e7eb' : 'inherit',
+          }}
+        >
           {func.name}
         </h3>
-        <div style={{
-          fontSize: '0.875rem',
-          color: isDark ? '#9ca3af' : '#6b7280'
-        }}>
+        <div
+          style={{
+            fontSize: '0.875rem',
+            color: isDark ? '#9ca3af' : '#6b7280',
+          }}
+        >
           Module: {moduleDetail.name}
         </div>
       </div>
@@ -342,7 +374,17 @@ const MethodCall = ({
                 <Form.Item
                   key={`param-${index}`}
                   name={`${item}${index}`}
-                  label={<div style={{ color: isDark ? '#d1d5db' : 'inherit', fontWeight: 500 }}>{item}</div>}
+                  label={
+                    <div
+                      style={{
+                        overflowX: 'scroll',
+                        color: isDark ? '#d1d5db' : 'inherit',
+                        fontWeight: 500,
+                      }}
+                    >
+                      {item}
+                    </div>
+                  }
                   rules={[{ required: true }]}
                 >
                   <Input
@@ -365,7 +407,11 @@ const MethodCall = ({
               <Form.Item
                 key={`type-param-${index}`}
                 name={index}
-                label={<div style={{ color: isDark ? '#d1d5db' : 'inherit', fontWeight: 500 }}>{`Type Argument ${index + 1}`}</div>}
+                label={
+                  <div
+                    style={{ color: isDark ? '#d1d5db' : 'inherit', fontWeight: 500 }}
+                  >{`Type Argument ${index + 1}`}</div>
+                }
                 rules={[{ required: true }]}
               >
                 <Input
@@ -396,13 +442,11 @@ const MethodCall = ({
             bgcolor: 'transparent',
             border: '1px solid',
             borderColor: isDark ? '#2d3949' : '#e5e7eb',
-            color: loading
-              ? (isDark ? '#9ca3af' : '#6b7280')
-              : (isDark ? '#e5e7eb' : '#111827'),
+            color: loading ? (isDark ? '#9ca3af' : '#6b7280') : isDark ? '#e5e7eb' : '#111827',
             '&:hover': {
               bgcolor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
               boxShadow: 'none',
-            }
+            },
           }}
         >
           {loading ? 'Executing...' : 'Execute'}
