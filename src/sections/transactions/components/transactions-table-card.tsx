@@ -39,6 +39,7 @@ export default function TransactionsTableCard({
   paginationModel,
   paginate,
   dense,
+  hideHeader,
 }: {
   address: string;
   isPending: boolean;
@@ -49,18 +50,21 @@ export default function TransactionsTableCard({
   };
   paginate?: (index: number) => void;
   dense?: boolean;
+  hideHeader?: boolean;
 }) {
   return (
     <Card className="mt-4">
-      <CardHeader
-        title="Transactions"
-        subheader={
-          dense
-            ? undefined
-            : `${shortAddress(address, 6, 6)} Activity History`
-        }
-        sx={{ mb: 3 }}
-      />
+      {!hideHeader && (
+        <CardHeader
+          title="Transactions"
+          subheader={
+            dense
+              ? undefined
+              : `${shortAddress(address, 6, 6)} Activity History`
+          }
+          sx={{ mb: 3 }}
+        />
+      )}
       <Scrollbar sx={{ minHeight: dense ? undefined : 462 }}>
         <Table sx={{ minWidth: 720 }} size={dense ? 'small' : 'medium'}>
           <TableHeadCustom

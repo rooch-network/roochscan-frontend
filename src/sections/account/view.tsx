@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRoochClientQuery } from '@roochnetwork/rooch-sdk-kit';
 import { RoochAddress, isValidRoochAddress, isValidBitcoinAddress } from '@roochnetwork/rooch-sdk';
 
-import { Box, Card, Chip, Stack, Button, CardHeader, CardContent } from '@mui/material';
+import { Box, Card, Chip, Stack, Button, CardHeader, CardContent, Tab, Tabs } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 import useAddressChanged from 'src/routes/hooks/useAddressChanged';
+
+import { useTabs } from 'src/hooks/use-tabs';
 
 import { BitcoinAddressToRoochAddress } from 'src/utils/address';
 
@@ -17,13 +19,21 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 
+import ObjectsTableCard from './components/objects-table-card';
 import AssetsTableCard from '../assets/components/assets-table-card';
 import TransactionsTableCard from '../transactions/components/transactions-table-card';
+
+const ACCOUNT_VIEW_TABS = [
+  { label: 'Coins', value: 'coins' },
+  { label: 'Objects', value: 'objects' },
+  { label: 'Transactions', value: 'transactions' },
+];
 
 export function AccountView({ address }: { address: string }) {
   const [viewBitcoinAddress, setViewBitcoinAddress] = useState<string>();
   const [viewRoochAddress, setViewRoochAddress] = useState<string>();
   const [viewRoochBech32Address, setViewRoochBech32Address] = useState<string>();
+  const tabs = useTabs('coins');
 
   const router = useRouter();
   useAddressChanged({ address, path: 'account' });
@@ -61,6 +71,27 @@ export function AccountView({ address }: { address: string }) {
     { enabled: !!viewBitcoinAddress || !!viewRoochAddress }
   );
   // console.log(transactionsList, 'transactionsList');
+
+  const renderTabs = (
+    <Tabs 
+      value={tabs.value} 
+      onChange={tabs.onChange} 
+      sx={{ 
+        mb: { xs: 2, md: 2 },
+        '& .MuiTab-root': {
+          fontSize: '1.125rem',
+          fontWeight: 600,
+          textTransform: 'none',
+          minHeight: 48,
+          py: 2
+        }
+      }}
+    >
+      {ACCOUNT_VIEW_TABS.map((tab) => (
+        <Tab key={tab.value} value={tab.value} label={tab.label} />
+      ))}
+    </Tabs>
+  );
 
   if (!viewBitcoinAddress && !viewRoochAddress) {
     return null;
@@ -106,17 +137,34 @@ export function AccountView({ address }: { address: string }) {
         </CardContent>
       </Card>
 
-      <AssetsTableCard
-        dense
-        bitcoinAddress={viewBitcoinAddress}
-        roochAddress={viewRoochBech32Address}
-      />
-      <TransactionsTableCard
-        dense
-        address={address}
-        isPending={isTransactionsPending}
-        transactionsList={transactionsList}
-      />
+      {renderTabs}
+
+      {tabs.value === 'coins' && (
+        <AssetsTableCard
+          dense
+          hideHeader
+          bitcoinAddress={viewBitcoinAddress}
+          roochAddress={viewRoochBech32Address}
+        />
+      )}
+      
+      {tabs.value === 'objects' && (
+        <ObjectsTableCard
+          dense
+          hideHeader
+          address={viewRoochAddress!}
+        />
+      )}
+      
+      {tabs.value === 'transactions' && (
+        <TransactionsTableCard
+          dense
+          hideHeader
+          address={address}
+          isPending={isTransactionsPending}
+          transactionsList={transactionsList}
+        />
+      )}
     </DashboardContent>
   );
 }
