@@ -20,7 +20,7 @@ const headerLabel = [
   { id: 'action', label: 'Action', align: 'right' },
 ];
 
-export default function AssetsTableCard({ bitcoinAddress, roochAddress, dense }: { bitcoinAddress?: string; roochAddress?: string; dense?: boolean }) {
+export default function AssetsTableCard({ bitcoinAddress, roochAddress, dense, hideHeader }: { bitcoinAddress?: string; roochAddress?: string; dense?: boolean; hideHeader?: boolean }) {
   const currentAddress = useCurrentAddress();
 
   const {
@@ -61,11 +61,13 @@ export default function AssetsTableCard({ bitcoinAddress, roochAddress, dense }:
 
   return (
     <Card className="mt-4">
-      <CardHeader
-        title="Coin"
-        subheader={dense ? undefined : `Rooch network coin assets`}
-        sx={{ mb: 3 }}
-      />
+      {!hideHeader && (
+        <CardHeader
+          title="Coin"
+          subheader={dense ? undefined : `Rooch network coin assets`}
+          sx={{ mb: 3 }}
+        />
+      )}
 
       <Scrollbar sx={{ minHeight: dense ? undefined : 462 }}>
         <Table sx={{ minWidth: 720 }} size={dense ? 'small' : 'medium'}>
