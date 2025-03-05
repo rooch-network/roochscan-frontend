@@ -37,6 +37,10 @@ export function NetworkProvider({ children }: NetworkProviderProps) {
       setRoochNodeUrl(getRoochNodeUrl('mainnet'));
     } else if (hostname === 'test.roochscan.io') {
       setRoochNodeUrl(getRoochNodeUrl('testnet'));
+    } else if (hostname === 'dev.roochscan.io') {
+      setRoochNodeUrl(getRoochNodeUrl('devnet'));
+    } else if (hostname === 'local.roochscan.io') {
+      setRoochNodeUrl(getRoochNodeUrl('localnet'));
     } else {
       setRoochNodeUrl(getRoochNodeUrl('mainnet'));
     }
