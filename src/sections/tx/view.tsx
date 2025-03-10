@@ -50,6 +50,7 @@ dayjs.extend(relativeTime);
 const TX_VIEW_TABS = [
   { label: 'Overview', value: 'overview' },
   { label: 'Action Call', value: 'call' },
+  { label: 'Events', value: 'events' },
   { label: 'Raw JSON', value: 'raw' },
 ];
 
@@ -73,6 +74,15 @@ export function TxView({ hash }: { hash: string }) {
   const { data: transactionDetail, isPending } = useRoochClientQuery('queryTransactions', {
     filter: {
       tx_hashes: [hash],
+    },
+  });
+
+  const { data: eventsDetail, isPending: isPendingEvents } = useRoochClientQuery('queryEvents', {
+    filter: {
+      tx_hash: hash,
+    },
+    queryOption: {
+      decode: true,
     },
   });
 
@@ -461,6 +471,214 @@ export function TxView({ hash }: { hash: string }) {
                   <Stack spacing={1} alignItems="center">
                     <Iconify icon="mdi:function-variant" width={40} sx={{ opacity: 0.4 }} />
                     <Box>No function call data available for this transaction</Box>
+                  </Stack>
+                </Box>
+              )}
+            </Stack>
+          )}
+          {tabs.value === 'events' && (
+            <Stack spacing={2}>
+              {isPendingEvents ? (
+                <Box className="p-4">
+                  <Skeleton variant="rectangular" width="100%" height={100} />
+                </Box>
+              ) : eventsDetail?.data.length ? (
+                eventsDetail.data.map((event, index) => (
+                  <Card
+                    key={index}
+                    variant="outlined"
+                    className="w-full"
+                    sx={{
+                      '&:hover': {
+                        borderColor: 'primary.main',
+                        bgcolor: (theme) => varAlpha(theme.vars.palette.primary.main, 0.02),
+                      },
+                      transition: 'all 0.2s ease-in-out',
+                    }}
+                  >
+                    <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+                      <Stack spacing={2}>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          spacing={1}
+                          sx={{
+                            pb: 1,
+                            borderBottom: (theme) =>
+                              `1px dashed ${theme.vars.palette.divider}`,
+                          }}
+                        >
+                          <Chip
+                            label={`Event #${index + 1}`}
+                            size="small"
+                            color="default"
+                            sx={{ fontWeight: 600 }}
+                          />
+                          <Chip
+                            label={event.event_type}
+                            size="small"
+                            variant="soft"
+                            color="primary"
+                          />
+                        </Stack>
+
+                        <Box>
+                          <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                            Event Type
+                          </Box>
+                          <Box className="text-sm break-all p-2 rounded"
+                            sx={{
+                              bgcolor: (theme) =>
+                                varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                              fontSize: '0.85rem',
+                            }}>
+                            {event.event_type}
+                          </Box>
+                        </Box>
+
+                        <Box>
+                          <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                            Sender
+                          </Box>
+                          <Box className="text-sm break-all p-2 rounded"
+                            sx={{
+                              bgcolor: (theme) =>
+                                varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                              fontSize: '0.85rem',
+                            }}>
+                            {event.sender}
+                          </Box>
+                        </Box>
+
+                        <Box>
+                          <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                            Event ID
+                          </Box>
+                          <SyntaxHighlighter
+                            language="json"
+                            style={mode === 'light' ? duotoneLight : duotoneDark}
+                            customStyle={{
+                              whiteSpace: 'pre-wrap',
+                              width: '100%',
+                              borderRadius: '8px',
+                              wordBreak: 'break-all',
+                              overflowWrap: 'break-word',
+                              fontSize: '0.85rem',
+                            }}
+                            wrapLines
+                            wrapLongLines
+                          >
+                            {JSON.stringify(event.event_id, null, 2)}
+                          </SyntaxHighlighter>
+                        </Box>
+
+                        <Box>
+                          <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                            Indexer Event ID
+                          </Box>
+                          <SyntaxHighlighter
+                            language="json"
+                            style={mode === 'light' ? duotoneLight : duotoneDark}
+                            customStyle={{
+                              whiteSpace: 'pre-wrap',
+                              width: '100%',
+                              borderRadius: '8px',
+                              wordBreak: 'break-all',
+                              overflowWrap: 'break-word',
+                              fontSize: '0.85rem',
+                            }}
+                            wrapLines
+                            wrapLongLines
+                          >
+                            {JSON.stringify(event.indexer_event_id, null, 2)}
+                          </SyntaxHighlighter>
+                        </Box>
+
+                        <Box>
+                          <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                            Transaction Hash
+                          </Box>
+                          <Box className="text-sm break-all p-2 rounded"
+                            sx={{
+                              bgcolor: (theme) =>
+                                varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                              fontSize: '0.85rem',
+                            }}>
+                            {event.tx_hash}
+                          </Box>
+                        </Box>
+
+                        <Box>
+                          <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                            Created At
+                          </Box>
+                          <Box className="text-sm break-all p-2 rounded"
+                            sx={{
+                              bgcolor: (theme) =>
+                                varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                              fontSize: '0.85rem',
+                            }}>
+                            {dayjs(Number(event.created_at)).fromNow()}
+                            <span className="ml-2 text-gray-500">
+                              ({dayjs(Number(event.created_at)).format('MMMM DD, YYYY HH:mm:ss UTC Z')})
+                            </span>
+                          </Box>
+                        </Box>
+
+                        {event.decoded_event_data && (
+                          <Box>
+                            <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                              Decoded Event Data
+                            </Box>
+                            <SyntaxHighlighter
+                              language="json"
+                              style={mode === 'light' ? duotoneLight : duotoneDark}
+                              customStyle={{
+                                whiteSpace: 'pre-wrap',
+                                width: '100%',
+                                borderRadius: '8px',
+                                wordBreak: 'break-all',
+                                overflowWrap: 'break-word',
+                                fontSize: '0.85rem',
+                              }}
+                              wrapLines
+                              wrapLongLines
+                            >
+                              {JSON.stringify(event.decoded_event_data, null, 2)}
+                            </SyntaxHighlighter>
+                          </Box>
+                        )}
+
+                        <Box>
+                          <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                            Raw Event Data
+                          </Box>
+                          <SyntaxHighlighter
+                            language="json"
+                            style={mode === 'light' ? duotoneLight : duotoneDark}
+                            customStyle={{
+                              whiteSpace: 'pre-wrap',
+                              width: '100%',
+                              borderRadius: '8px',
+                              wordBreak: 'break-all',
+                              overflowWrap: 'break-word',
+                              fontSize: '0.85rem',
+                            }}
+                            wrapLines
+                            wrapLongLines
+                          >
+                            {formatDecodedValue(event.event_data)}
+                          </SyntaxHighlighter>
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <Box className="text-sm text-center py-8" sx={{ color: 'text.secondary' }}>
+                  <Stack spacing={1} alignItems="center">
+                    <Iconify icon="mdi:bell-outline" width={40} sx={{ opacity: 0.4 }} />
+                    <Box>No events found for this transaction</Box>
                   </Stack>
                 </Box>
               )}
