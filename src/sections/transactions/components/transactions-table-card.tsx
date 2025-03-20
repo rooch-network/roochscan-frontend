@@ -26,6 +26,7 @@ import { getUTCOffset } from 'src/utils/format-time';
 
 import { ROOCH_GAS_COIN_DECIMALS } from 'src/config/constant';
 
+import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import TableSkeleton from 'src/components/skeleton/table-skeleton';
 import { TableNoData, TableHeadCustom } from 'src/components/table';
@@ -40,6 +41,7 @@ export default function TransactionsTableCard({
   paginate,
   dense,
   hideHeader,
+  onOpenFilter,
 }: {
   address: string;
   isPending: boolean;
@@ -51,12 +53,26 @@ export default function TransactionsTableCard({
   paginate?: (index: number) => void;
   dense?: boolean;
   hideHeader?: boolean;
+  onOpenFilter?: () => void;
 }) {
   return (
     <Card className="mt-4">
       {!hideHeader && (
         <CardHeader
-          title="Transactions"
+          title={
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant="h6">Transactions</Typography>
+              {onOpenFilter && (
+                <Button
+                  color="primary"
+                  onClick={onOpenFilter}
+                  startIcon={<Iconify icon="ic:round-filter-list" />}
+                >
+                  Filters
+                </Button>
+              )}
+            </Box>
+          }
           subheader={
             dense
               ? undefined
