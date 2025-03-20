@@ -51,6 +51,7 @@ const TX_VIEW_TABS = [
   { label: 'Overview', value: 'overview' },
   { label: 'Action Call', value: 'call' },
   { label: 'Events', value: 'events' },
+  { label: 'State Changes', value: 'changes' },
   { label: 'Raw JSON', value: 'raw' },
 ];
 
@@ -84,8 +85,19 @@ export function TxView({ hash }: { hash: string }) {
     queryOption: {
       decode: true,
     },
-  });
+  })
 
+  const { data: statusDetail, isPending: isPendingStatus } = useRoochClientQuery('syncStates', {
+    filter: 'all',
+    cursor: (Number(transactionDetail?.data[0].transaction.sequence_info.tx_order) + 1).toString(),
+    limit: '1',
+    queryOption: {
+      decode: true,
+    },
+  }, {
+    enabled: !!transactionDetail?.data[0].transaction.sequence_info.tx_order,
+  });
+  console.log(statusDetail);
   const txDetail = useMemo(() => transactionDetail?.data[0], [transactionDetail]);
 
   const [moduleAddress, setModuleAddress] = useState<string>();
@@ -679,6 +691,307 @@ export function TxView({ hash }: { hash: string }) {
                   <Stack spacing={1} alignItems="center">
                     <Iconify icon="mdi:bell-outline" width={40} sx={{ opacity: 0.4 }} />
                     <Box>No events found for this transaction</Box>
+                  </Stack>
+                </Box>
+              )}
+            </Stack>
+          )}
+          {tabs.value === 'changes' && (
+            <Stack spacing={2}>
+              {isPendingStatus ? (
+                <Box className="p-4">
+                  <Skeleton variant="rectangular" width="100%" height={100} />
+                </Box>
+              ) : statusDetail?.data.length ? (
+                <>
+                  <Card 
+                    variant="outlined" 
+                    className="w-full"
+                    sx={{
+                      '&:hover': {
+                        borderColor: 'primary.main',
+                        bgcolor: (theme) => varAlpha(theme.vars.palette.primary.main, 0.02),
+                      },
+                      transition: 'all 0.2s ease-in-out',
+                    }}
+                  >
+                    <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+                      <Stack spacing={2}>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          spacing={1}
+                          sx={{
+                            pb: 1,
+                            borderBottom: (theme) => `1px dashed ${theme.vars.palette.divider}`,
+                          }}
+                        >
+                          <Chip
+                            label="Transaction Order"
+                            size="small"
+                            color="default"
+                            sx={{ fontWeight: 600 }}
+                          />
+                        </Stack>
+                        <Box className="text-sm break-all p-2 rounded"
+                          sx={{
+                            bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                            fontSize: '0.85rem',
+                          }}>
+                          {statusDetail.data[0].tx_order}
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card 
+                    variant="outlined" 
+                    className="w-full"
+                    sx={{
+                      '&:hover': {
+                        borderColor: 'primary.main',
+                        bgcolor: (theme) => varAlpha(theme.vars.palette.primary.main, 0.02),
+                      },
+                      transition: 'all 0.2s ease-in-out',
+                    }}
+                  >
+                    <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+                      <Stack spacing={2}>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          spacing={1}
+                          sx={{
+                            pb: 1,
+                            borderBottom: (theme) => `1px dashed ${theme.vars.palette.divider}`,
+                          }}
+                        >
+                          <Chip
+                            label="State Root"
+                            size="small"
+                            color="default"
+                            sx={{ fontWeight: 600 }}
+                          />
+                        </Stack>
+                        <Box className="text-sm break-all p-2 rounded"
+                          sx={{
+                            bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                            fontSize: '0.85rem',
+                          }}>
+                          {statusDetail.data[0].state_change_set.state_root}
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card 
+                    variant="outlined" 
+                    className="w-full"
+                    sx={{
+                      '&:hover': {
+                        borderColor: 'primary.main',
+                        bgcolor: (theme) => varAlpha(theme.vars.palette.primary.main, 0.02),
+                      },
+                      transition: 'all 0.2s ease-in-out',
+                    }}
+                  >
+                    <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+                      <Stack spacing={2}>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          spacing={1}
+                          sx={{
+                            pb: 1,
+                            borderBottom: (theme) => `1px dashed ${theme.vars.palette.divider}`,
+                          }}
+                        >
+                          <Chip
+                            label="Global Size"
+                            size="small"
+                            color="default"
+                            sx={{ fontWeight: 600 }}
+                          />
+                        </Stack>
+                        <Box className="text-sm break-all p-2 rounded"
+                          sx={{
+                            bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                            fontSize: '0.85rem',
+                          }}>
+                          {statusDetail.data[0].state_change_set.global_size}
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                  
+                  <Box className="text-md font-semibold mb-2">State Change List</Box>
+                  
+                  {statusDetail.data[0].state_change_set.changes.map((change, index) => (
+                    <Card
+                      key={index}
+                      variant="outlined"
+                      className="w-full"
+                      sx={{
+                        '&:hover': {
+                          borderColor: 'primary.main',
+                          bgcolor: (theme) => varAlpha(theme.vars.palette.primary.main, 0.02),
+                        },
+                        transition: 'all 0.2s ease-in-out',
+                      }}
+                    >
+                      <CardContent sx={{ '&:last-child': { pb: 2 } }}>
+                        <Stack spacing={2}>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={1}
+                            sx={{
+                              pb: 1,
+                              borderBottom: (theme) => `1px dashed ${theme.vars.palette.divider}`,
+                            }}
+                          >
+                            <Chip
+                              label={`Change #${index + 1}`}
+                              size="small"
+                              color="default"
+                              sx={{ fontWeight: 600 }}
+                            />
+                            <Chip
+                              label={change.metadata.object_type}
+                              size="small"
+                              variant="soft"
+                              color="primary"
+                            />
+                          </Stack>
+
+                          <Box>
+                            <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                              Object ID
+                            </Box>
+                            <Box className="text-sm break-all p-2 rounded"
+                              sx={{
+                                bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                fontSize: '0.85rem',
+                              }}>
+                              {change.metadata.id}
+                            </Box>
+                          </Box>
+
+                          <Box>
+                            <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                              Owner
+                            </Box>
+                            <Box className="text-sm break-all p-2 rounded"
+                              sx={{
+                                bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                fontSize: '0.85rem',
+                              }}>
+                              {change.metadata.owner}
+                            </Box>
+                          </Box>
+
+                          {change.metadata.owner_bitcoin_address && (
+                            <Box>
+                              <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                                Bitcoin Address
+                              </Box>
+                              <Box className="text-sm break-all p-2 rounded"
+                                sx={{
+                                  bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                  fontSize: '0.85rem',
+                                }}>
+                                {change.metadata.owner_bitcoin_address}
+                              </Box>
+                            </Box>
+                          )}
+
+                          <Box>
+                            <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                              Created At
+                            </Box>
+                            <Box className="text-sm break-all p-2 rounded"
+                              sx={{
+                                bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                fontSize: '0.85rem',
+                              }}>
+                              {dayjs(Number(change.metadata.created_at)).fromNow()}
+                              <span className="ml-2 text-gray-500">
+                                ({dayjs(Number(change.metadata.created_at)).format('MMMM DD, YYYY HH:mm:ss')})
+                              </span>
+                            </Box>
+                          </Box>
+
+                          <Box>
+                            <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                              Updated At
+                            </Box>
+                            <Box className="text-sm break-all p-2 rounded"
+                              sx={{
+                                bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                fontSize: '0.85rem',
+                              }}>
+                              {dayjs(Number(change.metadata.updated_at)).fromNow()}
+                              <span className="ml-2 text-gray-500">
+                                ({dayjs(Number(change.metadata.updated_at)).format('MMMM DD, YYYY HH:mm:ss')})
+                              </span>
+                            </Box>
+                          </Box>
+
+                          <Box>
+                            <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                              Value Change
+                            </Box>
+                            <SyntaxHighlighter
+                              language="json"
+                              style={mode === 'light' ? duotoneLight : duotoneDark}
+                              customStyle={{
+                                whiteSpace: 'pre-wrap',
+                                width: '100%',
+                                borderRadius: '8px',
+                                wordBreak: 'break-all',
+                                overflowWrap: 'break-word',
+                                fontSize: '0.85rem',
+                              }}
+                              wrapLines
+                              wrapLongLines
+                            >
+                              {JSON.stringify(change.value, null, 2)}
+                            </SyntaxHighlighter>
+                          </Box>
+
+                          {change.fields.length > 0 && (
+                            <Box>
+                              <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
+                                Fields Change
+                              </Box>
+                              <SyntaxHighlighter
+                                language="json"
+                                style={mode === 'light' ? duotoneLight : duotoneDark}
+                                customStyle={{
+                                  whiteSpace: 'pre-wrap',
+                                  width: '100%',
+                                  borderRadius: '8px',
+                                  wordBreak: 'break-all',
+                                  overflowWrap: 'break-word',
+                                  fontSize: '0.85rem',
+                                }}
+                                wrapLines
+                                wrapLongLines
+                              >
+                                {JSON.stringify(change.fields, null, 2)}
+                              </SyntaxHighlighter>
+                            </Box>
+                          )}
+                        </Stack>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </>
+              ) : (
+                <Box className="text-sm text-center py-8" sx={{ color: 'text.secondary' }}>
+                  <Stack spacing={1} alignItems="center">
+                    <Iconify icon="mdi:database-edit-outline" width={40} sx={{ opacity: 0.4 }} />
+                    <Box>No state changes found for this transaction</Box>
                   </Stack>
                 </Box>
               )}

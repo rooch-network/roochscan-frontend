@@ -78,11 +78,11 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0
       '@roochnetwork/rooch-sdk':
-        specifier: 0.3.0
-        version: 0.3.0(typescript@5.6.3)
+        specifier: 0.3.1
+        version: 0.3.1(typescript@5.6.3)
       '@roochnetwork/rooch-sdk-kit':
-        specifier: 0.3.0
-        version: 0.3.0(@tanstack/react-query@5.59.20(react@18.3.1))(@types/react-dom@18.3.1)(@types/react@18.3.12)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
+        specifier: 0.3.1
+        version: 0.3.1(@tanstack/react-query@5.59.20(react@18.3.1))(@types/react-dom@18.3.1)(@types/react@18.3.12)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
       '@tanstack/react-query':
         specifier: ^5.51.11
         version: 5.59.20(react@18.3.1)
@@ -1716,15 +1716,15 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@roochnetwork/rooch-sdk-kit@0.3.0':
-    resolution: {integrity: sha512-S14hHDLQ9PV6wTA3O0YgXrwJ7gk9NIeC6jSE505HloMkSejT73Z2BZQHVWLvqx3q12svwyZzEbM2aBw1ucV7LA==}
+  '@roochnetwork/rooch-sdk-kit@0.3.1':
+    resolution: {integrity: sha512-ZcAYP/mlrC2Aid68/sjtfrvgbW/hCmi1Y3eul/7XNkypza/D1ONT+uYrWq5c/gqcKdyUToO9HC1pVessoG0MgQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@tanstack/react-query': ^5.0.0
       react: '*'
 
-  '@roochnetwork/rooch-sdk@0.3.0':
-    resolution: {integrity: sha512-shjYS6Lv/bMiptu3iAiRI2TtcVL0qbrNyO2nLg9ucxw6r/lzyqiSZ3GfYybuLN7mQBxr4DoPkPGIKzz5QYrJPw==}
+  '@roochnetwork/rooch-sdk@0.3.1':
+    resolution: {integrity: sha512-IVAUng6hDvxAoXNALoEwSJd3+L9+vk3AfeXVyNAE12OFUdy0L3cmktZ+qlQ4UviDoMIN5g03CJYqeXndPu1V2w==}
     engines: {node: '>=18.0.0'}
 
   '@rtsao/scc@1.1.0':
@@ -1900,6 +1900,9 @@ packages:
 
   '@types/unist@2.0.11':
     resolution: {integrity: sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA==}
+
+  '@types/ws@8.18.0':
+    resolution: {integrity: sha512-8svvI3hMyvN0kKCJMvTJP/x6Y/EoQbepff882wL+Sn5QsXb3etnamgrJq4isrBxSJj5L2AuXcI0+bgkoAXGUJw==}
 
   '@typescript-eslint/eslint-plugin@7.18.0':
     resolution: {integrity: sha512-94EQTWZ40mzBc42ATNIBimBEDltSJ9RQHCC8vc/PDbxi4k8dVwUAv4o98dk50M1zB+JGFxp43FP7f8+FP8R6Sw==}
@@ -4267,6 +4270,18 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  ws@8.18.1:
+    resolution: {integrity: sha512-RKW2aJZMXeMxVpnZ6bck+RswznaxmzdULiBr6KY7XkTnW8uvt0iT9H5DkHUChXrc+uurzwa0rVI16n/Xzjdz1w==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
@@ -5940,12 +5955,12 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@roochnetwork/rooch-sdk-kit@0.3.0(@tanstack/react-query@5.59.20(react@18.3.1))(@types/react-dom@18.3.1)(@types/react@18.3.12)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)':
+  '@roochnetwork/rooch-sdk-kit@0.3.1(@tanstack/react-query@5.59.20(react@18.3.1))(@types/react-dom@18.3.1)(@types/react@18.3.12)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)':
     dependencies:
       '@radix-ui/react-dialog': 1.1.5(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-dropdown-menu': 2.1.5(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/react-slot': 1.1.1(@types/react@18.3.12)(react@18.3.1)
-      '@roochnetwork/rooch-sdk': 0.3.0(typescript@5.6.3)
+      '@roochnetwork/rooch-sdk': 0.3.1(typescript@5.6.3)
       '@tanstack/react-query': 5.59.20(react@18.3.1)
       '@vanilla-extract/css': 1.16.0(babel-plugin-macros@3.1.0)
       '@vanilla-extract/dynamic': 2.1.2
@@ -5959,11 +5974,13 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
       - babel-plugin-macros
+      - bufferutil
       - immer
       - react-dom
       - typescript
+      - utf-8-validate
 
-  '@roochnetwork/rooch-sdk@0.3.0(typescript@5.6.3)':
+  '@roochnetwork/rooch-sdk@0.3.1(typescript@5.6.3)':
     dependencies:
       '@mysten/bcs': 1.0.4
       '@noble/curves': 1.6.0
@@ -5972,13 +5989,17 @@ snapshots:
       '@scure/bip32': 1.5.0
       '@scure/bip39': 1.4.0
       '@suchipi/femver': 1.0.0
+      '@types/ws': 8.18.0
       bech32: 2.0.0
       bs58check: 4.0.0
       buffer: 6.0.3
       tweetnacl: 1.0.3
       valibot: 0.41.0(typescript@5.6.3)
+      ws: 8.18.1
     transitivePeerDependencies:
+      - bufferutil
       - typescript
+      - utf-8-validate
 
   '@rtsao/scc@1.1.0': {}
 
@@ -6166,6 +6187,10 @@ snapshots:
   '@types/trusted-types@2.0.7': {}
 
   '@types/unist@2.0.11': {}
+
+  '@types/ws@8.18.0':
+    dependencies:
+      '@types/node': 20.17.6
 
   '@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.6.3))(eslint@8.57.1)(typescript@5.6.3)':
     dependencies:
@@ -8920,6 +8945,8 @@ snapshots:
       strip-ansi: 7.1.0
 
   wrappy@1.0.2: {}
+
+  ws@8.18.1: {}
 
   xtend@4.0.2: {}
 
