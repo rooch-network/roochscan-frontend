@@ -72,7 +72,13 @@ export function TxView({ hash }: { hash: string }) {
   const { mode } = useColorScheme();
   const { network } = useNetwork();
 
-  const { data: transactionDetail, isPending } = useRoochClientQuery('queryTransactions', {
+  const {
+    data: transactionDetail,
+    isPending,
+    isFetchedAfterMount,
+    isLoading,
+    isError,
+  } = useRoochClientQuery('queryTransactions', {
     filter: {
       tx_hashes: [hash],
     },
@@ -85,24 +91,41 @@ export function TxView({ hash }: { hash: string }) {
     queryOption: {
       decode: true,
     },
-  })
-
-  const { data: statusDetail, isPending: isPendingStatus } = useRoochClientQuery('syncStates', {
-    filter: 'all',
-    cursor: (Number(transactionDetail?.data[0].transaction.sequence_info.tx_order) + 1).toString(),
-    limit: '1',
-    queryOption: {
-      decode: true,
-    },
-  }, {
-    enabled: !!transactionDetail?.data[0].transaction.sequence_info.tx_order,
   });
-  console.log(statusDetail);
+
+  const { data: statusDetail, isPending: isPendingStatus } = useRoochClientQuery(
+    'syncStates',
+    {
+      filter: 'all',
+      cursor: (
+        Number(transactionDetail?.data[0].transaction.sequence_info.tx_order) + 1
+      ).toString(),
+      limit: '1',
+      queryOption: {
+        decode: true,
+      },
+    },
+    {
+      enabled: !!transactionDetail?.data[0].transaction.sequence_info.tx_order,
+    }
+  );
+  // console.log(statusDetail);
   const txDetail = useMemo(() => transactionDetail?.data[0], [transactionDetail]);
 
   const [moduleAddress, setModuleAddress] = useState<string>();
   const [moduleName, setModuleName] = useState<string>();
-
+  const subheader = useMemo(() => {
+    if (isFetchedAfterMount && transactionDetail) {
+      return hash;
+    }
+    if (isLoading) {
+      return '';
+    }
+    if (isError) {
+      return 'transaction not found';
+    }
+    return 'transaction not found';
+  }, [isFetchedAfterMount, transactionDetail, hash, isLoading, isError]);
   useEffect(() => {
     if (
       txDetail?.transaction.data.type === 'l2_tx' &&
@@ -167,7 +190,7 @@ export function TxView({ hash }: { hash: string }) {
         Back
       </Button>
       <Card className="mt-4">
-        <CardHeader title="Transactions" subheader={hash} sx={{ mb: 3 }} />
+        <CardHeader title="Transaction" subheader={subheader} sx={{ mb: 3 }} />
 
         <Divider />
 
@@ -443,12 +466,14 @@ export function TxView({ hash }: { hash: string }) {
                                     <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
                                       Value
                                     </Box>
-                                    <Box className="text-sm break-all p-2 rounded"
+                                    <Box
+                                      className="text-sm break-all p-2 rounded"
                                       sx={{
                                         bgcolor: (theme) =>
                                           varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                                         fontSize: '0.85rem',
-                                      }}>
+                                      }}
+                                    >
                                       {formatDecodedValue(arg.decoded)}
                                     </Box>
                                   </Box>
@@ -516,8 +541,7 @@ export function TxView({ hash }: { hash: string }) {
                           spacing={1}
                           sx={{
                             pb: 1,
-                            borderBottom: (theme) =>
-                              `1px dashed ${theme.vars.palette.divider}`,
+                            borderBottom: (theme) => `1px dashed ${theme.vars.palette.divider}`,
                           }}
                         >
                           <Chip
@@ -538,12 +562,14 @@ export function TxView({ hash }: { hash: string }) {
                           <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
                             Event Type
                           </Box>
-                          <Box className="text-sm break-all p-2 rounded"
+                          <Box
+                            className="text-sm break-all p-2 rounded"
                             sx={{
                               bgcolor: (theme) =>
                                 varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                               fontSize: '0.85rem',
-                            }}>
+                            }}
+                          >
                             {event.event_type}
                           </Box>
                         </Box>
@@ -552,12 +578,14 @@ export function TxView({ hash }: { hash: string }) {
                           <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
                             Sender
                           </Box>
-                          <Box className="text-sm break-all p-2 rounded"
+                          <Box
+                            className="text-sm break-all p-2 rounded"
                             sx={{
                               bgcolor: (theme) =>
                                 varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                               fontSize: '0.85rem',
-                            }}>
+                            }}
+                          >
                             {event.sender}
                           </Box>
                         </Box>
@@ -610,12 +638,14 @@ export function TxView({ hash }: { hash: string }) {
                           <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
                             Transaction Hash
                           </Box>
-                          <Box className="text-sm break-all p-2 rounded"
+                          <Box
+                            className="text-sm break-all p-2 rounded"
                             sx={{
                               bgcolor: (theme) =>
                                 varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                               fontSize: '0.85rem',
-                            }}>
+                            }}
+                          >
                             {event.tx_hash}
                           </Box>
                         </Box>
@@ -624,15 +654,21 @@ export function TxView({ hash }: { hash: string }) {
                           <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
                             Created At
                           </Box>
-                          <Box className="text-sm break-all p-2 rounded"
+                          <Box
+                            className="text-sm break-all p-2 rounded"
                             sx={{
                               bgcolor: (theme) =>
                                 varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                               fontSize: '0.85rem',
-                            }}>
+                            }}
+                          >
                             {dayjs(Number(event.created_at)).fromNow()}
                             <span className="ml-2 text-gray-500">
-                              ({dayjs(Number(event.created_at)).format('MMMM DD, YYYY HH:mm:ss UTC Z')})
+                              (
+                              {dayjs(Number(event.created_at)).format(
+                                'MMMM DD, YYYY HH:mm:ss UTC Z'
+                              )}
+                              )
                             </span>
                           </Box>
                         </Box>
@@ -704,8 +740,8 @@ export function TxView({ hash }: { hash: string }) {
                 </Box>
               ) : statusDetail?.data.length ? (
                 <>
-                  <Card 
-                    variant="outlined" 
+                  <Card
+                    variant="outlined"
                     className="w-full"
                     sx={{
                       '&:hover': {
@@ -733,19 +769,22 @@ export function TxView({ hash }: { hash: string }) {
                             sx={{ fontWeight: 600 }}
                           />
                         </Stack>
-                        <Box className="text-sm break-all p-2 rounded"
+                        <Box
+                          className="text-sm break-all p-2 rounded"
                           sx={{
-                            bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                            bgcolor: (theme) =>
+                              varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                             fontSize: '0.85rem',
-                          }}>
+                          }}
+                        >
                           {statusDetail.data[0].tx_order}
                         </Box>
                       </Stack>
                     </CardContent>
                   </Card>
-                  
-                  <Card 
-                    variant="outlined" 
+
+                  <Card
+                    variant="outlined"
                     className="w-full"
                     sx={{
                       '&:hover': {
@@ -773,19 +812,22 @@ export function TxView({ hash }: { hash: string }) {
                             sx={{ fontWeight: 600 }}
                           />
                         </Stack>
-                        <Box className="text-sm break-all p-2 rounded"
+                        <Box
+                          className="text-sm break-all p-2 rounded"
                           sx={{
-                            bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                            bgcolor: (theme) =>
+                              varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                             fontSize: '0.85rem',
-                          }}>
+                          }}
+                        >
                           {statusDetail.data[0].state_change_set.state_root}
                         </Box>
                       </Stack>
                     </CardContent>
                   </Card>
-                  
-                  <Card 
-                    variant="outlined" 
+
+                  <Card
+                    variant="outlined"
                     className="w-full"
                     sx={{
                       '&:hover': {
@@ -813,19 +855,22 @@ export function TxView({ hash }: { hash: string }) {
                             sx={{ fontWeight: 600 }}
                           />
                         </Stack>
-                        <Box className="text-sm break-all p-2 rounded"
+                        <Box
+                          className="text-sm break-all p-2 rounded"
                           sx={{
-                            bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                            bgcolor: (theme) =>
+                              varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                             fontSize: '0.85rem',
-                          }}>
+                          }}
+                        >
                           {statusDetail.data[0].state_change_set.global_size}
                         </Box>
                       </Stack>
                     </CardContent>
                   </Card>
-                  
+
                   <Box className="text-md font-semibold mb-2">State Change List</Box>
-                  
+
                   {statusDetail.data[0].state_change_set.changes.map((change, index) => (
                     <Card
                       key={index}
@@ -868,11 +913,14 @@ export function TxView({ hash }: { hash: string }) {
                             <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
                               Object ID
                             </Box>
-                            <Box className="text-sm break-all p-2 rounded"
+                            <Box
+                              className="text-sm break-all p-2 rounded"
                               sx={{
-                                bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                bgcolor: (theme) =>
+                                  varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                                 fontSize: '0.85rem',
-                              }}>
+                              }}
+                            >
                               {change.metadata.id}
                             </Box>
                           </Box>
@@ -881,11 +929,14 @@ export function TxView({ hash }: { hash: string }) {
                             <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
                               Owner
                             </Box>
-                            <Box className="text-sm break-all p-2 rounded"
+                            <Box
+                              className="text-sm break-all p-2 rounded"
                               sx={{
-                                bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                bgcolor: (theme) =>
+                                  varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                                 fontSize: '0.85rem',
-                              }}>
+                              }}
+                            >
                               {change.metadata.owner}
                             </Box>
                           </Box>
@@ -895,11 +946,14 @@ export function TxView({ hash }: { hash: string }) {
                               <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
                                 Bitcoin Address
                               </Box>
-                              <Box className="text-sm break-all p-2 rounded"
+                              <Box
+                                className="text-sm break-all p-2 rounded"
                                 sx={{
-                                  bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                  bgcolor: (theme) =>
+                                    varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                                   fontSize: '0.85rem',
-                                }}>
+                                }}
+                              >
                                 {change.metadata.owner_bitcoin_address}
                               </Box>
                             </Box>
@@ -909,14 +963,21 @@ export function TxView({ hash }: { hash: string }) {
                             <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
                               Created At
                             </Box>
-                            <Box className="text-sm break-all p-2 rounded"
+                            <Box
+                              className="text-sm break-all p-2 rounded"
                               sx={{
-                                bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                bgcolor: (theme) =>
+                                  varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                                 fontSize: '0.85rem',
-                              }}>
+                              }}
+                            >
                               {dayjs(Number(change.metadata.created_at)).fromNow()}
                               <span className="ml-2 text-gray-500">
-                                ({dayjs(Number(change.metadata.created_at)).format('MMMM DD, YYYY HH:mm:ss')})
+                                (
+                                {dayjs(Number(change.metadata.created_at)).format(
+                                  'MMMM DD, YYYY HH:mm:ss'
+                                )}
+                                )
                               </span>
                             </Box>
                           </Box>
@@ -925,14 +986,21 @@ export function TxView({ hash }: { hash: string }) {
                             <Box className="text-xs font-medium text-gray-500 mb-1 uppercase">
                               Updated At
                             </Box>
-                            <Box className="text-sm break-all p-2 rounded"
+                            <Box
+                              className="text-sm break-all p-2 rounded"
                               sx={{
-                                bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+                                bgcolor: (theme) =>
+                                  varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
                                 fontSize: '0.85rem',
-                              }}>
+                              }}
+                            >
                               {dayjs(Number(change.metadata.updated_at)).fromNow()}
                               <span className="ml-2 text-gray-500">
-                                ({dayjs(Number(change.metadata.updated_at)).format('MMMM DD, YYYY HH:mm:ss')})
+                                (
+                                {dayjs(Number(change.metadata.updated_at)).format(
+                                  'MMMM DD, YYYY HH:mm:ss'
+                                )}
+                                )
                               </span>
                             </Box>
                           </Box>
